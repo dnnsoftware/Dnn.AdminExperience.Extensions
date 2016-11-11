@@ -11,15 +11,15 @@ All Rights Reserved
 define(['jquery',
     'knockout',
     'knockout.mapping',
-    '../scripts/RecycleBin.ViewModel',
+    './RecycleBin.ViewModel',
 	'dnn.jquery',
 	'dnn.extensions',
 	'dnn.jquery.extensions',
 	'jquery.tokeninput',
 	'dnn.jScrollBar',
     'jquery-ui.min',
-    'css!../css/Pages.css',
-    'css!../css/tags-input.css'],
+    'css!./../../Pages/css/Pages.css',
+    'css!main/../css/tags-input.css'],
     function ($, ko, koMapping, DnnPageRecycleBin) {
         'use strict';
 

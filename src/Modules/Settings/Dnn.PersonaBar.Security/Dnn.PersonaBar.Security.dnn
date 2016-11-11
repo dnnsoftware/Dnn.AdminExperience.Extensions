@@ -20,7 +20,7 @@
       <components>
         <component type="ResourceFile">
           <resourceFiles>
-            <basePath>admin/Dnn.PersonaBar</basePath>
+            <basePath>admin/Dnn.PersonaBar/Modules/Security</basePath>
             <resourceFile>
               <name>Resources.zip</name>
             </resourceFile>
@@ -36,7 +36,7 @@
         </component>
         <component type="Script">
           <scripts>
-            <basePath>admin\Dnn.PersonaBar\Security</basePath>
+            <basePath>admin\Dnn.PersonaBar\Modules\Security</basePath>
             <script type="Install">
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>Install.SqlDataProvider</name>

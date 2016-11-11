@@ -1,4 +1,4 @@
-﻿define(['jquery', 'knockout', './extension', './config', 'jquery-ui.min', 'dnn.jquery'], function ($, ko, ext, cf) {
+﻿define(['jquery', 'knockout', 'main/extension', 'main/config', 'jquery-ui.min', 'dnn.jquery'], function ($, ko, ext, cf) {
     'use strict';
     window.ko = ko;
 
@@ -7,7 +7,7 @@
     var config = cf.init();
     function loadScript() {
         //var url = "http://localhost:8080/dist/pages-bundle.js"
-        var url = "scripts/bundles/pages-bundle.js";
+        var url = "modules/pages/scripts/bundles/pages-bundle.js";
         $.ajax({
             dataType: "script",
             cache: true,

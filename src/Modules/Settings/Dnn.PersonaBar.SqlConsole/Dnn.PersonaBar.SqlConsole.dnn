@@ -20,7 +20,7 @@
             <components>
                 <component type="ResourceFile">
                     <resourceFiles>
-                        <basePath>admin/Dnn.PersonaBar</basePath>
+                        <basePath>admin/Dnn.PersonaBar/Modules/SqlConsole</basePath>
                         <resourceFile>
                             <name>Resources.zip</name>
                         </resourceFile>

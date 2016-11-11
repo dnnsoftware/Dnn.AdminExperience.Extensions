@@ -5,15 +5,17 @@ define(['jquery'], function ($) {
         init: function (config) {
             var loadTempl;
 
-            loadTempl = function (template, wrapper, params, self, cb, isMobile) {
-                var callbackInit, templateSuffix, cssSuffix, initMethod, moduleJs, loadMethod;
+            loadTempl = function (identifier, template, wrapper, params, self, cb, isMobile) {
+                var callbackInit, moduleFolder, scriptFolder, templateSuffix, cssSuffix, initMethod, moduleJs, loadMethod;
 
                 if (!initializedModules[template]) {
                     templateSuffix = isMobile ? '.mobi.html' : '.html';
                     cssSuffix = isMobile ? '.mobi.css' : '.css';
                     initMethod = isMobile ? 'initMobile' : 'init';
-                    var requiredArray = ['../' + template, 'text!../../' + template + templateSuffix];
-                    requiredArray.push('css!../../css/' + template + cssSuffix);
+                    moduleFolder = identifier ? 'modules/' + identifier + '/' : '';
+                    scriptFolder = moduleFolder ? moduleFolder + 'scripts/' : 'scripts/';
+                    var requiredArray = ['../../' + scriptFolder + template, 'text!../../' + moduleFolder + template + templateSuffix];
+                    requiredArray.push('css!../../' + moduleFolder + 'css/' + template + cssSuffix);
 
                     window.require(requiredArray, function (module, html) {
                         if (module === undefined) return;
@@ -43,20 +45,14 @@ define(['jquery'], function ($) {
             };
 
             return {
-                loadTemplate: function (template, wrapper, params, cb) {
+                loadTemplate: function (identifier, template, wrapper, params, cb) {
                     var self = this;
-                    loadTempl(template, wrapper, params, self, cb, false);
+                    loadTempl(identifier, template, wrapper, params, self, cb, false);
                 },
 
-                loadMobileTemplate: function (template, wrapper, params, cb) {
+                loadMobileTemplate: function (identifier, template, wrapper, params, cb) {
                     var self = this;
-                    loadTempl(template, wrapper, params, self, cb, true);
-                },
-
-                loadInContextAnalytics: function (template, wrapper, cb) {
-                    var self = this;
-                    var params = { moduleName: config.socialModule, showEngageStats: config.socialModule && config.isCommunityManager };
-                    loadTempl(template, wrapper, params, self, cb, false);
+                    loadTempl(identifier, template, wrapper, params, self, cb, true);
                 },
 
                 loadResx: function (cb) {
