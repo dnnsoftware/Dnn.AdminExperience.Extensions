@@ -7,8 +7,7 @@
     requirejs.config({
         baseUrl: 'scripts/contrib/',
         paths: {
-            'templatePath': '../../',
-            'cssPath': '../../css/'
+            'main': '../../../scripts/'
         },
         urlArgs: (cdv ? 'cdv=' + cdv : '') + (debugMode ? '&t=' + Math.random() : ''),
         shim: {

@@ -1,13 +1,13 @@
 ﻿'use strict';
 define(['jquery',
-    '../scripts/config'
+    'main/config'
 ],
     function ($, cf) {
         var utility;
         var config = cf.init();
 
         function loadScript() {
-            var url = "scripts/bundles/licensing-bundle.js";
+            var url = "modules/licensing/scripts/bundles/licensing-bundle.js";
             //var url = "http://localhost:8080/dist/licensing-bundle.js";
             $.ajax({
                 dataType: "script",

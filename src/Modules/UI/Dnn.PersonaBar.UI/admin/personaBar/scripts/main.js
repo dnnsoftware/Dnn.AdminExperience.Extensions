@@ -8,7 +8,8 @@
         baseUrl: 'scripts/contrib/',
         paths: {
             'templatePath': '../../',
-            'cssPath': '../../css/'
+            'cssPath': '../../css/',
+            'main': '../../scripts'
         },
         urlArgs: (cdv ? 'cdv=' + cdv : '') + (debugMode ? '&t=' + Math.random() : ''),
         shim: {
@@ -84,7 +85,7 @@ require(['jquery', 'knockout', 'moment', '../util', '../sf', '../config', './../
         var $personaBar = $('#personabar');
         var $showSiteButton = $('#showsite');
         var customModules = [];
-        
+
         window.requirejs.config({
             paths: {
                 'rootPath': utility.getApplicationRootPath()
@@ -221,7 +222,7 @@ require(['jquery', 'knockout', 'moment', '../util', '../sf', '../config', './../
                             $panel.show().delay(100).animate({ left: personaBarMenuWidth }, 189, 'linear', function () {
                                 inAnimation = false;
                                 $personaBarPlaceholder.show();
-                                self.loadTemplate(template, $panel, params, function () {
+                                self.loadTemplate(identifier, template, $panel, params, function () {
                                     self.panelLoaded(params);
                                 });
                                 $(document).keyup(function (e) {
@@ -253,7 +254,7 @@ require(['jquery', 'knockout', 'moment', '../util', '../sf', '../config', './../
                                     activePath = path;
                                     activemodule = moduleName;
                                     inAnimation = false;
-                                    self.loadTemplate(template, $panel, params, function() {
+                                    self.loadTemplate(identifier, template, $panel, params, function () {
                                         self.panelLoaded(params);
                                     });
                                 };
@@ -266,7 +267,7 @@ require(['jquery', 'knockout', 'moment', '../util', '../sf', '../config', './../
                         });
                     } else if (activemodule !== moduleName) {
                         activemodule = moduleName;
-                        self.loadTemplate(template, $panel, params, function () {
+                        self.loadTemplate(identifier, template, $panel, params, function () {
                             self.panelLoaded(params);
                         });
                     }

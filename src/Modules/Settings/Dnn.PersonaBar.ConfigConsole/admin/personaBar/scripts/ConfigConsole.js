@@ -13,11 +13,10 @@ define(['jquery',
         'knockout',
         'knockout.mapping',
 		'jquery-ui.min',
-        './codeEditor',
-		'../scripts/config',
-        'dnn.jquery',
-        './koBindingHandlers/jScrollPane'],
-    function ($, ko, koMapping, jqueryUI, codeEditor, cf, jScrollPane) {
+        'main/codeEditor',
+		'main/config',
+        'dnn.jquery'],
+    function ($, ko, koMapping, jqueryUI, codeEditor, cf) {
         var config = cf.init();
 
         var isMobile, identifier, utility, $panel, viewModel, configEditor, mergeEditor, curConfigName;

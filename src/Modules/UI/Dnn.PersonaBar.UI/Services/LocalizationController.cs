@@ -79,8 +79,6 @@ namespace Dnn.PersonaBar.UI.Services
 
         private bool Expired(string culture)
         {
-            return true;
-
             var cacheKey = $"PersonaBarResources{culture}";
             if (DataCache.GetCache(cacheKey) != null)
             {
@@ -117,12 +115,11 @@ namespace Dnn.PersonaBar.UI.Services
         {
             var resources = new Dictionary<string, IDictionary<string, string>>();
             var resourceFiles = GetAllResourceFiles(culture);
-            var personaBarResourcesPath = Path.Combine(Constants.PersonaBarRelativePath, "App_LocalResources");
+            var physicalPath = HttpContext.Current.Server.MapPath(Constants.PersonaBarRelativePath);
             foreach (var resourcesFile in resourceFiles)
             {
                 var key = Path.GetFileNameWithoutExtension(resourcesFile);
-                var filename = Path.GetFileName(resourcesFile);
-                var relativePath = Path.Combine(personaBarResourcesPath, filename);
+                var relativePath = Path.Combine(Constants.PersonaBarRelativePath, resourcesFile.Replace(physicalPath, string.Empty));
                 var keys = Components.Controllers.LocalizationController.Instance.GetLocalizedDictionary(relativePath, culture);
                 resources.Add(key, keys);
             }
@@ -148,9 +145,8 @@ namespace Dnn.PersonaBar.UI.Services
 
         private IList<string> GetAllResourceFiles(string culture)
         {
-            var personaBarResourcesPath = Path.Combine(Constants.PersonaBarRelativePath, "App_LocalResources");
-            var physicalPath = HttpContext.Current.Server.MapPath(personaBarResourcesPath);
-            return Directory.GetFiles(physicalPath, "*.resx");
+            var physicalPath = HttpContext.Current.Server.MapPath(Constants.PersonaBarRelativePath);
+            return Directory.GetFiles(physicalPath, "*.resx", SearchOption.AllDirectories);
         } 
 
         #endregion
