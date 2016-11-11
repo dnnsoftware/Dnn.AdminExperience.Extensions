@@ -30,7 +30,7 @@ namespace Dnn.PersonaBar.SiteSettings.Services
     public class LanguagesController : PersonaBarApiController
     {
         private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(LanguagesController));
-        private const string LocalResourcesFile = "~/admin/Dnn.PersonaBar/App_LocalResources/SiteSettings.resx";
+        private const string LocalResourcesFile = "~/admin/Dnn.PersonaBar/Modules/SiteSettings/App_LocalResources/SiteSettings.resx";
 
         // Sample matches:
         // MyResources.ascx.en-US.resx
