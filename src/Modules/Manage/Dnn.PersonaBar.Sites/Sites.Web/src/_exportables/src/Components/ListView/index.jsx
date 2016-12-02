@@ -51,7 +51,7 @@ class ListView extends Component {
         event = Object.assign(event, settings);
 
         utilities.loadPanel(this.props.siteSettingModule, {
-            identifier: "SiteSettings", // This is always SiteSettings, to call the proper GetExtensions method.
+            identifier: "Dnn.SiteSettings", // This is always SiteSettings, to call the proper GetExtensions method.
             moduleName: this.props.siteSettingModule,
             path: this.props.siteSettingModule,
             query: "",
