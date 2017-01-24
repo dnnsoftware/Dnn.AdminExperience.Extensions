@@ -55,6 +55,29 @@ BEGIN
 END
 GO
 
+IF EXISTS (SELECT * FROM sys.procedures WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Personabar_GetUsersByUserIds]'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Personabar_GetUsersByUserIds
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Personabar_GetUsersByUserIds 
+(	@PortalId INT,
+	@UserIds nvarchar(max) -- comma separated list of UserIds
+) AS
+BEGIN
+	SELECT DISTINCT 
+            U.UserID, 
+            U.Username, 
+            U.DisplayName, 
+            U.Email, 
+            U.CreatedOnDate, 
+            U.IsDeleted, 
+            U.Authorised
+     FROM {databaseOwner}{objectQualifier}vw_Users                         U 
+     JOIN {databaseOwner}{objectQualifier}ConvertListToTable(',',@UserIds) I ON U.UserID = I.RowValue
+	 WHERE U.PortalId = @PortalId
+END
+GO
+
 /************************************************************/
 /*****              SqlDataProvider                     *****/
 /************************************************************/
