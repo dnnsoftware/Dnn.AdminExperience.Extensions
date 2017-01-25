@@ -99,12 +99,24 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dnn.PersonaBar.AdminLogs", 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dnn.PersonaBar.Licensing", "Modules\Settings\Dnn.PersonaBar.Licensing\Dnn.PersonaBar.Licensing.csproj", "{A8B33EDC-FE3D-4BBA-B127-13A6AD7E5C12}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5313F690-D9A3-40B1-908C-1F5A3F3EA683} = {5313F690-D9A3-40B1-908C-1F5A3F3EA683}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dnn.PersonaBar.Pages", "Modules\Content\Dnn.PersonaBar.Pages\Dnn.PersonaBar.Pages.csproj", "{9CCA271F-CFAA-42A3-B577-7D5CBB38C646}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5313F690-D9A3-40B1-908C-1F5A3F3EA683} = {5313F690-D9A3-40B1-908C-1F5A3F3EA683}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dnn.PersonaBar.Servers", "Modules\Settings\Dnn.PersonaBar.Servers\Dnn.PersonaBar.Servers.csproj", "{9FA6939A-0ABF-42AF-B43A-4063AFE3EE47}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5313F690-D9A3-40B1-908C-1F5A3F3EA683} = {5313F690-D9A3-40B1-908C-1F5A3F3EA683}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dnn.PersonaBar.SiteSettings", "Modules\Settings\Dnn.PersonaBar.SiteSettings\Dnn.PersonaBar.SiteSettings.csproj", "{C0A07377-E031-4C5B-AC56-0080555C9AC2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5313F690-D9A3-40B1-908C-1F5A3F3EA683} = {5313F690-D9A3-40B1-908C-1F5A3F3EA683}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
