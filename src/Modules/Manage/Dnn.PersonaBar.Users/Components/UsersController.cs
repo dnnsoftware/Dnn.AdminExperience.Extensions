@@ -285,11 +285,11 @@ namespace Dnn.PersonaBar.Users.Components
 
                     if (string.IsNullOrEmpty(searchText))
                     {
-                        dbUsers = UserController.GetUsers(portalId, pageIndex, pageSize, ref totalRecords, true, false);
+                        dbUsers = UserController.GetUsers(isSuperUser ? -1 : portalId, pageIndex, pageSize, ref totalRecords, true, false);
                     }
                     else
                     {
-                        dbUsers = UserController.GetUsersByDisplayName(portalId, searchText + "%", pageIndex, pageSize,
+                        dbUsers = UserController.GetUsersByDisplayName(isSuperUser ? -1 : portalId, searchText + "%", pageIndex, pageSize,
                             ref totalRecords, true, false);
                     }
                     paged = true;
@@ -298,7 +298,7 @@ namespace Dnn.PersonaBar.Users.Components
                 case UserFilters.SuperUsers:
                     if (isSuperUser)
                     {
-                        dbUsers = UserController.GetUsers(Null.NullInteger, pageIndex, pageSize, ref totalRecords, true, true);
+                        dbUsers = UserController.GetUsers(Null.NullInteger, pageIndex, pageSize, ref totalRecords, false, true);
                         userInfos = dbUsers?.OfType<UserInfo>().ToList();
                     }
                     paged = true;
@@ -313,15 +313,21 @@ namespace Dnn.PersonaBar.Users.Components
                     break;
                 case UserFilters.Deleted:
                     dbUsers = UserController.GetDeletedUsers(portalId);
-                    userInfos = dbUsers?.OfType<UserInfo>().ToList();
                     if (!isSuperUser)
                     {
-                        userInfos = userInfos?.Where(x => !x.IsSuperUser);
+                        userInfos = dbUsers?.OfType<UserInfo>().Where(x => !x.IsSuperUser);
+                    }
+                    else
+                    {
+                        //we don't expect more then 1000 super users in a site :)
+                        var deleterSUsers = UserController.GetUsers(Null.NullInteger, 0, 1000, ref totalRecords, true, true)
+                            .OfType<UserInfo>().Where(u => u.IsDeleted);
+                        userInfos = dbUsers?.OfType<UserInfo>().Concat(deleterSUsers).ToList();
                     }
                     break;
-//                    case UserFilters.Online:
-//                        dbUsers = UserController.GetOnlineUsers(usersContract.PortalId);
-//                        break;
+                    //case UserFilters.Online:
+                    //    dbUsers = UserController.GetOnlineUsers(usersContract.PortalId);
+                    //    break;
                 case UserFilters.RegisteredUsers:
                     userInfos = RoleController.Instance.GetUsersByRole(portalId,
                         PortalController.Instance.GetCurrentPortalSettings().RegisteredRoleName);
