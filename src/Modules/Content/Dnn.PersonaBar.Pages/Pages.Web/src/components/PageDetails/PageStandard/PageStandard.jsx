@@ -40,47 +40,55 @@ class PageDetails extends Component {
                 <GridSystem>
                     <GridCell className="left-column">
                         <SingleLineInputWithError
+                            style={{marginBottom:"0px"}}
                             label={Localization.get("Name") + "*"}
+                            inputStyle={{marginBottom:"32px"}}
                             tooltipMessage={Localization.get("NameTooltip")}
                             error={!!errors.name}
                             errorMessage={errors.name}
-                            value={page.name} 
+                            value={page.name}
                             onChange={this.onChangeField.bind(this, "name")}
                             maxLength="200" />
                     </GridCell>
                     <GridCell className="right-column">
                         <SingleLineInputWithError
                             label={Localization.get("Title")}
+                            inputStyle={{marginBottom:"32px"}}
                             tooltipMessage={Localization.get("TitleTooltip")}
                             value={page.title}
                             onChange={this.onChangeField.bind(this, "title")}
                             maxLength="200" />
                     </GridCell>
                 </GridSystem>
-                <InputGroup>
+                <InputGroup style={{padding:"0px", marginBottom:"0px"}}>
                     <MultiLineInputWithError
                         label={Localization.get("Description")}
                         value={page.description}
                         onChange={this.onChangeField.bind(this, "description")}
+                        inputStyle={{height:"64px", minHeight:"64px", marginBottom:"28px", paddingBottom:"0px"}}
+                        labelStyle={{paddingTop:"0px"}}
                         maxLength="500" />
                 </InputGroup>
-                <InputGroup>
+                <InputGroup style={{padding:"0px", margin:"0px"}}>
                     <MultiLineInputWithError
                         label={Localization.get("Keywords")}
-                        value={page.keywords} 
+                        value={page.keywords}
                         onChange={this.onChangeField.bind(this, "keywords")}
+                        inputStyle={{height: "64px", minHeight:"32px"}}
+                        labelStyle={{paddingTop:"0px"}}
+                        style={{padding:"0px"}}
                         maxLength="500" />
                 </InputGroup>
                 <GridSystem>
                     <GridCell className="left-column input-cell">
                         <Label label={Localization.get("Tags")}/>
                         <Tags 
-                            tags={tags} 
+                            tags={tags}
                             onUpdateTags={this.onChangeTags.bind(this)}/>
                     </GridCell>
                     <GridCell className="right-column input-cell">
                         <Label label={Localization.get("Url")}/>
-                        <SingleLineInput 
+                        <SingleLineInput
                             value={page.url}
                             onChange={this.onChangeUrl.bind(this)} />
                     </GridCell>
