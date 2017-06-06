@@ -9,6 +9,8 @@ import Localization from "../../../localization";
 import styles from "./style.less";
 import Tags from "dnn-tags";
 import Label from "dnn-label";
+import PagePicker from "dnn-page-picker";
+import Utils from "../../../utils";
 
 class PageDetails extends Component {
 
@@ -22,18 +24,26 @@ class PageDetails extends Component {
         onChangeField("tags", tags.join(","));
     }
 
-    onChangeUrl(event) {
+    onChangeUrl(value) {
         const {onChangeField} = this.props;
-        let value = event.target.value;
-        if (!value.startsWith("/")) {
-            value = "/" + value;
-        }  
         onChangeField("url", value);
     }
 
     render() {
         const {page, errors} = this.props;
         const tags = page.tags ? page.tags.split(",") : [];
+        console.log(page)
+        const TabParameters = {
+            portalId:  -2,
+            cultureCode: "",
+            isMultiLanguage: false,
+            excludeAdminTabs: false,
+            roles: "",
+            sortOrder: 0
+        };
+
+         let TabParameters_1 = Object.assign(Object.assign({}, TabParameters), { disabledNotSelectable: false });
+         const sf = Utils.getServiceFramework();
 
         return (
             <div className={styles.pageStandard}>
@@ -89,10 +99,14 @@ class PageDetails extends Component {
                             onUpdateTags={this.onChangeTags.bind(this)} />
                     </GridCell>
                     <GridCell className="right-column input-cell">
-                        <Label label={Localization.get("Url")}  style={{paddingBottom:"10px"}}/>
-                        <SingleLineInput
-                            value={page.url}
-                            onChange={this.onChangeUrl.bind(this)} />
+                        <InputGroup>
+                            <Label label={Localization.get("Url")}  style={{paddingBottom:"10px"}}/>
+                            <PagePicker
+                                style={{ width: "100%", zIndex: 5 }}
+                                selectedTabId={(d)=>{console.log(d); }}
+                                OnSelect={ this.onChangeUrl.bind(this) }
+                                serviceFramework={sf} />
+                        </InputGroup>
                     </GridCell>
                 </GridSystem>
                 <div style={{clear: "both"}}></div>
