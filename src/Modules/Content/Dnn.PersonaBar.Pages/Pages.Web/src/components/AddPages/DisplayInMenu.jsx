@@ -12,6 +12,7 @@ class DisplayInMenu extends Component {
                 labelType="inline"
                 tooltipMessage={Localization.get("DisplayInMenuTooltip")}
                 label={Localization.get("DisplayInMenu")} />
+
             <Switch
                 labelHidden={false}
                 value={props.includeInMenu}
