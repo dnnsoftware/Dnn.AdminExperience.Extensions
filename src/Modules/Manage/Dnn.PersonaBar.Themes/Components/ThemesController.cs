@@ -66,7 +66,7 @@ namespace Dnn.PersonaBar.Themes.Components
             var themes = new List<ThemeInfo>();
             if ((level & ThemeLevel.Site) == ThemeLevel.Site)
             {
-                themes.AddRange(GetThemes(ThemeType.Skin, Path.Combine(portalSettings.HomeSystemDirectoryMapPath, SkinController.RootSkin)));
+                themes.AddRange(GetThemes(ThemeType.Skin, Path.Combine(portalSettings.HomeDirectoryMapPath, SkinController.RootSkin)));
             }
 
             if ((level & ThemeLevel.Global) == ThemeLevel.Global)
@@ -88,7 +88,7 @@ namespace Dnn.PersonaBar.Themes.Components
             var themes = new List<ThemeInfo>();
             if ((level & ThemeLevel.Site) == ThemeLevel.Site)
             {
-                themes.AddRange(GetThemes(ThemeType.Container, Path.Combine(portalSettings.HomeSystemDirectoryMapPath, SkinController.RootContainer)));
+                themes.AddRange(GetThemes(ThemeType.Container, Path.Combine(portalSettings.HomeDirectoryMapPath, SkinController.RootContainer)));
             }
 
             if ((level & ThemeLevel.Global) == ThemeLevel.Global)
