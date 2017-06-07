@@ -32,7 +32,6 @@ class PageDetails extends Component {
     render() {
         const {page, errors} = this.props;
         const tags = page.tags ? page.tags.split(",") : [];
-        console.log(page)
         const TabParameters = {
             portalId:  -2,
             cultureCode: "",

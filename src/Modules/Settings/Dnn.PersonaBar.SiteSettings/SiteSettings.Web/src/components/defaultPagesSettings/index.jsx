@@ -151,7 +151,6 @@ class DefaultPagesSettingsPanelBody extends Component {
         let TabParameters_Login = Object.assign(Object.assign({}, TabParameters), { disabledNotSelectable: false, validateTab: "Account Login" });
         let TabParameters_Search = Object.assign(Object.assign({}, TabParameters), { disabledNotSelectable: false, validateTab: "Search Results" });
 
-        debugger;
         if (state.defaultPagesSettings) {
             const columnOne = <div className="left-column">
                 <InputGroup>
