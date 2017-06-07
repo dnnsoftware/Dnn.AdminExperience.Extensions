@@ -11,5 +11,6 @@ export default function validateFields(field, value) {
             errors[field] = undefined;
         }
     }
+
     return errors;
 }
