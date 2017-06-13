@@ -18,7 +18,9 @@ import Button from "dnn-button";
 import styles from "./style.less";
 import utilities from "utils";
 
-import TreeControlInteractor from "dnn-tree-control-interactor";
+//import TreeControlInteractor from "dnn-tree-control-interactor";
+
+import TreeControlInteractor from "./TreeControlInteractor/src/TreeControlInteractor";
 
 const keysToValidate = ["ExportName"];
 
@@ -394,6 +396,8 @@ class ExportModal extends Component {
                         <div className="export-pages">
                             <div className="sectionTitle">{Localization.get("PagesInExport")}</div>
                             <TreeControlInteractor
+                                characterLimit={15}
+                                selectedColor={"#1E88C3"}
                                 PortalTabsParameters={PortalTabsParameters}
                                 OnSelect={this.updatePagesToExport.bind(this)}
                                 moduleRoot={"PersonaBar"}
@@ -417,13 +421,12 @@ class ExportModal extends Component {
                                     onChange={this.onChange.bind(this, "ExportMode")}
                                     options={this.getExportModeOptions()}
                                     buttonGroup="exportMode"
-                                    value={props.lastExportTime ? state.exportRequest.ExportMode : "Full"} />
+                                    value={ props.lastExportTime ? state.exportRequest.ExportMode : "Full" } />
                             </InputGroup>
                             <InputGroup>
                                 <Label
                                     labelType="inline"
-                                    label={Localization.get("LastExport")}
-                                />
+                                    label={Localization.get("LastExport")} />
                                 <div className="lastExport">{props.lastExportTime || Localization.get("EmptyDateTime")}</div>
                             </InputGroup>
                         </div>
