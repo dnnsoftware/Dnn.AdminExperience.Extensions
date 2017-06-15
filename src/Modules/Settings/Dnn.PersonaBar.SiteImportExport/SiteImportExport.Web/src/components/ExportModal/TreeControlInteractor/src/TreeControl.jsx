@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { PropTypes } from "prop-types";
 import { IconSelector } from "./icons/IconSelector";
 import { global } from "./global";
+//import TextOverflowWrapperNew from "dnn-text-overflow-wrapper-new";
+
+import TextOverflowWrapperNew from "./TextOverflowWrapperNew/src/TextOverflowWrapperNew";
 
 const styles = global.styles;
 const floatLeft = styles.float();
@@ -17,6 +20,7 @@ export default class TreeControl extends Component {
         this.icon = IconSelector(icon_type);
         this.export = props.export;
         this.getDescendantPortalTabs = props.getDescendantPortalTabs;
+        this.textOverflowRefs = [];
     }
 
     _traverse(comparator) {
@@ -185,12 +189,12 @@ export default class TreeControl extends Component {
             this.props.getDescendantPortalTabs(tab.TabId, () => {
                 tab.IsOpen = !tab.IsOpen;
                 this.props.updateTree(tab);
-
             });
         };
         condition ? left() : right();
         this.props.updateTree(tab);
     }
+
 
     render_icon(direction) {
         const animate = direction === "90deg" ? true : false;
@@ -265,7 +269,8 @@ export default class TreeControl extends Component {
     }
 
     render_tabName(tab) {
-        const name = tab.Name.length > this.props.characterLimit || 15 ? `${tab.Name.substr(0, this.props.characterLimit || 15)}...` : tab.Name;
+        const charLimit = 15;
+        const name = tab.Name.length > charLimit ? `${tab.Name.substr(0, charLimit)}...` : tab.Name;
         const render = (() => {
             const margin = styles.margin({ top: 0 });
             const padding = styles.padding({ left: 20 });
@@ -279,6 +284,9 @@ export default class TreeControl extends Component {
             return (
                 <span style={merge(margin, padding, nowrap, clr, bold)}>
                     {name}
+                    <TextOverflowWrapperNew
+                        text={name}
+                        border={true}/>
                 </span>
             );
         })();
@@ -314,7 +322,6 @@ export default class TreeControl extends Component {
                         {tab.HasChildren ? bullet : null}
                         {checkbox}
                         {tabName}
-                       
                         {tree}
                     </li>);
                 const parent = this.props.findParent(tab);

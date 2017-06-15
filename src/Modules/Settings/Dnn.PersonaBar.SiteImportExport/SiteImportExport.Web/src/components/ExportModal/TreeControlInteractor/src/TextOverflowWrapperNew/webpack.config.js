@@ -1,34 +1,31 @@
 module.exports = {
-    entry: "./src/TreeControlInteractor.jsx",
+    entry: "./src/TextOverflowWrapperNew.jsx",
     output: {
         path: "./lib/",
-        filename: "TreeControlInteractor.js",
+        filename: "TextOverflowWrapperNew.js",
         libraryTarget: "umd",
-        library: "TreeControlInteractor"
+        library: "TextOverflowWrapperNew"
     },
     module: {
         loaders: [
-            {
+            { 
                 test: /\.(js|jsx)$/, exclude: /node_modules/,
                 loader: "babel-loader",
                 query: {
                     presets: ["react", "es2015"]
-                }
+                } 
             },
             { test: /\.less$/, loader: "style-loader!css-loader!less-loader" }
-            { test: /\.svg$/, loader: 'svg-url-loader'}
         ],
         preLoaders: [
-            { test: /\.(js|jsx)$/, exclude: /node_modules/, loaders: ["babel-loader", "eslint-loader"] }
+            { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: "eslint-loader"}
         ]
     },
     externals: {
         "react": "react",
-        "lodash": "lodash",
-        "react-dom": "react-dom",
         "react-tooltip": "react-tooltip"
     },
     resolve: {
-        extensions: ["", ".js", ".json", ".jsx"] 
+        extensions: ["", ".js", ".json", ".jsx"]
     }
 };
