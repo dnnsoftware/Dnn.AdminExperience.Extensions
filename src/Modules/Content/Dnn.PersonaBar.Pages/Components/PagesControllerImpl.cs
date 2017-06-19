@@ -971,7 +971,14 @@ namespace Dnn.PersonaBar.Pages.Components
             };
 
             pageSettings.TemplateId = _templateController.GetDefaultTemplateId(pageSettings.Templates);
-               
+
+            var portalSettings = PortalController.Instance.GetCurrentPortalSettings();
+            if (PortalController.GetPortalSettingAsBoolean("SSLEnabled", portalSettings.PortalId, false) &&
+                PortalController.GetPortalSettingAsBoolean("SSLEnforced", portalSettings.PortalId, false))
+            {
+                pageSettings.IsSecure = true;
+            }
+
             return pageSettings;
         }
 
@@ -1056,7 +1063,7 @@ namespace Dnn.PersonaBar.Pages.Components
             tab.IconFileLarge = sourceTab.IconFileLarge;
             tab.PageHeadText = sourceTab.PageHeadText;
             tab.RefreshInterval = sourceTab.RefreshInterval;
-
+            tab.IsSecure = sourceTab.IsSecure;
             _tabController.UpdateTab(tab);
 
             //update need tab settings.
