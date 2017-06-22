@@ -182,23 +182,14 @@ const pageActions = {
                 if (page.tabId > 0 && securityService.isSuperUser()) {
                     utils.notify(Localization.get("PageUpdatedMessage"));
                 }
-                
-                if (page.tabId === 0 && !securityService.isSuperUser()) {
-                    PagesService.openPageInEditMode(response.Page.id, response.Page.url);
-                    return;    
-                }
 
                 if (page.tabId > 0 && !securityService.isSuperUser()) {
                     utils.closePersonaBar();
                     return;
                 }
 
-                dispatch({
-                    type: ActionTypes.SAVED_PAGE,
-                    data: {
-                        createdPage: page.tabId === 0 ? response.Page : null
-                    }
-                });
+                PagesService.openPageInEditMode(response.Page.id, response.Page.url);
+
             }).catch((error) => {
                 dispatch({
                     type: ActionTypes.ERROR_SAVING_PAGE,
