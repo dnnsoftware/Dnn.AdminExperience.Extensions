@@ -234,7 +234,7 @@ class App extends Component {
         const backToReferral = this.backToReferral.bind(this, this.state.referral);
         const AllowContentLocalization = !!props.isContentLocalizationEnabled;
         return (<PersonaBarPage isOpen={props.selectedView === panels.PAGE_SETTINGS_PANEL}>
-            <PersonaBarPageHeader title={titleSettings} tooltip={titleSettings}>
+            <PersonaBarPageHeader title={titleSettings}  titleCharLimit={20} tooltip={titleSettings}>
                 {!this.isNewPage() &&
                     this.getSettingsButtons()
                 }
