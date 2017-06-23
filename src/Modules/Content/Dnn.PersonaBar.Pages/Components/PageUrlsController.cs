@@ -149,7 +149,7 @@ namespace Dnn.PersonaBar.Pages.Components
             }
 
             //Validate for uniqueness
-            if (!tab.TabUrls.Exists(t => t.SeqNum == dto.Id && t.Url == dto.Path.ValueOrEmpty()))
+            if (!tab.TabUrls.Exists(t => t.SeqNum == dto.Id && t.Url.Equals("/" + urlPath, StringComparison.InvariantCultureIgnoreCase)))
             {
                 urlPath = FriendlyUrlController.ValidateUrl(urlPath, -1, portalSettings, out modified);
                 if (modified)
