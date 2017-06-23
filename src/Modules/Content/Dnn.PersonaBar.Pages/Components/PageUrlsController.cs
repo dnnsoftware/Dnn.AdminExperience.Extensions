@@ -149,15 +149,18 @@ namespace Dnn.PersonaBar.Pages.Components
             }
 
             //Validate for uniqueness
-            urlPath = FriendlyUrlController.ValidateUrl(urlPath, -1, portalSettings, out modified);
-            if (modified)
+            if (!tab.TabUrls.Exists(t => t.SeqNum == dto.Id && t.Url == dto.Path.ValueOrEmpty()))
             {
-                return new PageUrlResult
+                urlPath = FriendlyUrlController.ValidateUrl(urlPath, -1, portalSettings, out modified);
+                if (modified)
+                {
+                    return new PageUrlResult
                     {
                         Success = false,
                         ErrorMessage = Localization.GetString("UrlPathNotUnique.Error"),
                         SuggestedUrlPath = "/" + urlPath
                     };
+                }
             }
 
             var cultureCode = LocaleController.Instance.GetLocales(portalSettings.PortalId)

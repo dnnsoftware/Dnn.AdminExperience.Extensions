@@ -175,8 +175,7 @@ class App extends Component {
     getPageTitle() {
         const {selectedPage} = this.props;
         return this.isNewPage() ?
-            Localization.get("AddPage") :
-            Localization.get("PageSettings") + ": " + selectedPage.name;
+            Localization.get("AddPage") : selectedPage.name;
     }
 
     getSettingsButtons() {
