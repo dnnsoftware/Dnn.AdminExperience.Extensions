@@ -166,7 +166,7 @@ namespace Dnn.PersonaBar.Pages.Components
             var cultureCode = LocaleController.Instance.GetLocales(portalSettings.PortalId)
                 .Where(l => l.Value.KeyID == dto.LocaleKey)
                 .Select(l => l.Value.Code)
-                .SingleOrDefault();
+                .SingleOrDefault() ?? portalSettings.DefaultLanguage;
 
             if (dto.StatusCodeKey.ToString(CultureInfo.InvariantCulture) == "200")
             {
@@ -190,18 +190,28 @@ namespace Dnn.PersonaBar.Pages.Components
                     };
                     TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
                 }
-                else
+                else 
                 {
-                    //Change the original 200 url to a redirect
-                    tabUrl.HttpStatus = "301";
-                    tabUrl.SeqNum = dto.Id;
-                    TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
+                    tabUrl.CultureCode = cultureCode;
+                    if (!tabUrl.Url.Equals("/" + urlPath, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        //Change the original 200 url to a redirect
+                        tabUrl.HttpStatus = "301";
+                        tabUrl.SeqNum = dto.Id;
+                        TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
 
-                    //Add new custom url
-                    tabUrl.Url = dto.Path.ValueOrEmpty();
-                    tabUrl.HttpStatus = "200";
-                    tabUrl.SeqNum = tab.TabUrls.Max(t => t.SeqNum) + 1;
-                    TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
+                        //Add new custom url
+                        tabUrl.Url = dto.Path.ValueOrEmpty();
+                        tabUrl.HttpStatus = "200";
+                        tabUrl.SeqNum = tab.TabUrls.Max(t => t.SeqNum) + 1;
+                        TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
+                    }
+                    else
+                    {
+                        //Update the original 200 url
+                        tabUrl.SeqNum = dto.Id;
+                        TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
+                    }
                 }
             }
             else
