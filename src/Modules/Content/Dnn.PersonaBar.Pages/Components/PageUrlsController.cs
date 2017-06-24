@@ -168,11 +168,12 @@ namespace Dnn.PersonaBar.Pages.Components
                 .Select(l => l.Value.Code)
                 .SingleOrDefault() ?? portalSettings.DefaultLanguage;
 
-            if (dto.StatusCodeKey.ToString(CultureInfo.InvariantCulture) == "200")
+            var statusCodeKey = dto.StatusCodeKey.ToString(CultureInfo.InvariantCulture);
+            var tabUrl = tab.TabUrls.SingleOrDefault(t => t.SeqNum == dto.Id && t.HttpStatus == statusCodeKey);
+
+            if (statusCodeKey == "200")
             {
-                //We need to check if we are updating a current url or creating a new 200
-                var tabUrl = tab.TabUrls.SingleOrDefault(t => t.SeqNum == dto.Id
-                                                              && t.HttpStatus == "200");
+                //We need to check if we are updating a current url or creating a new 200                
                 if (tabUrl == null)
                 {
                     //Just create Url
@@ -185,7 +186,7 @@ namespace Dnn.PersonaBar.Pages.Components
                         QueryString = dto.QueryString.ValueOrEmpty(),
                         Url = dto.Path.ValueOrEmpty(),
                         CultureCode = cultureCode,
-                        HttpStatus = dto.StatusCodeKey.ToString(CultureInfo.InvariantCulture),
+                        HttpStatus = "200",
                         IsSystem = dto.IsSystem // false
                     };
                     TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
@@ -212,31 +213,55 @@ namespace Dnn.PersonaBar.Pages.Components
                     else
                     {
                         //Update the original 200 url
-                        tabUrl.SeqNum = dto.Id;
-                        tabUrl.CultureCode = cultureCode;
-                        tabUrl.PortalAliasId = dto.SiteAliasKey;
-                        tabUrl.PortalAliasUsage = (PortalAliasUsageType)dto.SiteAliasUsage;
-                        tabUrl.QueryString = dto.QueryString.ValueOrEmpty();
-                        TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
+                        if (tabUrl.CultureCode != cultureCode
+                        || tabUrl.PortalAliasId != dto.SiteAliasKey
+                        || tabUrl.PortalAliasUsage != (PortalAliasUsageType)dto.SiteAliasUsage
+                        || tabUrl.Url != dto.Path.ValueOrEmpty())
+                        {
+                            tabUrl.CultureCode = cultureCode;
+                            tabUrl.PortalAliasId = dto.SiteAliasKey;
+                            tabUrl.PortalAliasUsage = (PortalAliasUsageType)dto.SiteAliasUsage;
+                            tabUrl.QueryString = dto.QueryString.ValueOrEmpty();
+                            TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
+                        }
                     }
                 }
             }
             else
             {
-                //Just update the url
-                var tabUrl = new TabUrlInfo
+                //Update the original non 200 url
+                if (tabUrl == null)
                 {
-                    TabId = tab.TabID,
-                    SeqNum = dto.Id,
-                    PortalAliasId = dto.SiteAliasKey,
-                    PortalAliasUsage = (PortalAliasUsageType)dto.SiteAliasUsage,
-                    QueryString = dto.QueryString.ValueOrEmpty(),
-                    Url = dto.Path.ValueOrEmpty(),
-                    CultureCode = cultureCode,
-                    HttpStatus = dto.StatusCodeKey.ToString(CultureInfo.InvariantCulture),
-                    IsSystem = dto.IsSystem // false
-                };
-                TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
+                    tabUrl = new TabUrlInfo
+                    {
+                        TabId = tab.TabID,
+                        SeqNum = dto.Id,
+                        PortalAliasId = dto.SiteAliasKey,
+                        PortalAliasUsage = (PortalAliasUsageType)dto.SiteAliasUsage,
+                        QueryString = dto.QueryString.ValueOrEmpty(),
+                        Url = dto.Path.ValueOrEmpty(),
+                        CultureCode = cultureCode,
+                        HttpStatus = statusCodeKey,
+                        IsSystem = dto.IsSystem // false
+                    };
+                    TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
+                }
+                else
+                {
+                    if (tabUrl.CultureCode != cultureCode
+                        || tabUrl.PortalAliasId != dto.SiteAliasKey
+                        || tabUrl.PortalAliasUsage != (PortalAliasUsageType)dto.SiteAliasUsage
+                        || tabUrl.Url != dto.Path.ValueOrEmpty()
+                        || tabUrl.HttpStatus != statusCodeKey)
+                    {
+                        tabUrl.CultureCode = cultureCode;
+                        tabUrl.PortalAliasId = dto.SiteAliasKey;
+                        tabUrl.PortalAliasUsage = (PortalAliasUsageType)dto.SiteAliasUsage;
+                        tabUrl.Url = dto.Path.ValueOrEmpty();
+                        tabUrl.HttpStatus = statusCodeKey;
+                        TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
+                    }
+                }
             }
 
 
