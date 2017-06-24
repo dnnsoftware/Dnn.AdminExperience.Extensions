@@ -190,12 +190,8 @@ namespace Dnn.PersonaBar.Pages.Components
                     };
                     TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
                 }
-                else 
+                else
                 {
-                    tabUrl.CultureCode = cultureCode;
-                    tabUrl.PortalAliasId = dto.SiteAliasKey;
-                    tabUrl.PortalAliasUsage = (PortalAliasUsageType)dto.SiteAliasUsage;
-                    tabUrl.QueryString = dto.QueryString.ValueOrEmpty();
                     if (!tabUrl.Url.Equals("/" + urlPath, StringComparison.InvariantCultureIgnoreCase))
                     {
                         //Change the original 200 url to a redirect
@@ -207,12 +203,20 @@ namespace Dnn.PersonaBar.Pages.Components
                         tabUrl.Url = dto.Path.ValueOrEmpty();
                         tabUrl.HttpStatus = "200";
                         tabUrl.SeqNum = tab.TabUrls.Max(t => t.SeqNum) + 1;
+                        tabUrl.CultureCode = cultureCode;
+                        tabUrl.PortalAliasId = dto.SiteAliasKey;
+                        tabUrl.PortalAliasUsage = (PortalAliasUsageType)dto.SiteAliasUsage;
+                        tabUrl.QueryString = dto.QueryString.ValueOrEmpty();
                         TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
                     }
                     else
                     {
                         //Update the original 200 url
                         tabUrl.SeqNum = dto.Id;
+                        tabUrl.CultureCode = cultureCode;
+                        tabUrl.PortalAliasId = dto.SiteAliasKey;
+                        tabUrl.PortalAliasUsage = (PortalAliasUsageType)dto.SiteAliasUsage;
+                        tabUrl.QueryString = dto.QueryString.ValueOrEmpty();
                         TabController.Instance.SaveTabUrl(tabUrl, portalSettings.PortalId, true);
                     }
                 }
