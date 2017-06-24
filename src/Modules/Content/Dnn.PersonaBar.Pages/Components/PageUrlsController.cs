@@ -193,6 +193,9 @@ namespace Dnn.PersonaBar.Pages.Components
                 else 
                 {
                     tabUrl.CultureCode = cultureCode;
+                    tabUrl.PortalAliasId = dto.SiteAliasKey;
+                    tabUrl.PortalAliasUsage = (PortalAliasUsageType)dto.SiteAliasUsage;
+                    tabUrl.QueryString = dto.QueryString.ValueOrEmpty();
                     if (!tabUrl.Url.Equals("/" + urlPath, StringComparison.InvariantCultureIgnoreCase))
                     {
                         //Change the original 200 url to a redirect
