@@ -5,9 +5,10 @@
 
         var utility;
         var config = cf.init();
+        var cdv = config.buildNumber;
 
         function loadScript() {
-            var url = "modules/dnn.siteimportexport/scripts/bundles/siteimportexport-bundle.js";
+            var url = "modules/dnn.siteimportexport/scripts/bundles/siteimportexport-bundle.js?cdv=" + cdv;
             $.ajax({
                 dataType: "script",
                 cache: true,
