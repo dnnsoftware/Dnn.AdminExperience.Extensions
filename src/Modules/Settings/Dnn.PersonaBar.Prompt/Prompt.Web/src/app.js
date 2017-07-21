@@ -1,6 +1,9 @@
 var css = require('../css/Prompt.css');
-
 const Cookies = require('./js-cookie');
+
+import PaginationService from "./pagination-service";
+
+
 
 class DnnPrompt {
     constructor(vsn, wrapper, util, params) {
@@ -9,7 +12,6 @@ class DnnPrompt {
         self.version = vsn;
         self.util = util;
         self.wrapper = wrapper;
-        console.log(self.util);
         self.params = params;
         self.tabId = null;
         self.history = []; // Command history
@@ -203,6 +205,8 @@ class DnnPrompt {
                     return response.json();
                 })
                 .then(function (result) {
+                    paginationService.isPaginationRequired(result)
+
                     if (result.Message) {
                         // dnn web api error
                         result.output = result.Message;
@@ -285,10 +289,21 @@ class DnnPrompt {
     }
 
     writeLine(txt, cssSuffix) {
+        let messages = txt.split(/\\n/);
+        messages = messages.map((m) => {
+            const p = document.createElement("p");
+            p.innerText = m;
+            return p
+        });
+
         let span = document.createElement('span');
         cssSuffix = cssSuffix || 'ok';
         span.className = 'dnn-prompt-' + cssSuffix;
-        span.innerText = txt;
+
+        messages.forEach((el) => {
+            span.appendChild(el)
+        });
+
         this.outputEl.appendChild(span);
         this.newLine();
     }
@@ -578,4 +593,6 @@ class DnnPrompt {
 }
 
 window.DnnPrompt = DnnPrompt;
+const paginationService = new PaginationService(window.DnnPrompt);
+
 //# sourceURL=prompt-app.js

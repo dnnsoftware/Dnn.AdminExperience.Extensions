@@ -4,7 +4,8 @@
   "description": "KnowBetter Prompt",
   "scripts": {
     "build": "node_modules\\.bin\\webpack",
-    "watch": "node_modules\\.bin\\webpack --watch"
+    "watch": "node_modules\\.bin\\webpack --watch",
+    "webpack": "webpack-dev-server -d --port 8089 --hot --inline --content-base dist/ --history-api-fallback"
   },
   "devDependencies": {
     "babel-core": "^6.22.1",
@@ -16,5 +17,9 @@
     "optimize-css-assets-webpack-plugin": "^1.3.0",
     "webpack": "^2.2.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "dnn-webpack-externals": "1.1.4",
+    "webpack": "^2.7.0",
+    "webpack-dev-server": "^2.5.1"
+  }
 }

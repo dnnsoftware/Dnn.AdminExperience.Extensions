@@ -3,18 +3,23 @@ var path = require('path'),
     ExtractTextPlugin = require('extract-text-webpack-plugin'),
     OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
+const packageJson = require("./package.json");
+const isProduction = process.env.NODE_ENV === "production";
+
+
 module.exports = {
     context: path.resolve(__dirname, '.'),
     entry: "./src/app.js",
     output: {
         path: path.resolve(__dirname, '../admin/personaBar/scripts/bundles/'),
-        publicPath: '/scripts/',
         filename: 'prompt-bundle.js'
     },
     devtool: '#source-map',
-    resolve: {
-        extensions: ['*', '.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.jsx', '.css']
+    devServer: {
+        contentBase: `${__dirname}/src/`,
+        publicPath: '/dist/',
     },
+
     module: {
         rules: [{
             test: /\.js$/,
@@ -28,6 +33,9 @@ module.exports = {
             test: /\.css$/,
             loader: ExtractTextPlugin.extract({ use: 'css-loader' })
         }]
+    },
+    resolve: {
+        extensions: [".js", ".json", ".jsx"]
     },
     externals: {
         'jquery': 'jQuery'
