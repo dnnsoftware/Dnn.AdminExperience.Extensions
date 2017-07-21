@@ -2,11 +2,12 @@ var css = require('../css/Prompt.css');
 const Cookies = require('./js-cookie');
 
 import PaginationService from "./pagination-service";
-
+let paginationService = null
 
 
 class DnnPrompt {
     constructor(vsn, wrapper, util, params) {
+        paginationService = new PaginationService(this);
         const self = this;
 
         self.version = vsn;
@@ -81,50 +82,59 @@ class DnnPrompt {
     }
 
     onKeyDown(e) {
-        const self = this;
-        // CTRL + `
-        if (e.ctrlKey && e.keyCode === 192) {
-            if (self.wrapper[0].offsetLeft <= 0) {
-                self.util.loadPanel("Dnn.Prompt", {
-                    moduleName: "Dnn.Prompt",
-                    folderName: "",
-                    identifier: "Dnn.Prompt",
-                    path: "Prompt"
-                });
-            } else {
-                self.util.closePersonaBar();
-            }
-            return;
+
+        const left = () => {
+            paginationService.nextPage()
         }
 
-        if (self.isBusy) return;
+        const right = () => {
+            const self = this;
+            // CTRL + `
+            if (e.ctrlKey && e.keyCode === 192) {
+                if (self.wrapper[0].offsetLeft <= 0) {
+                    self.util.loadPanel("Dnn.Prompt", {
+                        moduleName: "Dnn.Prompt",
+                        folderName: "",
+                        identifier: "Dnn.Prompt",
+                        path: "Prompt"
+                    });
+                } else {
+                    self.util.closePersonaBar();
+                }
+                return;
+            }
 
-        // All other keys, only trap if focus is in console.
-        if (self.inputEl === document.activeElement) {
-            switch (e.keyCode) {
-                case 13: // enter key
-                    return self.runCmd();
-                case 38: // Up arrow
-                    if ((self.history.length + self.cmdOffset > 0)) {
-                        self.cmdOffset--;
-                        self.inputEl.value = self.history[self.history.length + self.cmdOffset];
-                        e.preventDefault();
-                    }
-                    break;
-                case 40: // Down arrow
-                    if ((self.cmdOffset < -1)) {
-                        self.cmdOffset++;
-                        self.inputEl.value = self.history[self.history.length + self.cmdOffset];
-                        e.preventDefault();
-                    }
-                    break;
+            if (self.isBusy) return;
+
+            // All other keys, only trap if focus is in console.
+            if (self.inputEl === document.activeElement) {
+                switch (e.keyCode) {
+                    case 13: // enter key
+                        return self.runCmd();
+                    case 38: // Up arrow
+                        if ((self.history.length + self.cmdOffset > 0)) {
+                            self.cmdOffset--;
+                            self.inputEl.value = self.history[self.history.length + self.cmdOffset];
+                            e.preventDefault();
+                        }
+                        break;
+                    case 40: // Down arrow
+                        if ((self.cmdOffset < -1)) {
+                            self.cmdOffset++;
+                            self.inputEl.value = self.history[self.history.length + self.cmdOffset];
+                            e.preventDefault();
+                        }
+                        break;
+                }
             }
         }
+
+        paginationService.shouldPaginate ? left() : right();
     }
 
-    runCmd() {
+    runCmd(command) {
         const self = this;
-        const txt = self.inputEl.value.trim();
+        const txt = (command) ? command : self.inputEl.value.trim()
 
         if (!self.tabId) {
             self.tabId = dnn.getVar("sf_tabId");
@@ -593,6 +603,6 @@ class DnnPrompt {
 }
 
 window.DnnPrompt = DnnPrompt;
-const paginationService = new PaginationService(window.DnnPrompt);
+
 
 //# sourceURL=prompt-app.js

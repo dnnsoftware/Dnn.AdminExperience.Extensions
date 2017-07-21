@@ -17,8 +17,15 @@ export default class PaginationService {
         return res;
     }
 
-    nextPage(fn){
+    nextPage(){
+        let page = this.currentPageInfo;
+        page.pageNo++;
 
+        const left = () => this.prompt.runCmd(`list-modules --page ${page.pageNo} --max 2`)
+        const right = () => console.log("at end");
+
+        page.pageNo < page.totalPages ? left() : right();
+        
     }
 
 }
