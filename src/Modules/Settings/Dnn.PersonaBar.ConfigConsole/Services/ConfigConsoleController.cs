@@ -88,6 +88,10 @@ namespace Dnn.PersonaBar.ConfigConsole.Services
 
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
+            catch (ArgumentException exc)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc.Message);
+            }
             catch (Exception exc)
             {
                 Logger.Error(exc);
@@ -109,6 +113,10 @@ namespace Dnn.PersonaBar.ConfigConsole.Services
             {
                 _controller.UpdateConfigFile(configFileDto.FileName, configFileDto.FileContent);
                 return Request.CreateResponse(HttpStatusCode.OK, new { Success = true });
+            }
+            catch (ArgumentException exc)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exc.Message);
             }
             catch (Exception exc)
             {
