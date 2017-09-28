@@ -88,6 +88,7 @@ class App extends Component {
             filters:[],
             searchFields:{}
         };
+        
     }
 
     componentDidMount() {
@@ -152,7 +153,7 @@ class App extends Component {
 
     componentWillMount() {
         this.props.getContentLocalizationEnabled();
-
+        
     }
 
     componentWillUnmount() {
@@ -165,8 +166,10 @@ class App extends Component {
         window.dnn.utility.closeSocialTasks();
 
         const {selectedPage} = newProps;
-        if(selectedPage){
-            console.log(selectedPage);
+
+        console.log(newProps);
+        
+        if (selectedPage){
             
             const pages = selectedPage.url
                             .split("/")
@@ -177,7 +180,7 @@ class App extends Component {
             let stop = false;
             let pageListCopy = null;
             const traverse = (item, list, updateStore) => {
-                if( item.parentId === -1 && item.name === pages[0]) {
+                if ( item.parentId === -1 && item.name === pages[0]) {
                                         item.childCount>0 ? this.props.getChildPageList(item.id)
                         .then(data=>{
                             item.childListItems=data;
@@ -187,11 +190,13 @@ class App extends Component {
                             const left = () => {
                                 let newParentName = null;
                                 let newParentId = null;
+                                let newParentItem = item;
+                                
+                                pages.shift();
                                 
                                 const loop = () => {
-                                    pages.shift();
-                                    const condition = !!item.childListItems.filter((child)=>{
-                                        if(child.name===pages[0]){
+                                    const condition = !!newParentItem.childListItems.filter((child)=>{
+                                        if (child.name===pages[0]) {
                                             newParentName = child.name;
                                             newParentId = child.id;
                                             return true;
@@ -201,22 +206,28 @@ class App extends Component {
                                     }); 
 
                                     const assignment = ()=>{
-                                        
                                         this.props.getChildPageList(newParentId).then((data)=>{
                                             this._traverse((item,list,updateStore)=>{
                                                 const condition = item.id === newParentId;
-                                                console.log(list);
-                                                if(condition) {
+                                                
+                                                if (condition) {
                                                     item.childListItems = data;
+                                                    newParentItem = item.childListItems;
+                                                    pages.shift();
+                                                }else {
+                                                    updateStorage();
                                                 }
+
                                             },pageListCopy);
 
-
+                                            pages.length === 1 ? loop() : updateStorage();
                                         });
                                     };
-                                    const doNothing = () =>{console.log('doNothing');};
+                                    const updateStorage = () =>{ 
+                                        console.log(pageListCopy);
+                                     };
                                     
-                                    condition ? assignment() : doNothing();
+                                    condition ? assignment() : updateStorage();
 
                                     
 
