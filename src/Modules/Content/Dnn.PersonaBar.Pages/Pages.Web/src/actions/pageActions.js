@@ -29,7 +29,7 @@ function updateUrlPreview(value, dispatch) {
 
 const debouncedUpdateUrlPreview = debounce(updateUrlPreview, 500);
 
-const loadPage = function (dispatch, pageId, callback) {
+const loadPage = function (dispatch, pageId) {
     return new Promise((resolve)=>{
             if (!securityService.userHasPermission(permissionTypes.MANAGE_PAGE)) {
             dispatch({
@@ -52,9 +52,6 @@ const loadPage = function (dispatch, pageId, callback) {
                     page: response
                 }
             });
-            if (callback) {
-                callback(response);
-            }
             resolve(response);
         }).catch((error) => {
             dispatch({
@@ -70,6 +67,7 @@ const loadPage = function (dispatch, pageId, callback) {
 const pageActions = {
     getPageList(id) {
         return (dispatch) => PagesService.getPageList(id).then(pageList => {
+         
             dispatch({
                 type: PageListActionTypes.SAVE,
                 data: { pageList }
@@ -150,33 +148,22 @@ const pageActions = {
         };
     },
 
-    duplicatePage(reloadTemplate) {
+    duplicatePage() {
         return (dispatch, getState) => {
             const { pages } = getState();
-            const duplicate = (page) => {
-                const duplicatedPage = cloneDeep(page);
-                
-                duplicatedPage.templateTabId = duplicatedPage.tabId;
-                duplicatedPage.tabId = 0;
-                duplicatedPage.name = "";
-                duplicatedPage.url = "";
-                duplicatedPage.isCopy = true;
-                
-                dispatch({
-                    type: ActionTypes.LOADED_PAGE,
-                    data: {
-                        page: duplicatedPage
-                    }
-                });
-            };
-            if (reloadTemplate) {
-                loadPage(dispatch, pages.selectedPage.tabId, (page) => {
-                    duplicate(page);
-                });
-            }
-            else {
-                duplicate(pages.selectedPage);
-            }            
+            const duplicatedPage = cloneDeep(pages.selectedPage);
+
+            duplicatedPage.templateTabId = duplicatedPage.tabId;
+            duplicatedPage.tabId = 0;
+            duplicatedPage.name = "";
+            duplicatedPage.url = "";
+
+            dispatch({
+                type: ActionTypes.LOADED_PAGE,
+                data: {
+                    page: duplicatedPage
+                }
+            });
         };
     },
 
@@ -190,12 +177,7 @@ const pageActions = {
         });
     },
 
-    cancelPage(reloadPageId) {
-        if (reloadPageId) {
-            return (dispatch) => {
-                return loadPage(dispatch, reloadPageId);
-            };
-        }
+    cancelPage() {
         return (dispatch) => {
             dispatch({
                 type: ActionTypes.CANCEL_PAGE,
