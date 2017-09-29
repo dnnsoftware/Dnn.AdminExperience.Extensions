@@ -153,21 +153,6 @@ const pageActions = {
     duplicatePage() {
         return (dispatch, getState) => {
             const { pages } = getState();
-<<<<<<< HEAD
-            const duplicatedPage = cloneDeep(pages.selectedPage);
-
-            duplicatedPage.templateTabId = duplicatedPage.tabId;
-            duplicatedPage.tabId = 0;
-            duplicatedPage.name = "";
-            duplicatedPage.url = "";
-
-            dispatch({
-                type: ActionTypes.LOADED_PAGE,
-                data: {
-                    page: duplicatedPage
-                }
-            });
-=======
             const duplicate = (page) => {
                 const duplicatedPage = cloneDeep(page);
                 
@@ -193,7 +178,6 @@ const pageActions = {
             else {
                 duplicate(pages.selectedPage);
             }            
->>>>>>> 3bcbcb3bb74a1681d63249f7a11aa388560250bc
         };
     },
 

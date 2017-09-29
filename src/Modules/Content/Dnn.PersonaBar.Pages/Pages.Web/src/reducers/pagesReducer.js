@@ -45,10 +45,7 @@ export default function pagesReducer(state = {
 
     switch (action.type) {
         case ActionTypes.GET_WORKFLOW_LIST:
-<<<<<<< HEAD
-=======
         {
->>>>>>> 3bcbcb3bb74a1681d63249f7a11aa388560250bc
             return {
                 ...state,
                 workflowList: action.data.workflowList

@@ -168,7 +168,6 @@ class App extends Component {
     componentWillReceiveProps(newProps) {
         this.notifyErrorIfNeeded(newProps);
         window.dnn.utility.closeSocialTasks();
-<<<<<<< HEAD
 
         const {selectedPage} = newProps;
         
@@ -257,8 +256,6 @@ class App extends Component {
         
             
         }
-=======
->>>>>>> 3bcbcb3bb74a1681d63249f7a11aa388560250bc
     }
 
     notifyErrorIfNeeded(newProps) {
