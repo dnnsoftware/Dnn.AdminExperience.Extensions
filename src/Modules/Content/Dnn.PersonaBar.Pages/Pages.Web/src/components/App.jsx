@@ -449,21 +449,15 @@ class App extends Component {
 
         if (this.props.selectedPageDirty) {
             const onConfirm = () => {
-                this.props.onLoadPage(id).then(()=>{
                     this.props.onLoadPage(input).then((data) => {
                         this._traverse((item, list, updateStore) => {
                             if (item.id === input) {
                                 Object.keys(this.props.selectedPage).forEach((key) => item[key] = this.props.selectedPage[key]);
                                 this.props.updatePageListStore(list);
                                 this.selectPageSettingTab(0);
-
                             }
                         });
                     });
-
-                });
-
-
             };
 
             utils.confirm(
