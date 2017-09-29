@@ -88,6 +88,8 @@ class App extends Component {
             filters:[],
             searchFields:{}
         };
+
+        this.shouldRunRecursive = true;
         
     }
 
@@ -109,6 +111,8 @@ class App extends Component {
 
         //Listen to event fired to view page settings (from site settings)
         document.addEventListener("viewPageSettings", this.resolveTabBeingViewed.bind(this), false);
+        
+        
     }
 
     //Update referral text if coming from a referral. (ex: "SiteSettings", resx.get("BackToLanguages"))
@@ -153,7 +157,7 @@ class App extends Component {
 
     componentWillMount() {
         this.props.getContentLocalizationEnabled();
-        
+
     }
 
     componentWillUnmount() {
@@ -166,10 +170,8 @@ class App extends Component {
         window.dnn.utility.closeSocialTasks();
 
         const {selectedPage} = newProps;
-
-        console.log(newProps);
         
-        if (selectedPage){
+        if (selectedPage && this.shouldRunRecursive) {
             
             const pages = selectedPage.url
                             .split("/")
@@ -177,13 +179,15 @@ class App extends Component {
                             .map(d  => d.replace(/\-/, " "));
 
 
-            let stop = false;
             let pageListCopy = null;
+            
             const traverse = (item, list, updateStore) => {
                 if ( item.parentId === -1 && item.name === pages[0]) {
                                         item.childCount>0 ? this.props.getChildPageList(item.id)
                         .then(data=>{
                             item.childListItems=data;
+                            item.isOpen = true;
+                            item.hasChildren = true;
                             pageListCopy = list;
                         })
                         .then(()=>{
@@ -212,31 +216,32 @@ class App extends Component {
                                                 
                                                 if (condition) {
                                                     item.childListItems = data;
+                                                    item.isOpen = true;
+                                                    item.hasChildren = true;
                                                     newParentItem = item.childListItems;
                                                     pages.shift();
-                                                }else {
-                                                    updateStorage();
+                                                } else {
+                                                    this.shouldRunRecursive ? updateStorage(): null;
                                                 }
 
                                             },pageListCopy);
 
-                                            pages.length === 1 ? loop() : updateStorage();
+                                            pages.length === 1 ? updateStorage() : loop();
                                         });
                                     };
                                     const updateStorage = () =>{ 
-                                        console.log(pageListCopy);
+                                        this.shouldRunRecursive = false;
+                                        updateStore(pageListCopy);
                                      };
                                     
-                                    condition ? assignment() : updateStorage();
-
-                                    
+                                    condition ? assignment() : null;
 
                                 };
                                 loop();
                             };
                             
                             const right = () => {
-                                
+                                return null;
                             };
 
                             const condition  = item.childListItems? !!item.childListItems.length:null; 
