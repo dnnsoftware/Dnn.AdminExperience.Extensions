@@ -29,7 +29,7 @@ function updateUrlPreview(value, dispatch) {
 
 const debouncedUpdateUrlPreview = debounce(updateUrlPreview, 500);
 
-const loadPage = function (dispatch, pageId) {
+const loadPage = function (dispatch, pageId, callback) {
     return new Promise((resolve)=>{
             if (!securityService.userHasPermission(permissionTypes.MANAGE_PAGE)) {
             dispatch({
@@ -54,6 +54,9 @@ const loadPage = function (dispatch, pageId) {
                 },
                 selectedPageSettingTab: 0
             });
+            if (callback) {
+                callback(response);
+            }
             resolve(response);
         }).catch((error) => {
             dispatch({
@@ -150,7 +153,7 @@ const pageActions = {
         };
     },
 
-    duplicatePage() {
+    duplicatePage(reloadTemplate) {
         return (dispatch, getState) => {
             const { pages } = getState();
             const duplicate = (page) => {
