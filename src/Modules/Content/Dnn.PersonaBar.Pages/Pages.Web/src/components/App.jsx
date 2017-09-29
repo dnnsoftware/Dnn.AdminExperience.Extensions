@@ -88,6 +88,9 @@ class App extends Component {
             filters:[],
             searchFields:{}
         };
+
+        this.shouldRunRecursive = true;
+        
     }
 
     componentDidMount() {
@@ -108,6 +111,8 @@ class App extends Component {
 
         //Listen to event fired to view page settings (from site settings)
         document.addEventListener("viewPageSettings", this.resolveTabBeingViewed.bind(this), false);
+        
+        
     }
 
     //Update referral text if coming from a referral. (ex: "SiteSettings", resx.get("BackToLanguages"))
@@ -163,6 +168,94 @@ class App extends Component {
     componentWillReceiveProps(newProps) {
         this.notifyErrorIfNeeded(newProps);
         window.dnn.utility.closeSocialTasks();
+
+        const {selectedPage} = newProps;
+        
+        if (selectedPage && this.shouldRunRecursive) {
+            
+            const pages = selectedPage.url
+                            .split("/")
+                            .filter(d => !!d)
+                            .map(d  => d.replace(/\-/, " "));
+
+
+            let pageListCopy = null;
+            
+            const traverse = (item, list, updateStore) => {
+                if ( item.parentId === -1 && item.name === pages[0]) {
+                                        item.childCount>0 ? this.props.getChildPageList(item.id)
+                        .then(data=>{
+                            item.childListItems=data;
+                            item.isOpen = true;
+                            item.hasChildren = true;
+                            pageListCopy = list;
+                        })
+                        .then(()=>{
+                            const left = () => {
+                                let newParentName = null;
+                                let newParentId = null;
+                                let newParentItem = item;
+                                
+                                pages.shift();
+                                
+                                const loop = () => {
+                                    const condition = !!newParentItem.childListItems.filter((child)=>{
+                                        if (child.name===pages[0]) {
+                                            newParentName = child.name;
+                                            newParentId = child.id;
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    }); 
+
+                                    const assignment = ()=>{
+                                        this.props.getChildPageList(newParentId).then((data)=>{
+                                            this._traverse((item,list,updateStore)=>{
+                                                const condition = item.id === newParentId;
+                                                
+                                                if (condition) {
+                                                    item.childListItems = data;
+                                                    item.isOpen = true;
+                                                    item.hasChildren = true;
+                                                    newParentItem = item.childListItems;
+                                                    pages.shift();
+                                                } else {
+                                                    this.shouldRunRecursive ? updateStorage(): null;
+                                                }
+
+                                            },pageListCopy);
+
+                                            pages.length === 1 ? updateStorage() : loop();
+                                        });
+                                    };
+                                    const updateStorage = () =>{ 
+                                        this.shouldRunRecursive = false;
+                                        updateStore(pageListCopy);
+                                     };
+                                    
+                                    condition ? assignment() : null;
+
+                                };
+                                loop();
+                            };
+                            
+                            const right = () => {
+                                return null;
+                            };
+
+                            const condition  = item.childListItems? !!item.childListItems.length:null; 
+                            
+                            condition ? left() : right();
+
+                        })
+                        :null; 
+                }
+            };
+            this._traverse(traverse,pageListCopy);
+        
+            
+        }
     }
 
     notifyErrorIfNeeded(newProps) {
@@ -348,17 +441,11 @@ class App extends Component {
     }
 
     onCancelSettings() {
-        const { props } = this;
-        if (props.selectedPageDirty) {
+        if (this.props.selectedPageDirty) {
             this.showCancelWithoutSavingDialog();
         }
         else {
-            if (props.selectedPage.tabId === 0 && props.selectedPage.isCopy && props.selectedPage.templateTabId) {
-                this.props.onCancelPage(props.selectedPage.templateTabId);
-            }
-            else {
-                this.props.onCancelPage();
-            }
+            this.props.onCancelPage();
         }
     }
 
@@ -424,15 +511,8 @@ class App extends Component {
     }
 
     showCancelWithoutSavingDialog() {
-        const { props } = this;
-        const onConfirm = () => {            
-            if (props.selectedPage.tabId === 0 && props.selectedPage.isCopy && props.selectedPage.templateTabId) {
-                this.props.onCancelPage(props.selectedPage.templateTabId);
-            }
-            else {
-                this.props.onCancelPage();
-            }
-
+        const onConfirm = () => {
+            this.props.onCancelPage();
         };
 
         utils.confirm(
@@ -589,8 +669,8 @@ class App extends Component {
         return additionalPanels;
     }
 
-    _traverse(comparator) {
-        let listItems = JSON.parse(JSON.stringify(this.props.pageList));
+    _traverse(comparator,pageListCopy) {
+        let listItems = pageListCopy || JSON.parse(JSON.stringify(this.props.pageList));
         const cachedChildListItems = [];
         cachedChildListItems.push(listItems);
         const condition = cachedChildListItems.length > 0;
@@ -648,43 +728,10 @@ class App extends Component {
     onMovePage({ Action, PageId, ParentId, RelatedPageId }) {
         return PageActions.movePage({ Action, PageId, ParentId, RelatedPageId });
     }
-    CallCustomAction(action) {
-        const { selectedPage, selectedPageDirty } = this.props;
-        const callAction = () => {
-            if (selectedPage && selectedPage.tabId !== 0 && selectedPageDirty) {
-                const onConfirm = () => {
-                    action();
-                };
-                utils.confirm(
-                    Localization.get("CancelWithoutSaving"),
-                    Localization.get("Close"),
-                    Localization.get("Cancel"),
-                    onConfirm);
 
-            } else {
-                action();
-            }
-        };
-        callAction();
-    }
-    onDuplicatePage(item) {
-        const { selectedPage, selectedPageDirty } = this.props;
+    onDuplicatePage(item){
         const message = Localization.get("NoPermissionCopyPage");
-        const duplicate = () => {
-            if (selectedPage && selectedPage.tabId !== 0 && selectedPageDirty) {
-                const onConfirm = () => {
-                    this.props.onDuplicatePage(true);
-                };
-                utils.confirm(
-                    Localization.get("CancelWithoutSaving"),
-                    Localization.get("Close"),
-                    Localization.get("Cancel"),
-                    onConfirm);
-
-            } else {
-                this.props.onDuplicatePage(false);
-            }
-        };
+        const duplicate = () => this.props.onDuplicatePage();
         const noPermission = () => this.setEmptyStateMessage(message);
         item.canCopyPage ? duplicate() : noPermission();
     }
@@ -1205,7 +1252,6 @@ class App extends Component {
                                             onViewPage={this.onViewPage.bind(this)}
                                             onViewEditPage={this.onViewEditPage.bind(this)}
                                             onDuplicatePage={this.onDuplicatePage.bind(this)}
-                                            CallCustomAction={this.CallCustomAction.bind(this)}
                                             onAddPage={this.onAddPage.bind(this)}
                                             onSelection={this.onSelection.bind(this)}
                                             pageInContextComponents={props.pageInContextComponents} />

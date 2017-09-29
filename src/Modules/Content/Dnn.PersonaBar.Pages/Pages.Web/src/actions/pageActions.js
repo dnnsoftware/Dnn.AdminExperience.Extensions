@@ -72,6 +72,7 @@ const loadPage = function (dispatch, pageId, callback) {
 const pageActions = {
     getPageList(id) {
         return (dispatch) => PagesService.getPageList(id).then(pageList => {
+         
             dispatch({
                 type: PageListActionTypes.SAVE,
                 data: { pageList }
@@ -194,12 +195,7 @@ const pageActions = {
         });
     },
 
-    cancelPage(reloadPageId) {
-        if (reloadPageId) {
-            return (dispatch) => {
-                return loadPage(dispatch, reloadPageId);
-            };
-        }
+    cancelPage() {
         return (dispatch) => {
             dispatch({
                 type: ActionTypes.CANCEL_PAGE,
