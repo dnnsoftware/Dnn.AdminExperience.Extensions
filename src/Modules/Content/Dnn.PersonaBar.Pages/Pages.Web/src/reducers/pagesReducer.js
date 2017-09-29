@@ -8,7 +8,8 @@ export default function pagesReducer(state = {
     editingSettingModuleId: null,
     urlChanged: false,
     dirtyPage: false,
-    selectedPageSettingTab: 0
+    selectedPageSettingTab: 0,
+    workflowList: []
 }, action) {
 
 
@@ -44,11 +45,15 @@ export default function pagesReducer(state = {
 
     switch (action.type) {
         case ActionTypes.GET_WORKFLOW_LIST:
+<<<<<<< HEAD
+=======
+        {
+>>>>>>> 3bcbcb3bb74a1681d63249f7a11aa388560250bc
             return {
                 ...state,
                 workflowList: action.data.workflowList
             };
-
+        }
         case ActionTypes.SELECT_PAGE_SETTING_TAB:
             return { ...state,
                 selectedPageSettingTab: action.selectedPageSettingTab
@@ -65,7 +70,8 @@ export default function pagesReducer(state = {
                 errors: {},
                 urlChanged: false,
                 dirtyPage: false,
-                cachedPageCount: null
+                cachedPageCount: null,
+                selectedPageSettingTab: action.selectedPageSettingTab
             };
 
         case ActionTypes.CHANGE_FIELD_VALUE:

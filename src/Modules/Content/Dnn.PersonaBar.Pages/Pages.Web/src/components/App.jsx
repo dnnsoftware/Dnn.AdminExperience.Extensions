@@ -168,6 +168,7 @@ class App extends Component {
     componentWillReceiveProps(newProps) {
         this.notifyErrorIfNeeded(newProps);
         window.dnn.utility.closeSocialTasks();
+<<<<<<< HEAD
 
         const {selectedPage} = newProps;
         
@@ -256,6 +257,8 @@ class App extends Component {
         
             
         }
+=======
+>>>>>>> 3bcbcb3bb74a1681d63249f7a11aa388560250bc
     }
 
     notifyErrorIfNeeded(newProps) {
@@ -407,7 +410,6 @@ class App extends Component {
 
     onAddPage(parentPage) {
         this.clearEmptyStateMessage();
-        this.selectPageSettingTab(0);
 
         const addPage = () => {
             const { props } = this;
@@ -524,14 +526,12 @@ class App extends Component {
 
 
     showCancelWithoutSavingDialogInEditMode(input) {
-
-        const id = (input.hasOwnProperty('parentId')) ? input : this.props.selectedPage.tabId;
-
+        const id = (typeof input ==="object") ? this.props.selectedPage.tabId : input;
         if (this.props.selectedPageDirty) {
             const onConfirm = () => {
-                this.props.onLoadPage(input).then((data) => {
+                this.props.onLoadPage(id).then((data) => {
                     this._traverse((item, list, updateStore) => {
-                        if (item.id === input) {
+                        if (item.id === id) {
                             Object.keys(this.props.selectedPage).forEach((key) => item[key] = this.props.selectedPage[key]);
                             this.props.updatePageListStore(list);
                             this.selectPageSettingTab(0);
@@ -765,7 +765,7 @@ class App extends Component {
         const view = () => {
             this.props.onLoadPage(item.id);
             utils.getUtilities().closePersonaBar(function () {
-                window.open(item.url);
+                window.parent.location=item.url;
             });
         };
 
@@ -864,7 +864,6 @@ class App extends Component {
 
 
     onBreadcrumbSelect(name){
-        //console.log(name);
     }
 
     render_PagesDetailEditor() {
@@ -927,8 +926,6 @@ class App extends Component {
         const cancelAction = this.onCancelSettings.bind(this);
         const deleteAction = this.onDeleteSettings.bind(this);
         const AllowContentLocalization = !!props.isContentLocalizationEnabled;
-
-
         return (
             <GridCell columnSize={100} className="treeview-page-details" >
                 <PageSettings selectedPage={props.selectedPage }
@@ -968,8 +965,6 @@ class App extends Component {
 
     /* eslint-disable react/no-danger */
     render_more_flyout(){
-        const options = [{value:true, label:"test"}];
-
         const {startDate, endDate} = this.state;
         const startMonth = startDate.getMonth()+1;
 
@@ -983,15 +978,21 @@ class App extends Component {
             {value: "File", label: "File"}
         ];
 
-        const filterByPageStatusOptions = [
-            {value: null, label:  "None"},
-            {value: "Published", label: "Published"},
-            {value: "Draft", label: "Draft"}
+        let filterByPageStatusOptions = [
+            {value: "Published", label: Localization.get("lblPublished")}
         ];
-
+        let filterByDateText = "FilterByModifiedDateText";
         let workflowList = [];
+        if (!utils.isPlatform())
+        {
+            filterByPageStatusOptions = ([{value: null, label: Localization.get("lblNone")}]).concat(filterByPageStatusOptions.concat([{value: "Draft", label: Localization.get("lblDraft")}]));
+            filterByDateText = "FilterByPublishDateText";
+            if (this.props.workflowList.length<=0){
+                this.props.getWorkflowsList();   
+            }
+        }
         this.props.workflowList.length ? workflowList = this.props.workflowList.map((item => { return {value:item.workflowId, label:item.workflowName}; })) : null;
-        const filterByWorkflowOptions = [{value: null, label:"None"}].concat(workflowList);
+        const filterByWorkflowOptions = [{value: null, label: Localization.get("lblNone")}].concat(workflowList);
 
         const generateTags = (e) => {
             this.setState({tags:e.target.value});
@@ -1007,14 +1008,13 @@ class App extends Component {
             const condition = !startAndEndDateDirty && fullStartDate == fullEndDate;
             condition ? this.setState({startAndEndDateDirty:true, DropdownCalendarIsActive:null}) : this.setState({ DropdownCalendarIsActive:null});
         };
-
         return(
             <div className="search-more-flyout">
                 <GridCell columnSize={70} style={{padding: "5px 5px 5px 10px"}}>
-                    <h1>GENERAL FILTERS</h1>
+                    <h1>{Localization.get("lblGeneralFilters").toUpperCase()}</h1>
                 </GridCell>
                 <GridCell columnSize={30} style={{paddingLeft: "10px"}}>
-                    <h1>TAG FILTERS</h1>
+                    <h1>{Localization.get("lblTagFilters").toUpperCase()}</h1>
                 </GridCell>
                 <GridCell columnSize={70} style={{padding: "5px"}}>
                     <GridCell columnSize={100} >
@@ -1022,21 +1022,11 @@ class App extends Component {
                              <Dropdown
                                 className="more-dropdown"
                                 options={filterByPageTypeOptions}
-                                label={this.state.filterByPageType ? this.state.filterByPageType : "Filter by Page Type"}
+                                label={this.state.filterByPageType ? this.state.filterByPageType : Localization.get("FilterbyPageTypeText")}
                                 onSelect={(data) => this.setState({filterByPageType:data.value}) }
                                 withBorder={true} />
                         </GridCell>
                         <GridCell columnSize={50} style={{padding: "5px 5px 5px 15px"}}>
-                            <Dropdown
-                                className="more-dropdown"
-                                options={filterByPageStatusOptions}
-                                label={ this.state.filterByPublishStatus ? this.state.filterByPublishStatus : "Filter by Publish Status"}
-                                onSelect={(data) => this.setState({filterByPublishStatus:data.value}) }
-                                withBorder={true} />
-                        </GridCell>
-                    </GridCell>
-                    <GridCell columnSize={100}>
-                        <GridCell columnSize={50} style={{padding: "5px"}}>
                             <DropdownDayPicker
                                 onDayClick={this.onDayClick.bind(this)}
                                 dropdownIsActive={this.state.DropdownCalendarIsActive}
@@ -1045,24 +1035,37 @@ class App extends Component {
                                 endDate={this.state.endDate}
                                 toggleDropdownCalendar={this.toggleDropdownCalendar.bind(this)}
                                 CalendarIcon={CalendarIcon}
+                                label={Localization.get(filterByDateText)}
                                 />
                         </GridCell>
+                    </GridCell>
+                    <GridCell columnSize={100}>
+                        <GridCell columnSize={50} style={{padding: "5px"}}>
+                            <Dropdown
+                                className="more-dropdown"
+                                options={filterByPageStatusOptions}
+                                label={ this.state.filterByPublishStatus ? this.state.filterByPublishStatus : Localization.get("FilterbyPublishStatusText")}
+                                onSelect={(data) => this.setState({filterByPublishStatus:data.value}) }
+                                withBorder={true} />
+                        </GridCell>
+                    {!utils.isPlatform() &&
                         <GridCell columnSize={50} style={{padding: "5px 5px 5px 15px"}}>
                             <Dropdown
                                 className="more-dropdown"
                                 options={filterByWorkflowOptions}
-                                label={ this.state.filterByWorkflowName ? this.state.filterByWorkflowName :"Filter by Workflow"}
+                                label={ this.state.filterByWorkflowName ? this.state.filterByWorkflowName : Localization.get("FilterbyWorkflowText")}
                                 onSelect={(data) => this.setState({filterByWorkflow: data.value, filterByWorkflowName: data.label}) }
                                 withBorder={true} />
                         </GridCell>
+                    }
                     </GridCell>
                 </GridCell>
                 <GridCell columnSize={30} style={{paddingLeft: "10px", paddingTop: "10px"}}>
                         <textarea value={this.state.tags} onChange={(e)=>generateTags(e)}></textarea>
                 </GridCell>
                 <GridCell columnSize={100} style={{textAlign:"right"}}>
-                        <Button style={{marginRight: "5px"}} onClick={()=>this.setState({DropdownCalendarIsActive:null, toggleSearchMoreFlyout:false})}>Cancel</Button>
-                        <Button type="primary" onClick={()=>this.onSave()}>Save</Button>
+                        <Button style={{marginRight: "5px"}} onClick={()=>this.setState({DropdownCalendarIsActive:null, toggleSearchMoreFlyout:false})}>{Localization.get("Cancel")}</Button>
+                        <Button type="primary" onClick={()=>this.onSave()}>{Localization.get("Save")}</Button>
                 </GridCell>
             </div>);
     }
@@ -1130,7 +1133,7 @@ class App extends Component {
                         </div>
                     </GridCell>
                     <GridCell columnSize={20} style={{textAlign:"right", padding:"10px", fontWeight:"bold", animation: "fadeIn .15s ease-in forwards"}}>
-                        <p>{`${searchList.length} PAGES FOUND` }</p>
+                        <p>{`${searchList.length} ` + Localization.get("lblPagesFound").toUpperCase() }</p>
                     </GridCell>
                     <GridCell columnSize={100}>
                         {searchList.map((item)=>{
@@ -1195,8 +1198,6 @@ class App extends Component {
         const onSelect = (selected) => this.setState({headerDropdownSelection: selected.label});
 
          /* eslint-disable react/no-danger */
-
-
         return (
             <div className="pages-app personaBar-mainContainer">
                 {props.selectedView === panels.MAIN_PANEL && isListPagesAllowed &&

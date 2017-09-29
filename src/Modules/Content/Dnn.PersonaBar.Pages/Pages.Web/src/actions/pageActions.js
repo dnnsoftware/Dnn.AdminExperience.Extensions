@@ -39,7 +39,8 @@ const loadPage = function (dispatch, pageId) {
                         tabId: utils.getCurrentPageId(),
                         name: utils.getCurrentPageName()
                     }
-                }
+                },
+                selectedPageSettingTab: 0
             });
             resolve();
             return;
@@ -50,7 +51,8 @@ const loadPage = function (dispatch, pageId) {
                 type: ActionTypes.LOADED_PAGE,
                 data: {
                     page: response
-                }
+                },
+                selectedPageSettingTab: 0
             });
             resolve(response);
         }).catch((error) => {
@@ -94,8 +96,8 @@ const pageActions = {
         });
     },
 
-    getWorkflowsList(){
-        return (dispatch) => PagesService.getWorkflowsList().then((workflowList)=>{
+    getWorkflowsList() {
+        return (dispatch) => PagesService.getWorkflowsList().then(workflowList => {
             dispatch({
                 type: ActionTypes.GET_WORKFLOW_LIST,
                 data: {workflowList}
@@ -151,6 +153,7 @@ const pageActions = {
     duplicatePage() {
         return (dispatch, getState) => {
             const { pages } = getState();
+<<<<<<< HEAD
             const duplicatedPage = cloneDeep(pages.selectedPage);
 
             duplicatedPage.templateTabId = duplicatedPage.tabId;
@@ -164,6 +167,33 @@ const pageActions = {
                     page: duplicatedPage
                 }
             });
+=======
+            const duplicate = (page) => {
+                const duplicatedPage = cloneDeep(page);
+                
+                duplicatedPage.templateTabId = duplicatedPage.tabId;
+                duplicatedPage.tabId = 0;
+                duplicatedPage.name = "";
+                duplicatedPage.url = "";
+                duplicatedPage.isCopy = true;
+                
+                dispatch({
+                    type: ActionTypes.LOADED_PAGE,
+                    data: {
+                        page: duplicatedPage
+                    },
+                    selectedPageSettingTab: 0
+                });
+            };
+            if (reloadTemplate) {
+                loadPage(dispatch, pages.selectedPage.tabId, (page) => {
+                    duplicate(page);
+                });
+            }
+            else {
+                duplicate(pages.selectedPage);
+            }            
+>>>>>>> 3bcbcb3bb74a1681d63249f7a11aa388560250bc
         };
     },
 
@@ -172,7 +202,8 @@ const pageActions = {
         return (dispatch) => PagesService.getNewPage(parentPage).then((page) => {
             dispatch({
                 type: ActionTypes.LOADED_PAGE,
-                data: { page }
+                data: { page },
+                selectedPageSettingTab: 0
             });
         });
     },
