@@ -88,6 +88,9 @@ class App extends Component {
             filters:[],
             searchFields:{}
         };
+
+        this.shouldRunRecursive = true;
+
     }
 
     componentDidMount() {
@@ -97,7 +100,8 @@ class App extends Component {
         window.dnn.utility.setConfirmationDialogPosition();
         window.dnn.utility.closeSocialTasks();
         this.props.getPageList();
-
+        const selectedPageId = utils.getCurrentPageId();
+        selectedPageId && this.props.onLoadPage(selectedPageId).then(()=> this.buildTree(selectedPageId));
 
         if (viewName === "edit") {
             props.onLoadPage(utils.getCurrentPageId());
@@ -108,6 +112,7 @@ class App extends Component {
 
         //Listen to event fired to view page settings (from site settings)
         document.addEventListener("viewPageSettings", this.resolveTabBeingViewed.bind(this), false);
+        
     }
 
     //Update referral text if coming from a referral. (ex: "SiteSettings", resx.get("BackToLanguages"))
@@ -163,8 +168,40 @@ class App extends Component {
     componentWillReceiveProps(newProps) {
         this.notifyErrorIfNeeded(newProps);
         window.dnn.utility.closeSocialTasks();
+        const {selectedPage} = newProps;
+
+        if (selectedPage && this.shouldRunRecursive) {
+            this.shouldRunRecursive=false;
+            this.buildTree(selectedPage.tabId);
+        }
     }
 
+    buildTree(selectedId){
+        const buildTree = (hierarchy) => {
+            const callAPI = () => {
+                const parentId = hierarchy.shift();
+                parentId && setTimeout(()=> execute(), 100);
+                const execute = () =>this.props.getChildPageList(parentId)
+                .then(data => {
+                    this._traverse((item, list, update)=>{
+                        const left = () => {
+                            item.childListItems = data;
+                            item.isOpen = true;
+                            item.hasChildren = true;
+                            update(list);
+                            callAPI();
+                        };
+                        const right = () => {
+                            update(list);
+                        };
+                        item.id === data[0].parentId ? left() : right();
+                    });
+                });
+            };
+            callAPI();
+        };
+        this.props.getPageHierarchy(selectedId).then(buildTree);
+    }
     notifyErrorIfNeeded(newProps) {
         if (newProps.error !== this.props.error) {
             const errorMessage = (newProps.error && newProps.error.message) || Localization.get("AnErrorOccurred");
@@ -182,6 +219,7 @@ class App extends Component {
     }
 
     onUpdatePage(input) {
+        this.shouldRunRecursive=false;
         return new Promise((resolve) => {
             const update = (input && input.tabId) ? input : this.props.selectedPage;
             let newList = null;
@@ -349,17 +387,11 @@ class App extends Component {
     }
 
     onCancelSettings() {
-        const { props } = this;
-        if (props.selectedPageDirty) {
+        if (this.props.selectedPageDirty) {
             this.showCancelWithoutSavingDialog();
         }
         else {
-            if (props.selectedPage.tabId === 0 && props.selectedPage.isCopy && props.selectedPage.templateTabId) {
-                this.props.onCancelPage(props.selectedPage.templateTabId);
-            }
-            else {
-                this.props.onCancelPage();
-            }
+            this.props.onCancelPage();
         }
     }
 
@@ -425,15 +457,8 @@ class App extends Component {
     }
 
     showCancelWithoutSavingDialog() {
-        const { props } = this;
-        const onConfirm = () => {            
-            if (props.selectedPage.tabId === 0 && props.selectedPage.isCopy && props.selectedPage.templateTabId) {
-                this.props.onCancelPage(props.selectedPage.templateTabId);
-            }
-            else {
-                this.props.onCancelPage();
-            }
-
+        const onConfirm = () => {
+            this.props.onCancelPage();
         };
 
         utils.confirm(
@@ -591,8 +616,8 @@ class App extends Component {
         return additionalPanels;
     }
 
-    _traverse(comparator) {
-        let listItems = JSON.parse(JSON.stringify(this.props.pageList));
+    _traverse(comparator,pageListCopy) {
+        let listItems = pageListCopy || JSON.parse(JSON.stringify(this.props.pageList));
         const cachedChildListItems = [];
         cachedChildListItems.push(listItems);
         const condition = cachedChildListItems.length > 0;
@@ -627,6 +652,7 @@ class App extends Component {
     onSelection(pageId) {
         const { selectedPage, selectedPageDirty } = this.props;
         this.selectPageSettingTab(0);
+        this.shouldRunRecursive = false;
         const left = () => {
             if (!selectedPage || selectedPage.tabId !== pageId) {
                 this.props.onLoadPage(pageId).then((data) => {
@@ -650,43 +676,10 @@ class App extends Component {
     onMovePage({ Action, PageId, ParentId, RelatedPageId }) {
         return PageActions.movePage({ Action, PageId, ParentId, RelatedPageId });
     }
-    CallCustomAction(action) {
-        const { selectedPage, selectedPageDirty } = this.props;
-        const callAction = () => {
-            if (selectedPage && selectedPage.tabId !== 0 && selectedPageDirty) {
-                const onConfirm = () => {
-                    action();
-                };
-                utils.confirm(
-                    Localization.get("CancelWithoutSaving"),
-                    Localization.get("Close"),
-                    Localization.get("Cancel"),
-                    onConfirm);
 
-            } else {
-                action();
-            }
-        };
-        callAction();
-    }
-    onDuplicatePage(item) {
-        const { selectedPage, selectedPageDirty } = this.props;
+    onDuplicatePage(item){
         const message = Localization.get("NoPermissionCopyPage");
-        const duplicate = () => {
-            if (selectedPage && selectedPage.tabId !== 0 && selectedPageDirty) {
-                const onConfirm = () => {
-                    this.props.onDuplicatePage(true);
-                };
-                utils.confirm(
-                    Localization.get("CancelWithoutSaving"),
-                    Localization.get("Close"),
-                    Localization.get("Cancel"),
-                    onConfirm);
-
-            } else {
-                this.props.onDuplicatePage(false);
-            }
-        };
+        const duplicate = () => this.props.onDuplicatePage();
         const noPermission = () => this.setEmptyStateMessage(message);
         item.canCopyPage ? duplicate() : noPermission();
     }
@@ -1035,7 +1028,7 @@ class App extends Component {
                             </div>
                             <div className="search-item-details">
                                 <h1>{item.name}</h1>
-                                <h2>{item.tabpath}</h2>
+                                <h2 onClick={()=>this.buildTree(item.id)}>{item.tabpath}</h2>
                                 <div className="search-item-details-list">
                                     <ul>
                                         <li>
@@ -1143,7 +1136,6 @@ class App extends Component {
         const { selectedPage } = props;
         const {inSearch, headerDropdownSelection, toggleSearchMoreFlyout} = this.state;
 
-
         const additionalPanels = this.getAdditionalPanels();
         const isListPagesAllowed = securityService.canSeePagesList();
         let defaultLabel = "Save Page Template";
@@ -1207,7 +1199,6 @@ class App extends Component {
                                             onViewPage={this.onViewPage.bind(this)}
                                             onViewEditPage={this.onViewEditPage.bind(this)}
                                             onDuplicatePage={this.onDuplicatePage.bind(this)}
-                                            CallCustomAction={this.CallCustomAction.bind(this)}
                                             onAddPage={this.onAddPage.bind(this)}
                                             onSelection={this.onSelection.bind(this)}
                                             pageInContextComponents={props.pageInContextComponents} />
@@ -1293,7 +1284,8 @@ App.propTypes = {
     onClearCache: PropTypes.func.isRequired,
     clearSelectedPage: PropTypes.func.isRequired,
     onModuleCopyChange: PropTypes.func,
-    workflowList: PropTypes.array.isRequired
+    workflowList: PropTypes.array.isRequired,
+    getPageHierarchy: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {
@@ -1318,7 +1310,6 @@ function mapStateToProps(state) {
         isContentLocalizationEnabled: state.languages.isContentLocalizationEnabled,
         selectedPagePath: state.pageHierarchy.selectedPagePath,
         workflowList: state.pages.workflowList
-
     };
 }
 
@@ -1362,9 +1353,8 @@ function mapDispatchToProps(dispatch) {
         onGetCachedPageCount: PageActions.getCachedPageCount,
         onClearCache: PageActions.clearCache,
         clearSelectedPage: PageActions.clearSelectedPage,
-        onModuleCopyChange: PageActions.updatePageModuleCopy
-
-
+        onModuleCopyChange: PageActions.updatePageModuleCopy,
+        getPageHierarchy: PageActions.getPageHierarchy
 
     }, dispatch);
 }
