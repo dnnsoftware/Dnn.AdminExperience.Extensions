@@ -30,8 +30,8 @@ function updateUrlPreview(value, dispatch) {
 const debouncedUpdateUrlPreview = debounce(updateUrlPreview, 500);
 
 const loadPage = function (dispatch, pageId, callback) {
-    return new Promise((resolve)=>{
-            if (!securityService.userHasPermission(permissionTypes.MANAGE_PAGE)) {
+    return new Promise((resolve) => {
+        if (!securityService.userHasPermission(permissionTypes.MANAGE_PAGE)) {
             dispatch({
                 type: ActionTypes.LOADED_PAGE,
                 data: {
@@ -61,7 +61,9 @@ const loadPage = function (dispatch, pageId, callback) {
         }).catch((error) => {
             dispatch({
                 type: ActionTypes.ERROR_LOADING_PAGE,
-                data: { error }
+                data: {
+                    error
+                }
             });
             resolve();
         });
@@ -72,10 +74,12 @@ const loadPage = function (dispatch, pageId, callback) {
 const pageActions = {
     getPageList(id) {
         return (dispatch) => PagesService.getPageList(id).then(pageList => {
-         
+
             dispatch({
                 type: PageListActionTypes.SAVE,
-                data: { pageList }
+                data: {
+                    pageList
+                }
             });
         });
     },
@@ -84,22 +88,26 @@ const pageActions = {
         return (dispatch) => PagesService.searchPageList(searchKey).then((searchList) => {
             dispatch({
                 type: SearchListActionTypes.SAVE_SEARCH_LIST,
-                data: { searchList }
+                data: {
+                    searchList
+                }
             });
         });
     },
 
 
-    getPageHierarchy(id){
+    getPageHierarchy(id) {
         return () => PagesService.getPageHierarchy(id);
     },
 
     searchAndFilterPageList(params) {
-        return (dispatch) => PagesService.searchAndFilterPageList(params).then((searchList)=>{
-            searchList= searchList.Results;
+        return (dispatch) => PagesService.searchAndFilterPageList(params).then((searchList) => {
+            searchList = searchList.Results;
             dispatch({
                 type: SearchListActionTypes.SAVE_SEARCH_LIST,
-                data: {searchList}
+                data: {
+                    searchList
+                }
             });
         });
     },
@@ -108,7 +116,9 @@ const pageActions = {
         return (dispatch) => PagesService.getWorkflowsList().then(workflowList => {
             dispatch({
                 type: ActionTypes.GET_WORKFLOW_LIST,
-                data: {workflowList}
+                data: {
+                    workflowList
+                }
             });
         });
     },
@@ -117,10 +127,10 @@ const pageActions = {
         return (dispatch) => PagesService.getPage(id);
     },
 
-    getCurrentSelectedPage(){
+    getCurrentSelectedPage() {
         return (dispatch) => dispatch({
             type: ActionTypes.GET_CURRENT_SELECTED_PAGE,
-            data:{}
+            data: {}
         });
     },
     getChildPageList(id) {
@@ -131,7 +141,9 @@ const pageActions = {
         return (dispatch) => {
             dispatch({
                 type: PageListActionTypes.SAVE,
-                data: { pageList }
+                data: {
+                    pageList
+                }
             });
         };
     },
@@ -160,7 +172,9 @@ const pageActions = {
 
     duplicatePage(reloadTemplate) {
         return (dispatch, getState) => {
-            const { pages } = getState();
+            const {
+                pages
+            } = getState();
             const duplicate = (page) => {
                 const duplicatedPage = cloneDeep(page);
 
@@ -169,7 +183,7 @@ const pageActions = {
                 duplicatedPage.name = "";
                 duplicatedPage.url = "";
                 duplicatedPage.isCopy = true;
-                
+
                 dispatch({
                     type: ActionTypes.LOADED_PAGE,
                     data: {
@@ -182,10 +196,9 @@ const pageActions = {
                 loadPage(dispatch, pages.selectedPage.tabId, (page) => {
                     duplicate(page);
                 });
-            }
-            else {
+            } else {
                 duplicate(pages.selectedPage);
-            }            
+            }
         };
     },
 
@@ -194,13 +207,20 @@ const pageActions = {
         return (dispatch) => PagesService.getNewPage(parentPage).then((page) => {
             dispatch({
                 type: ActionTypes.LOADED_PAGE,
-                data: { page },
+                data: {
+                    page
+                },
                 selectedPageSettingTab: 0
             });
         });
     },
 
-    cancelPage() {
+    cancelPage(reloadPageId) {
+        if (reloadPageId) {
+            return (dispatch) => {
+                return loadPage(dispatch, reloadPageId);
+            };
+        }
         return (dispatch) => {
             dispatch({
                 type: ActionTypes.CANCEL_PAGE,
@@ -232,7 +252,9 @@ const pageActions = {
             }).catch((error) => {
                 dispatch({
                     type: ActionTypes.ERROR_DELETING_PAGE,
-                    data: { error }
+                    data: {
+                        error
+                    }
                 });
             });
         };
@@ -243,7 +265,9 @@ const pageActions = {
             dispatch({
                 type: ActionTypes.SAVE_PAGE
             });
-            const { pages } = getState();
+            const {
+                pages
+            } = getState();
             const selectedPage = pages.selectedPage;
 
             PagesService.savePage(selectedPage, pages.urlChanged).then(response => {
@@ -261,7 +285,9 @@ const pageActions = {
             }).catch((error) => {
                 dispatch({
                     type: ActionTypes.ERROR_SAVING_PAGE,
-                    data: { error }
+                    data: {
+                        error
+                    }
                 });
             });
         };
@@ -270,7 +296,9 @@ const pageActions = {
     updatePage(page, callback) {
         return (dispatch, getState) => {
 
-            const { pages } = getState();
+            const {
+                pages
+            } = getState();
 
             PagesService.savePage(page, pages.urlChanged).then(response => {
 
@@ -293,7 +321,9 @@ const pageActions = {
             }).catch((error) => {
                 dispatch({
                     type: ActionTypes.ERROR_SAVING_PAGE,
-                    data: { error }
+                    data: {
+                        error
+                    }
                 });
             });
         };
@@ -302,7 +332,9 @@ const pageActions = {
 
     changePageField(key, value) {
         return (dispatch, getState) => {
-            const { pages } = getState();
+            const {
+                pages
+            } = getState();
 
             dispatch({
                 type: ActionTypes.CHANGE_FIELD_VALUE,
@@ -346,12 +378,16 @@ const pageActions = {
                 PagesService.getCacheProviderList().then(cacheProviderList => {
                     dispatch({
                         type: ActionTypes.FETCHED_CACHE_PROVIDER_LIST,
-                        data: { cacheProviderList }
+                        data: {
+                            cacheProviderList
+                        }
                     });
                 }).catch((error) => {
                     dispatch({
                         type: ActionTypes.ERROR_FETCHING_CACHE_PROVIDER_LIST,
-                        data: { error }
+                        data: {
+                            error
+                        }
                     });
                 });
             }
@@ -373,12 +409,16 @@ const pageActions = {
                 utils.notify(Localization.get("DeletePageModuleSuccess").replace("[MODULETITLE]", module.title));
                 dispatch({
                     type: ActionTypes.DELETED_PAGE_MODULE,
-                    data: { module }
+                    data: {
+                        module
+                    }
                 });
             }).catch((error) => {
                 dispatch({
                     type: ActionTypes.ERROR_DELETING_PAGE_MODULE,
-                    data: { error }
+                    data: {
+                        error
+                    }
                 });
             });
         };
@@ -387,14 +427,20 @@ const pageActions = {
     updatePageModuleCopy(id, key, event) {
         return {
             type: ActionTypes.UPDATED_PAGE_MODULE_COPY,
-            data: { id, key, event }
+            data: {
+                id,
+                key,
+                event
+            }
         };
     },
 
     editingPageModule(module) {
         return {
             type: ActionTypes.EDITING_PAGE_MODULE,
-            data: { module }
+            data: {
+                module
+            }
         };
     },
 
@@ -413,7 +459,10 @@ const pageActions = {
 
             const state = getState();
             const page = state.pages.selectedPage;
-            const { defaultPortalLayout, defaultPortalContainer } = state.theme;
+            const {
+                defaultPortalLayout,
+                defaultPortalContainer
+            } = state.theme;
             const theme = {
                 skinSrc: page.skinSrc || defaultPortalLayout,
                 containerSrc: page.containerSrc || defaultPortalContainer
@@ -433,7 +482,9 @@ const pageActions = {
             }).catch((error) => {
                 dispatch({
                     type: ActionTypes.ERROR_COPYING_APPEARANCE_TO_DESCENDANT_PAGES,
-                    data: { error }
+                    data: {
+                        error
+                    }
                 });
             });
         };
@@ -455,7 +506,9 @@ const pageActions = {
             }).catch((error) => {
                 dispatch({
                     type: ActionTypes.ERROR_COPYING_PERMISSIONS_TO_DESCENDANT_PAGES,
-                    data: { error }
+                    data: {
+                        error
+                    }
                 });
             });
         };
@@ -498,8 +551,18 @@ const pageActions = {
         };
     },
 
-    movePage({ Action, PageId, ParentId, RelatedPageId }) {
-        return PagesService.movePage({ Action, PageId, ParentId, RelatedPageId });
+    movePage({
+        Action,
+        PageId,
+        ParentId,
+        RelatedPageId
+    }) {
+        return PagesService.movePage({
+            Action,
+            PageId,
+            ParentId,
+            RelatedPageId
+        });
     }
 };
 
