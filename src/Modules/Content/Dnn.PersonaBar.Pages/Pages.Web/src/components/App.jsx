@@ -32,7 +32,7 @@ import GridCell from "dnn-grid-cell";
 import PageDetails from "./PageDetails/PageDetails";
 import Promise from "promise";
 
-import { PagesSearchIcon, PagesVerticalMore, CalendarIcon } from "dnn-svg-icons";
+import { PagesSearchIcon, PagesVerticalMore, CalendarIcon, ArrowBack } from "dnn-svg-icons";
 import Dropdown from "dnn-dropdown";
 import DayPicker from "./DayPicker/src/DayPicker";
 import {XIcon} from "dnn-svg-icons";
@@ -71,7 +71,7 @@ class App extends Component {
             DropdownCalendarIsActive:null,
 
             inSearch: false,
-            searchTerm: false,
+            searchTerm: "",
 
             startDate: date,
             endDate: date,
@@ -191,9 +191,7 @@ class App extends Component {
                             update(list);
                             callAPI();
                         };
-                        const right = () => {
-                            update(list);
-                        };
+                        const right = () => update(list);
                         item.id === data[0].parentId ? left() : right();
                     });
                 });
@@ -1019,6 +1017,11 @@ class App extends Component {
     render_searchResults(){
         const {searchList} = this.props;
         const render_card = (item) => {
+            const onPathClick = (item) => {
+                this.setState({inSearch: false}, () => {
+                    this.props.onLoadPage(item.id).then(()=> this.buildTree(item.id));
+                });
+            };
 
             return (
                     <GridCell columnSize={100}>
@@ -1028,7 +1031,7 @@ class App extends Component {
                             </div>
                             <div className="search-item-details">
                                 <h1>{item.name}</h1>
-                                <h2 onClick={()=>this.buildTree(item.id)}>{item.tabpath}</h2>
+                                <h2 onClick={()=> onPathClick(item)} >{item.tabpath}</h2>
                                 <div className="search-item-details-list">
                                     <ul>
                                         <li>
@@ -1134,7 +1137,7 @@ class App extends Component {
 
         const { props } = this;
         const { selectedPage } = props;
-        const {inSearch, headerDropdownSelection, toggleSearchMoreFlyout} = this.state;
+        const {inSearch, headerDropdownSelection, toggleSearchMoreFlyout, searchTerm} = this.state;
 
         const additionalPanels = this.getAdditionalPanels();
         const isListPagesAllowed = securityService.canSeePagesList();
@@ -1155,16 +1158,31 @@ class App extends Component {
                          { toggleSearchMoreFlyout ?  this.render_more_flyout() : null}
                         <GridCell columnSize={100} style={{padding:"20px"}}>
                             <div className="search-container">
+                                {inSearch ?
+                                    <div className="back-to-page" onClick={()=>this.setState({searchTerm:"", inSearch:false})}>
+                                        <div dangerouslySetInnerHTML={{__html: ArrowBack}} /> <p>{Localization.get("BackToPages")}</p>
+                                    </div> : null }
+
                                 <div className="search-box">
                                     <div className="search-input">
                                         <input
                                             type="text"
+                                            value={searchTerm}
                                             onFocus={this.onSearchFocus.bind(this)}
                                             onChange={this.onSearchFieldChange.bind(this)}
                                             onBlur={this.onSearchBlur.bind(this)}
                                             onKeyPress={(e)=>{e.key ==="Enter" ? this.onSearchClick() : null; }}
                                             placeholder="Search"/>
                                     </div>
+                                    {searchTerm ?
+                                        <div
+                                            className="btn clear-search"
+                                            style={{fill: "#444"}}
+                                            dangerouslySetInnerHTML={{__html: XIcon}}
+                                            onClick={()=>this.setState({searchTerm:""})}
+                                            />
+
+                                    : <div className="btn clear-search"/> }
                                     <div
                                         className="btn search-btn"
                                         dangerouslySetInnerHTML={{ __html: PagesSearchIcon }}
