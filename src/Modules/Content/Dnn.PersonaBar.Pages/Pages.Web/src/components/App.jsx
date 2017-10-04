@@ -32,7 +32,7 @@ import GridCell from "dnn-grid-cell";
 import PageDetails from "./PageDetails/PageDetails";
 import Promise from "promise";
 
-import { PagesSearchIcon, PagesVerticalMore, CalendarIcon, ArrowBack } from "dnn-svg-icons";
+import { PagesSearchIcon, PagesVerticalMore, CalendarIcon, ArrowBack, TreeEye, TreeEdit, TreeAnalytics } from "dnn-svg-icons";
 import Dropdown from "dnn-dropdown";
 import DayPicker from "./DayPicker/src/DayPicker";
 import {XIcon} from "dnn-svg-icons";
@@ -1030,8 +1030,17 @@ class App extends Component {
                                 <img src={item.thumbnail} />
                             </div>
                             <div className="search-item-details">
-                                <h1>{item.name}</h1>
-                                <h2 onClick={()=> onPathClick(item)} >{item.tabpath}</h2>
+                                <div className="search-item-details-left">
+                                    <h1>{item.name}</h1>
+                                    <h2 onClick={()=> onPathClick(item)} >{item.tabpath}</h2>
+                                </div>
+                                <div className="search-item-details-right">
+                                    <ul>
+                                        <li onClick={()=>this.onViewPage(item)}><div dangerouslySetInnerHTML={{__html:TreeEye}} /></li>
+                                        <li onClick={()=>this.onViewEditPage(item)}><div dangerouslySetInnerHTML={{__html:TreeEdit}} /></li>
+                                        <li><div dangerouslySetInnerHTML={{__html:TreeAnalytics}} /></li>
+                                    </ul>
+                                </div>
                                 <div className="search-item-details-list">
                                     <ul>
                                         <li>

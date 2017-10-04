@@ -123,24 +123,65 @@
 
         .search-item-thumbnail{
             float:left;
+            width:16%;
         }
 
         .search-item-details {
             float:left;
+            width: 83%;
             height:40px;
             padding: 10px 0px 10px 35px;
 
-            h1{
-                color: @curiousBlue;
+            .search-item-details-left{
+                float:left;
+
+                h1{
+                    color: @curiousBlue;
+                }
+                h2{
+                    cursor:pointer;
+                    color:@alto;
+                }
+
             }
-            h2{
-                cursor:pointer;
-                color:@alto;
+
+            .search-item-details-right{
+                float:right;
+
+                ul{
+                    float:right;
+                    transition: opacity .25s ease-in;
+                    opacity:0;
+                    padding:0;
+                    margin:0;
+                    li{
+                        list-style:none;
+                        padding: 0 10px;
+                        float:left;
+
+                        div{
+                            width: 20px;
+                            cursor:pointer;
+
+                            svg{
+                                width:100%;
+                                fill: @alto;
+                                stroke: @alto;
+                            }
+                        }
+
+                    }
+                }
+
+                ul:hover{
+                    opacity: 1
+                }
             }
         }
 
         .search-item-details-list {
             padding:10px 0px;
+            clear:both;
             
             ul{
                 list-style: none;
@@ -150,6 +191,7 @@
 
             li{
                 float:left;
+                margin: 0 10px;
                 p{
                     display:inline;
                     font-weight:bold;
@@ -162,6 +204,11 @@
                     margin: 0px 10px;
                     color: @curiousBlue
                 }
+            }
+
+            li:first-child{
+                float:left;
+                margin:0;
             }
         }
     }
