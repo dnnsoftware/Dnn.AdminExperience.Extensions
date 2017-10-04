@@ -822,9 +822,8 @@ class App extends Component {
         filterByWorkflow ? filters.push({ ref: "filterByWorkflow", tag: `Workflow: ${filterByWorkflow}` }) : null;
 
         if (startAndEndDateDirty) {
-            const fullStartDate = `${startDate.getDay()}/${startDate.getMonth() + 1}/${startDate.getFullYear()}`;
-            const fullEndDate = `${endDate.getDay()}/${endDate.getMonth() + 1}/${endDate.getFullYear()}`;
-
+            const fullStartDate = `${startDate.getDay()+1}/${startDate.getMonth() + 1}/${startDate.getFullYear()}`;
+            const fullEndDate = `${endDate.getDay()+1}/${endDate.getMonth() + 1}/${endDate.getFullYear()}`;
             const left = () => filters.push({ ref: "startAndEndDateDirty", tag: `Date Range: ${fullStartDate} ${fullEndDate} ` });
             const right = () => filters.push({ ref: "startAndEndDateDirty", tag: `From Date: ${fullStartDate}` });
 
@@ -1064,11 +1063,14 @@ class App extends Component {
     render_searchResults() {
         const { searchList } = this.props;
         const render_card = (item) => {
-            const onPathClick = (item) => {
+            const onNameClick = (item) => {
                 this.setState({ inSearch: false }, () => {
                     this.props.onLoadPage(item.id).then(() => this.buildTree(item.id));
                 });
             };
+
+            const publishedDate = new Date(item.publishDate.split(" ")[0]);
+
 
             return (
                 <GridCell columnSize={100}>
@@ -1078,8 +1080,8 @@ class App extends Component {
                         </div>
                         <div className="search-item-details">
                             <div className="search-item-details-left">
-                                <h1>{item.name}</h1>
-                                <h2 onClick={() => onPathClick(item)} >{item.tabpath}</h2>
+                                <h1 onClick={() => onNameClick(item)}>{item.name}</h1>
+                                <h2>{item.tabpath}</h2>
                             </div>
                             <div className="search-item-details-right">
                                 <ul>
@@ -1092,15 +1094,15 @@ class App extends Component {
                                 <ul>
                                     <li>
                                         <p>Page Type:</p>
-                                        <p>{item.pageType}</p>
+                                        <p onClick={()=>{ this.setState({filterByPageType: item.pageType}, ()=>this.onSave()); }} >{item.pageType}</p>
                                     </li>
                                     <li>
                                         <p>Publish Status:</p>
-                                        <p>{item.status}</p>
+                                        <p onClick={()=>{ this.setState({filterByPublishStatus: item.status}, ()=>this.onSave()); }} >{item.status}</p>
                                     </li>
                                     <li>
-                                        <p>Publish Date:</p>
-                                        <p>{item.publishDate}</p>
+                                        <p >Publish Date:</p>
+                                        <p onClick={()=>{ this.setState({startDate: publishedDate, endDate: publishedDate, startAndEndDateDirty:true}, ()=>this.onSave()); }}>{item.publishDate.split(" ")[0]}</p>
                                     </li>
                                 </ul>
                             </div>
@@ -1108,7 +1110,7 @@ class App extends Component {
                                 <ul>
                                     <li>
                                         <p>Workflow:</p>
-                                        <p>{item.workflowName}</p>
+                                        <p onClick={()=>{ this.setState({filterByWorkflow: item.workflowName}, ()=>this.onSave()); }}>{item.workflowName}</p>
                                     </li>
                                     <li>
                                         <p>Tags:</p>
