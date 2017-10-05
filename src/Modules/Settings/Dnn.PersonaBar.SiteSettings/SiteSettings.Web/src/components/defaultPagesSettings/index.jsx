@@ -20,7 +20,8 @@ class DefaultPagesSettingsPanelBody extends Component {
     constructor() {
         super();
         this.state = {
-            defaultPagesSettings: undefined
+            defaultPagesSettings: undefined,
+            resetPagePicker: false
         };
         isHost = util.settings.isHost;
     }
@@ -78,6 +79,9 @@ class DefaultPagesSettingsPanelBody extends Component {
 
     onSettingChange(key, event) {
         let {state, props} = this;
+        if (state.resetPagePicker) {
+            return;
+        }
 
         let defaultPagesSettings = Object.assign({}, state.defaultPagesSettings);
 
@@ -119,6 +123,12 @@ class DefaultPagesSettingsPanelBody extends Component {
                 let defaultPagesSettings = Object.assign({}, data.Settings);
                 this.setState({
                     defaultPagesSettings
+                }, () => {
+                    this.setState({
+                        resetPagePicker: true
+                    }, () => {
+                        this.setState({ resetPagePicker: false });
+                    });
                 });
             }));
         });
@@ -156,6 +166,7 @@ class DefaultPagesSettingsPanelBody extends Component {
                         noneSpecifiedText={noneSpecifiedText}
                         CountText={"{0} Results"}
                         PortalTabsParameters={TabParameters_1}
+                        ResetSelected={state.resetPagePicker}
                         />
                 </InputGroup>
                 <InputGroup>
@@ -172,6 +183,7 @@ class DefaultPagesSettingsPanelBody extends Component {
                         noneSpecifiedText={noneSpecifiedText}
                         CountText={"{0} Results"}
                         PortalTabsParameters={TabParameters_1}
+                        ResetSelected={state.resetPagePicker}
                         />
                 </InputGroup>
                 <InputGroup>
@@ -188,6 +200,7 @@ class DefaultPagesSettingsPanelBody extends Component {
                         noneSpecifiedText={noneSpecifiedText}
                         CountText={"{0} Results"}
                         PortalTabsParameters={TabParameters_Login}
+                        ResetSelected={state.resetPagePicker}
                         />
                 </InputGroup>
                 <InputGroup>
@@ -204,6 +217,7 @@ class DefaultPagesSettingsPanelBody extends Component {
                         noneSpecifiedText={noneSpecifiedText}
                         CountText={"{0} Results"}
                         PortalTabsParameters={TabParameters_1}
+                        ResetSelected={state.resetPagePicker}
                         />
                 </InputGroup>
             </div>;
@@ -222,6 +236,7 @@ class DefaultPagesSettingsPanelBody extends Component {
                         noneSpecifiedText={noneSpecifiedText}
                         CountText={"{0} Results"}
                         PortalTabsParameters={TabParameters_1}
+                        ResetSelected={state.resetPagePicker}
                         />
                 </InputGroup>
                 <InputGroup>
@@ -238,6 +253,7 @@ class DefaultPagesSettingsPanelBody extends Component {
                         noneSpecifiedText={noneSpecifiedText}
                         CountText={"{0} Results"}
                         PortalTabsParameters={TabParameters_Search}
+                        ResetSelected={state.resetPagePicker}
                         />
                 </InputGroup>
                 <InputGroup>
@@ -254,6 +270,7 @@ class DefaultPagesSettingsPanelBody extends Component {
                         noneSpecifiedText={noneSpecifiedText}
                         CountText={"{0} Results"}
                         PortalTabsParameters={TabParameters_2}
+                        ResetSelected={state.resetPagePicker}
                         />
                 </InputGroup>
                 <InputGroup>
@@ -270,6 +287,7 @@ class DefaultPagesSettingsPanelBody extends Component {
                         noneSpecifiedText={noneSpecifiedText}
                         CountText={"{0} Results"}
                         PortalTabsParameters={TabParameters_2}
+                        ResetSelected={state.resetPagePicker}
                         />
                 </InputGroup>
             </div>;

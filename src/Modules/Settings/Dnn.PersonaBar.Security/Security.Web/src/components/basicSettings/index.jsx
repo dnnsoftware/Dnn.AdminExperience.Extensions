@@ -19,7 +19,8 @@ class BasicSettingsPanelBody extends Component {
     constructor() {
         super();
         this.state = {
-            basicLoginSettings: undefined
+            basicLoginSettings: undefined,
+            resetPagePicker: false
         };
         canEdit = util.settings.isHost || util.settings.isAdmin || util.settings.permissions.BASIC_LOGIN_SETTINGS_EDIT;
     }
@@ -65,6 +66,10 @@ class BasicSettingsPanelBody extends Component {
     onSettingChange(key, event) {
         const {props, state} = this;
 
+        if (state.resetPagePicker) {
+            return;
+        }
+
         let basicLoginSettings = Object.assign({}, state.basicLoginSettings);
 
         if (key === "RedirectAfterLoginTabId" || key === "RedirectAfterLogoutTabId") {
@@ -101,10 +106,16 @@ class BasicSettingsPanelBody extends Component {
     onCancel() {
         const {props} = this;
         util.utilities.confirm(resx.get("LoginSettingsRestoreWarning"), resx.get("Yes"), resx.get("No"), () => {
-            props.dispatch(SecurityActions.getBasicLoginSettings(props.cultureCode, (data) => {
+            props.dispatch(SecurityActions.getBasicLoginSettings((data) => {
                 let basicLoginSettings = Object.assign({}, data.Results.Settings);
                 this.setState({
                     basicLoginSettings
+                }, () => {
+                    this.setState({
+                        resetPagePicker: true
+                    }, () => {
+                        this.setState({ resetPagePicker: false });
+                    });
                 });
             }));
         });
@@ -174,6 +185,7 @@ class BasicSettingsPanelBody extends Component {
                             noneSpecifiedText={noneSpecifiedText}
                             CountText={"{0} Results"}
                             PortalTabsParameters={RedirectAfterLoginParameters}
+                            ResetSelected={state.resetPagePicker}
                             enabled={canEdit}
                             />
                     </InputGroup>
@@ -191,6 +203,7 @@ class BasicSettingsPanelBody extends Component {
                             noneSpecifiedText={noneSpecifiedText}
                             CountText={"{0} Results"}
                             PortalTabsParameters={RedirectAfterLogoutParameters}
+                            ResetSelected={state.resetPagePicker}
                             enabled={canEdit}
                             />
                     </InputGroup>
