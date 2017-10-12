@@ -86,7 +86,9 @@ class App extends Component {
 
             tags:"",
             filters:[],
-            searchFields:{}
+            searchFields:{},
+
+            showAdditionalPanel: false
         };
     }
 
@@ -513,8 +515,8 @@ class App extends Component {
                         size="large"
                         disabled={this.onEditMode()}
                         onClick={onLoadSavePageAsTemplate}
-                        onShowPanelCallback={onShowPanel}
-                        onHidePanelCallback={onHidePanel}
+                        onShowPanelCallback={()=> {this.setState({showAdditionalPanel:true});}}
+                        onHidePanelCallback={()=> {this.setState({showAdditionalPanel:false});}}
                         onSaveAsPlatformTemplate={onLoadSavePageAsTemplate}>
                         {Localization.get("SaveAsTemplate")}
                     </SaveAsTemplateButton>
@@ -553,6 +555,17 @@ class App extends Component {
         return (
                 <SaveAsTemplate
                     onCancel={props.onCancelSavePageAsTemplate} />);
+    }
+
+    getAdditionalPanel() {
+        const { props } = this;
+        if (props.additionalPanels) {
+            const panel = props.additionalPanels[0];
+            const Component = panel.component;
+            return (<Component
+            onCancel={()=>{this.setState({showAdditionalPanel:false});}}
+            selectedPage={props.selectedPage}/>);
+        }
     }
 
     getAdditionalPanels() {
@@ -1093,9 +1106,11 @@ class App extends Component {
 
     render_details(){
         const {selectedPage} = this.props;
-        const {inSearch} = this.state;
+        const {inSearch, showAdditionalPanel} = this.state;
         const {selectedView} = this.props;
         switch(true){
+            case showAdditionalPanel:
+                return this.getAdditionalPanel(); 
             case inSearch:
                 return this.render_searchResults();
             case selectedPage && selectedPage.tabId === 0:
@@ -1233,7 +1248,6 @@ class App extends Component {
                 {props.selectedPage && props.selectedView === panels.SAVE_AS_TEMPLATE_PANEL &&
                     this.getSaveAsTemplatePage()
                 }
-                {additionalPanels}
             </div>
         );
     }
