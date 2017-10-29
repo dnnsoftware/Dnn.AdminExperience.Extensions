@@ -729,6 +729,8 @@ export class PersonaBarPageTreeviewInteractor extends Component {
     }
 
     render() {
+        
+
         return (
             <div onMouseEnter={() => this.setMouseOver(true)} onMouseLeave={() => this.setMouseOver(false)}>
                 <GridCell
@@ -748,10 +750,14 @@ export class PersonaBarPageTreeviewInteractor extends Component {
                         columnSize={55}
                         style={{ marginLeft: "-2px" }} >
                     
+                        {/* <div style={{width:"100%", height:"100%", position:"relative", overflowX:"scroll", overflowY:"scroll"}}>
+
+                            {this.render_treeview()}
+                        </div> */}
                         <ScrollArea
                             speed={0.8}
-                            style={{"overflow":"hidden","position":"absolute"}}
-                            >
+                            className="area"
+                            contentClassName="content">
 
                             {this.render_treeview()}
                         </ScrollArea>
