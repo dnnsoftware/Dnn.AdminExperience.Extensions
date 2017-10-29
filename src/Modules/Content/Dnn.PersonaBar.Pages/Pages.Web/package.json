@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "set NODE_ENV=production&&webpack -p",
-    "webpack": "webpack-dev-server -d --port 8080 --hot --inline --content-base dist/ --history-api-fallback",
+    "webpack": "webpack-dev-server --host 0.0.0.0 -d --port 8080 --hot --inline --content-base dist/ --history-api-fallback",
     "analyze": "set NODE_ENV=production&&webpack -p --json | webpack-bundle-size-analyzer"
   },
   "peerDependencies": {
@@ -55,6 +55,7 @@
     "prop-types": "^15.5.10",
     "react-day-picker": "^6.1.0",
     "react-dnd": "^2.4.0",
-    "react-dnd-html5-backend": "^2.4.1"
+    "react-dnd-html5-backend": "^2.4.1",
+    "react-scrollbar": "^0.5.1"
   }
 }
