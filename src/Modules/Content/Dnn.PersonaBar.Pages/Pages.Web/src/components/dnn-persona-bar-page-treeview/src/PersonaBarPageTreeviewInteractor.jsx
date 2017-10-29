@@ -1,7 +1,6 @@
 import React, {
 Component
 } from "react";
-// import Scrollbars from "react-custom-scrollbars";
 import ScrollArea from "react-scrollbar";
 import {
     PersonaBarPageTreeview
@@ -729,8 +728,6 @@ export class PersonaBarPageTreeviewInteractor extends Component {
     }
 
     render() {
-        
-
         return (
             <div onMouseEnter={() => this.setMouseOver(true)} onMouseLeave={() => this.setMouseOver(false)}>
                 <GridCell
@@ -750,26 +747,15 @@ export class PersonaBarPageTreeviewInteractor extends Component {
                         columnSize={55}
                         style={{ marginLeft: "-2px" }} >
                     
-                        {/* <div style={{width:"100%", height:"100%", position:"relative", overflowX:"scroll", overflowY:"scroll"}}>
-
-                            {this.render_treeview()}
-                        </div> */}
                         <ScrollArea
                             speed={0.8}
                             className="area"
-                            contentClassName="content">
+                            contentClassName="content"
+                            horizontal={(this.state.isMouseInTree?true:false)}>
+                            
 
                             {this.render_treeview()}
                         </ScrollArea>
-
-
-                        {/* <Scrollbars
-                            className="scrollArea content-horizontal"
-                            autoHeight autoHide={!this.state.isMouseInTree} autoHeightMin={100}
-                            autoHeightMax={9999}
-                            renderThumbVertical={props => <div {...props} className="thumb-vertical" style={{ display: "none" }} />}>
-                            {this.render_treeview()}
-                        </Scrollbars> */}
                     </GridCell>
 
                     <GridCell columnSize={30} >
