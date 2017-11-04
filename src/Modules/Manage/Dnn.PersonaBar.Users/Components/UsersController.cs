@@ -502,12 +502,14 @@ namespace Dnn.PersonaBar.Users.Components
                 int userId;
                 int.TryParse(r.UniqueKey?.Split('_')[0], out userId);
                 return userId;
-            }).Where(u => u > 0);
+            }).Where(u => u > 0).Distinct().ToList();
 
             var currentIds = string.Join(",", userIds);
             var users = UsersDataService.Instance.GetUsersByUserIds(usersContract.PortalId, currentIds)
                 .Where(u => UserController.GetUserById(usersContract.PortalId, u.UserId).Membership.Approved).ToList();
             totalRecords = searchResults.TotalHits;
+            if (usersContract.PageIndex == 0 && query.PageSize > userIds.Count)
+                totalRecords -= query.PageSize - userIds.Count;
             return GetSortedUsers(users, usersContract.SortColumn, usersContract.SortAscending).ToList();
         }
 
