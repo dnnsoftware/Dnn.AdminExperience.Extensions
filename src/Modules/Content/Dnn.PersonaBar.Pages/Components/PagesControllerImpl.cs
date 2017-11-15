@@ -55,6 +55,7 @@ namespace Dnn.PersonaBar.Pages.Components
         private readonly IPageUrlsController _pageUrlsController;
         private readonly ITemplateController _templateController;
         private readonly IDefaultPortalThemeController _defaultPortalThemeController;
+        private readonly ICloneModuleExecutionContext _cloneModuleExecutionContext;
 
         public const string PageTagsVocabulary = "PageTags";
         private static readonly IList<string> TabSettingKeys = new List<string> { "CustomStylesheet" };
@@ -66,6 +67,7 @@ namespace Dnn.PersonaBar.Pages.Components
             _pageUrlsController = PageUrlsController.Instance;
             _templateController = TemplateController.Instance;
             _defaultPortalThemeController = DefaultPortalThemeController.Instance;
+            _cloneModuleExecutionContext = CloneModuleExecutionContext.Instance;
         }
         
         public bool IsValidTabPath(TabInfo tab, string newTabPath, string newTabName, out string errorMessage)
@@ -1133,11 +1135,19 @@ namespace Dnn.PersonaBar.Pages.Components
                     var moduleBizClass = Reflection.CreateObject(newModule.DesktopModule.BusinessControllerClass, newModule.DesktopModule.BusinessControllerClass) as IPortable;
                     if (moduleBizClass != null)
                     {
-                        var content = Convert.ToString(moduleBizClass.ExportModule(module.ModuleID));
-                        if (!string.IsNullOrEmpty(content))
+                        try
                         {
-                            content = XmlUtils.RemoveInvalidXmlCharacters(content);
-                            moduleBizClass.ImportModule(newModule.ModuleID, content, newModule.DesktopModule.Version, UserController.Instance.GetCurrentUserInfo().UserID);
+                            _cloneModuleExecutionContext.SetCloneModuleContext(true);
+                            var content = Convert.ToString(moduleBizClass.ExportModule(module.ModuleID));
+                            if (!string.IsNullOrEmpty(content))
+                            {
+                                content = XmlUtils.RemoveInvalidXmlCharacters(content);
+                                moduleBizClass.ImportModule(newModule.ModuleID, content, newModule.DesktopModule.Version, UserController.Instance.GetCurrentUserInfo().UserID);
+                            }
+                        }
+                        finally
+                        {
+                            _cloneModuleExecutionContext.SetCloneModuleContext(false);
                         }
                     }
                 }

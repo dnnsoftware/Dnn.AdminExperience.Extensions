@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{424CCB69-AD4D-4CBC-83D3-E7588343A2E4}"
 	ProjectSection(SolutionItems) = preProject
@@ -151,7 +151,6 @@ Global
 		{A3DF3DFE-0A09-4D3E-9E82-A0D5EC45750E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3DF3DFE-0A09-4D3E-9E82-A0D5EC45750E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C608115-C60B-4138-B4FA-525513E984B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C608115-C60B-4138-B4FA-525513E984B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C608115-C60B-4138-B4FA-525513E984B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C608115-C60B-4138-B4FA-525513E984B8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5AD58DBF-E912-46E5-8812-342BB8AF8182}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -222,5 +221,8 @@ Global
 		{9FA6939A-0ABF-42AF-B43A-4063AFE3EE47} = {D01B5E16-A6B9-4B79-8CC2-A035A5FA783E}
 		{C0A07377-E031-4C5B-AC56-0080555C9AC2} = {D01B5E16-A6B9-4B79-8CC2-A035A5FA783E}
 		{312D5D02-5E41-4851-B7B1-4AEE27F8E42C} = {D01B5E16-A6B9-4B79-8CC2-A035A5FA783E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {81AA6132-3B90-4F3D-AB29-0003A74D4205}
 	EndGlobalSection
 EndGlobal
