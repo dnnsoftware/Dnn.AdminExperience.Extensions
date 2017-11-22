@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from "react";
 import { connect } from "react-redux";
 import resx from "../../../resources";
-import BackTo from "dnn-back-to";
+import BackTo from "dnn-back-to-link";
 import util from "utils";
 import styles from "./style.less";
 import "./style.less";
