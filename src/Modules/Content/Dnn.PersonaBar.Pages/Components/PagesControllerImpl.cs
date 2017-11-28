@@ -46,6 +46,7 @@ using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Personalization;
 using PermissionsNotMetException = DotNetNuke.Entities.Tabs.PermissionsNotMetException;
@@ -59,6 +60,7 @@ namespace Dnn.PersonaBar.Pages.Components
         private readonly IPageUrlsController _pageUrlsController;
         private readonly ITemplateController _templateController;
         private readonly IDefaultPortalThemeController _defaultPortalThemeController;
+        private readonly ICloneModuleExecutionContext _cloneModuleExecutionContext;
 
         public const string PageTagsVocabulary = "PageTags";
         private static readonly IList<string> TabSettingKeys = new List<string> { "CustomStylesheet" };
@@ -70,6 +72,7 @@ namespace Dnn.PersonaBar.Pages.Components
             _pageUrlsController = PageUrlsController.Instance;
             _templateController = TemplateController.Instance;
             _defaultPortalThemeController = DefaultPortalThemeController.Instance;
+            _cloneModuleExecutionContext = CloneModuleExecutionContext.Instance;
         }
 
         public bool IsValidTabPath(TabInfo tab, string newTabPath, string newTabName, out string errorMessage)
@@ -486,6 +489,44 @@ namespace Dnn.PersonaBar.Pages.Components
                 errorMessage = Localization.GetString("StartDateAfterEndDate");
                 invalidField = "endDate";
                 return false;
+            }
+            switch (pageSettings.PageType)
+            {
+                case "tab":
+                    var existingTabRedirectionId = 0;
+                    int.TryParse(pageSettings.ExistingTabRedirection, out existingTabRedirectionId);
+                    if (existingTabRedirectionId <= 0)
+                    {
+                        errorMessage = Localization.GetString("TabToRedirectIsRequired");
+                        invalidField = "ExistingTabRedirection";
+                        return false;
+                    }
+                    if (!TabPermissionController.CanViewPage(TabController.Instance.GetTab(existingTabRedirectionId,
+                        PortalSettings.Current.PortalId)))
+                    {
+                        errorMessage = Localization.GetString("NoPermissionViewRedirectPage");
+                        invalidField = "ExistingTabRedirection";
+                        return false;
+                    }
+                    break;
+                case "url":
+                    if (string.IsNullOrEmpty(pageSettings.ExternalRedirection))
+                    {
+                        errorMessage = Localization.GetString("ExternalRedirectionUrlRequired");
+                        invalidField = "ExternalRedirection";
+                        return false;
+                    }
+                    break;
+                case "file":
+                    var fileIdRedirectionId = pageSettings.FileIdRedirection ?? 0;
+                    var file = pageSettings.FileIdRedirection != null ? FileManager.Instance.GetFile(pageSettings.FileIdRedirection.Value) : null;
+                    if (fileIdRedirectionId <= 0 || file == null)
+                    {
+                        errorMessage = Localization.GetString("ValidFileIsRequired");
+                        invalidField = "FileIdRedirection";
+                        return false;
+                    }
+                    break;
             }
 
             return ValidatePageUrlSettings(pageSettings, tab, ref invalidField, ref errorMessage);
@@ -1287,10 +1328,18 @@ namespace Dnn.PersonaBar.Pages.Components
                             var o = objObject as IPortable;
                             if (o != null)
                             {
-                                var content = Convert.ToString(o.ExportModule(module.Id));
-                                if (!string.IsNullOrEmpty(content))
+                                try
                                 {
-                                    o.ImportModule(newModule.ModuleID, content, newModule.DesktopModule.Version, UserController.Instance.GetCurrentUserInfo().UserID);
+                                    _cloneModuleExecutionContext.SetCloneModuleContext(true);
+                                    var content = Convert.ToString(o.ExportModule(module.Id));
+                                    if (!string.IsNullOrEmpty(content))
+                                    {
+                                        o.ImportModule(newModule.ModuleID, content, newModule.DesktopModule.Version, UserController.Instance.GetCurrentUserInfo().UserID);
+                                    }
+                                }
+                                finally
+                                {
+                                    _cloneModuleExecutionContext.SetCloneModuleContext(false);
                                 }
                             }
                         }
