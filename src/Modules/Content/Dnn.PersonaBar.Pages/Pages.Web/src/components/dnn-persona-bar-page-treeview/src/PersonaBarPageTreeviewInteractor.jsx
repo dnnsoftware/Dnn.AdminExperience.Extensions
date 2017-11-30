@@ -1,7 +1,7 @@
 import React, {
 Component
 } from "react";
-import ScrollArea from "react-scrollbar";
+import ScrollArea from "react-scrollbar/dist/no-css";
 import {
     PersonaBarPageTreeview
 } from "./PersonaBarPageTreeview";
@@ -41,6 +41,7 @@ export class PersonaBarPageTreeviewInteractor extends Component {
             isMouseInTree: false
         };
         this.origin = window.origin;
+        this.isDragEnd = false;
     }
 
     componentDidMount() {
@@ -80,7 +81,6 @@ export class PersonaBarPageTreeviewInteractor extends Component {
             });
         }
 
-        //if (!this.state.initialCollapse) {
         this.props._traverse((item) => {
             if (item.isOpen) {
                 setTreeViewExpanded = true;
@@ -93,7 +93,6 @@ export class PersonaBarPageTreeviewInteractor extends Component {
         }) : this.setState({
             isTreeviewExpanded: false
         });
-        //}
     }
 
     init() {
@@ -719,55 +718,43 @@ export class PersonaBarPageTreeviewInteractor extends Component {
         );
     }
 
-    setMouseOver(isMouseOver) {
-        let hasChildren = this.state.pageList.some((page) => page.childCount > 0);
-
-        this.setState({
-            isMouseInTree: (isMouseOver && hasChildren)
-        });
-    }
-
     render() {
         return (
-            <div onMouseEnter={() => this.setMouseOver(true)} onMouseLeave={() => this.setMouseOver(false)}>
-                <GridCell
-                    columnSize={30}
-                    className="dnn-persona-bar-treeview"
-                    style={{ "zIndex": 1000 }} >
+            <GridCell
+                columnSize={30}
+                className="dnn-persona-bar-treeview"
+                style={{ "zIndex": 1000 }} >
 
-                    {this.render_collapseExpand()}
+                {this.render_collapseExpand()}
 
-                    <GridCell columnSize={15} >
-                        <div className="dnn-persona-bar-treeview-menu" >
-                            {this.render_tree_parent_expand()}
-                        </div>
-                    </GridCell>
-
-                     <GridCell
-                        columnSize={55}
-                        style={{ marginLeft: "-2px" }} >
-                    
-                        <ScrollArea
-                            speed={0.8}
-                            className="area"
-                            contentClassName="content"
-                            horizontal={(this.state.isMouseInTree?true:false)}>
-                            
-
-                            {this.render_treeview()}
-                        </ScrollArea>
-                    </GridCell>
-
-                    <GridCell columnSize={30} >
-                        <div
-                            className="dnn-persona-bar-treeview-menu selection-arrows"
-                            style={{ float: "right" }} >
-                            {this.render_treemenu()}
-                        </div>
-                    </GridCell>
-
+                <GridCell columnSize={15} >
+                    <div className="dnn-persona-bar-treeview-menu" >
+                        {this.render_tree_parent_expand()}
+                    </div>
                 </GridCell>
-            </div>
+
+                    <GridCell
+                    columnSize={55}
+                    style={{ marginLeft: "-2px" }} >
+
+                    <ScrollArea
+                        speed={0.8}
+                        className="area"
+                        contentClassName="content">
+                        {this.render_treeview()}
+                    </ScrollArea>
+                </GridCell>
+
+                <GridCell columnSize={30} >
+                    <div
+                        className="dnn-persona-bar-treeview-menu selection-arrows"
+                        style={{ float: "right" }} >
+                        {this.render_treemenu()}
+                    </div>
+                </GridCell>
+
+            </GridCell>
+
         );
     }
 }

@@ -56,6 +56,6 @@
     "react-day-picker": "^6.1.0",
     "react-dnd": "^2.4.0",
     "react-dnd-html5-backend": "^2.4.1",
-    "react-scrollarea": "^0.6.6"
+    "react-scrollbar": "0.5.1"
   }
 }
