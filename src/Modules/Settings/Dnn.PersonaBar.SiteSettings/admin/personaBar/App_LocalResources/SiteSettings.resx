@@ -871,7 +871,7 @@
     <value>The language has been added.</value>
   </data>
   <data name="DefaultLanguage.Text" xml:space="preserve">
-    <value>*NOTE: This Language is the System Default</value>
+    <value>*NOTE: This Language is the Site Default</value>
   </data>
   <data name="plEnableContentLocalization.Help" xml:space="preserve">
     <value>Check this box to allow Administrators to enable content localization for their site.</value>
@@ -1072,7 +1072,7 @@
     <value>Click Cancel now if you want to change the current site default.</value>
   </data>
   <data name="TranslationProgressBarText.Text" xml:space="preserve">
-    <value>[number] new pages are beign created for each language. Please wait as you localized pages are generated...</value>
+    <value>[number] new pages are being created for each language. Please wait as your localized pages are generated...</value>
   </data>
   <data name="TotalProgress.Text" xml:space="preserve">
     <value>Total Progress [number]%</value>
@@ -1319,5 +1319,8 @@
   </data>
   <data name="WrongFormat.Text" xml:space="preserve">
     <value>Wrong Format</value>
+  </data>
+  <data name="Host.Text" xml:space="preserve">
+    <value>Host</value>
   </data>
 </root>

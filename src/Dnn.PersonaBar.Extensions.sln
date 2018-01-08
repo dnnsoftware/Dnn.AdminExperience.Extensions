@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{424CCB69-AD4D-4CBC-83D3-E7588343A2E4}"
 	ProjectSection(SolutionItems) = preProject
@@ -111,6 +111,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dnn.PersonaBar.Connectors", "Modules\Settings\Dnn.PersonaBar.Connectors\Dnn.PersonaBar.Connectors.csproj", "{271F868B-2395-4652-B2EA-EF5FEC3CCBEA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dnn.PersonaBar.Prompt", "Modules\Settings\Dnn.PersonaBar.Prompt\Dnn.PersonaBar.Prompt.csproj", "{29521C64-3269-40DA-9B4C-CD492246C889}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{65825B4E-BC14-41E3-A308-AA4C6FAF3A4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

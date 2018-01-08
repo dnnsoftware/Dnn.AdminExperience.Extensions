@@ -94,7 +94,7 @@ class PageSettings extends Component {
             this.props.onChangeField("hierarchy", parentPageName);
         }
     }
-
+    
     render() {
         const {
             selectedPage,
@@ -159,7 +159,7 @@ class PageSettings extends Component {
             }
         ];
 
-        if ((isEditingExistingPage || selectedPage.templateTabId) && selectedPage.pageType === "normal") {
+        if ((isEditingExistingPage || selectedPage.templateTabId) && selectedPage.pageType === "normal" && selectedPage.modules) {
             advancedTabs.unshift({
                 label: Localization.get("Modules"),
                 component: <div className="dnn-simple-tab-item dnn-simple-tab-item-modules">
@@ -228,15 +228,16 @@ class PageSettings extends Component {
                 </Tabs>
             </div>);
         }
-
         return (
-            <Tabs
-                tabHeaders={headers}
-                className={styles.pageSettings}
-                onSelect={this.props.selectPageSettingTab.bind(this)}
-                selectedIndex={this.props.selectedPageSettingTab}>
-                {tabs}
-            </Tabs>
+            <div>
+                <Tabs
+                    tabHeaders={headers}
+                    className={styles.pageSettings}
+                    onSelect={this.props.selectPageSettingTab.bind(this)}
+                    selectedIndex={this.props.selectedPageSettingTab}>
+                    {tabs}
+                </Tabs>
+            </div>
         );
     }
 }

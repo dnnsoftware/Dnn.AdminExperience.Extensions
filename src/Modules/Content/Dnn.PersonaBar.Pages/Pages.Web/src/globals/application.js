@@ -4,6 +4,7 @@ import ExtensionsActions from "../actions/extensionsActions";
 import PageActions from "../actions/pageActions";
 import utils from "../utils";
 import securityService from "../services/securityService";
+import { languagesActions } from "../actions/index";
 
 const application = {
     init(initCallback) {
@@ -22,6 +23,9 @@ const application = {
     load(options) {
         utilities.load(options);
         const viewName = utils.getViewName();
+
+        //Check if page translation is enabled 
+        application.dispatch(languagesActions.getContentLocalizationEnabled());
 
         if (viewName === "edit") {
             application.dispatch(PageActions.loadPage(utils.getCurrentPageId()));
@@ -42,6 +46,9 @@ const application = {
     registerInContextMenuComponent(component) {
         application.dispatch(ExtensionsActions.registerInContextMenuComponent(component));
     },
+    registerPageSettingsComponent(component) {
+        application.dispatch(ExtensionsActions.registerPageSettingsComponent(component));
+    },
     registerPageDetailFooterComponent(component) {
         application.dispatch(ExtensionsActions.registerPageDetailFooterComponent(component));
     },
@@ -53,9 +60,6 @@ const application = {
     },
     registerPageTypeSelectorComponent(component) {
         application.dispatch(ExtensionsActions.registerPageTypeSelectorComponent(component));
-    },
-    registerAdditionalPanel(panel) {
-        application.dispatch(ExtensionsActions.registerAdditionalPanel(panel));
     },
     isSuperUserForPages() {
         return utilities.getIsSuperUser();
