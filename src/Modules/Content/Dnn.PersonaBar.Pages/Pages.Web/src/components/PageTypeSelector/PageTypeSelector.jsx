@@ -58,13 +58,8 @@ class PageTypeSelector extends Component {
                             <div className="page-info-item-label">
                                 {Localization.get("PageParent") + ": "}
                             </div>
-<<<<<<< HEAD
                             <div className="page-info-item-value parent-page-name">
                                 {hierarchyLabel}
-=======
-                            <div className="page-info-item-value parent-page-name">
-                                {hierarchy}
->>>>>>> development
                             </div>
                         </div>
                         <div className="page-info-item">
