@@ -9,9 +9,9 @@ class PageTypeSelector extends Component {
     getComponents() {
         const {props} = this;
         if (props.components && props.components.length > 0) {
-            return this.props.components.map(function (component) {
+            return this.props.components.map((component, index) => {
                 const Component = component.component;
-                return <Component page={props.page} />;
+                return <Component key={index} page={props.page} />;
             });
         }
         return false;
@@ -58,8 +58,13 @@ class PageTypeSelector extends Component {
                             <div className="page-info-item-label">
                                 {Localization.get("PageParent") + ": "}
                             </div>
-                            <div className="page-info-item-value">
+<<<<<<< HEAD
+                            <div className="page-info-item-value parent-page-name">
                                 {hierarchyLabel}
+=======
+                            <div className="page-info-item-value parent-page-name">
+                                {hierarchy}
+>>>>>>> development
                             </div>
                         </div>
                         <div className="page-info-item">

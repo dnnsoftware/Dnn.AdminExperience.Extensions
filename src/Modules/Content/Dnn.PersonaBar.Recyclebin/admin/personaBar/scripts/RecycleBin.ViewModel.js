@@ -1,7 +1,7 @@
 ﻿//#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2017
+// Copyright (c) 2002-2018
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -813,9 +813,12 @@ define(['jquery', 'knockout',
 
             };
 
-            getDeletedModuleList = function () {
+            getDeletedModuleList = function (isInitCall) {
                 if (_settings.canViewModules) {
                     var viewModel = getViewModel();
+                    if ((typeof (isInitCall) !== "boolean" || typeof (isInitCall) === "boolean" && !isInitCall) && !viewModel.deletedModulesReady()) {
+                        return;
+                    }
                     var element = $('#moduleList').jScrollPane();
                     var api = element.data("jsp");
 
@@ -844,9 +847,12 @@ define(['jquery', 'knockout',
             };
 
 
-            getDeletedUserList = function () {
+            getDeletedUserList = function (isInitCall) {
                 if (_settings.canViewUsers) {
                     var viewModel = getViewModel();
+                    if ((typeof (isInitCall) !== "boolean" || typeof (isInitCall) === "boolean" && !isInitCall) && !viewModel.deletedUsersReady()) {
+                        return;
+                    }
                     var element = $('#userList').jScrollPane();
                     var api = element.data("jsp");
 
@@ -974,8 +980,8 @@ define(['jquery', 'knockout',
 
             DnnPageRecycleBin.prototype.show = function () {
                 getDeletedPageList();
-                getDeletedModuleList();
-                getDeletedUserList();
+                getDeletedModuleList(true);
+                getDeletedUserList(true);
 
             };
 
