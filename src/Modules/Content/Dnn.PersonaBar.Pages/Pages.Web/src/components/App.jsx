@@ -60,6 +60,8 @@ class App extends Component {
     constructor() {
         super();
         const date = new Date();
+        const endDateToSet = new Date();
+        endDateToSet.setHours(23, 59, 59);
         this.state = {
             referral: "",
             referralText: "",
@@ -73,7 +75,7 @@ class App extends Component {
             filtersUpdated: false,
 
             startDate: date,
-            endDate: date,
+            endDate: endDateToSet,
             defaultDate: date,
             startAndEndDateDirty: false,
 
@@ -1340,10 +1342,10 @@ class App extends Component {
         };
         const onApplyChangesDropdownDayPicker = () => {
             const { startAndEndDateDirty, startDate, endDate } = this.state;
-            const fullStartDate = startDate.getDate() + startDate.getMonth() + startDate.getFullYear();
-            const fullEndDate = endDate.getDate() + endDate.getMonth() + endDate.getFullYear();
+            const fullStartDate = startDate.getDate() + startDate.getMonth() + startDate.getFullYear() + startDate.getTime();
+            const fullEndDate = endDate.getDate() + endDate.getMonth() + endDate.getFullYear() + startDate.getTime();
             const condition = !startAndEndDateDirty && fullStartDate === fullEndDate;
-            condition ? this.setState({ startAndEndDateDirty: true, DropdownCalendarIsActive: null }) : this.setState({ DropdownCalendarIsActive: null });
+            condition ? this.setState({ filtersUpdated: true, startAndEndDateDirty: true, DropdownCalendarIsActive: null }) : this.setState({ DropdownCalendarIsActive: null });
         };
         return (
             <div className="search-more-flyout">
