@@ -17,16 +17,22 @@ class PageTypeSelector extends Component {
         return false;
     }
 
+    _getHierarchyLabel() {
+        const page = this.props.page;
+        if (page.hierarchy === null || page.hierarchy === "" || page.hierarchy === Localization.get("NoneSpecified")) {
+            return Localization.get("TopPage");
+        } else {
+            return page.hierarchy;
+        }
+    }
+
     render() {
         const {page, onChangePageType} = this.props;
         const createdDate = Localization.get("CreatedValue")
                                 .replace("[CREATEDDATE]", utils.formatDateNoTime(page.createdOnDate))
                                 .replace("[CREATEDUSER]", page.created || "System");
         
-        const hierarchy = 
-            (page.hierarchy === null || page.hierarchy === "" || page.hierarchy === Localization.get("NoneSpecified")) ? 
-                Localization.get("TopPage") : 
-                page.hierarchy;
+        const hierarchyLabel = this._getHierarchyLabel();
         
         const components = this.getComponents(); 
 
@@ -53,7 +59,7 @@ class PageTypeSelector extends Component {
                                 {Localization.get("PageParent") + ": "}
                             </div>
                             <div className="page-info-item-value">
-                                {hierarchy}
+                                {hierarchyLabel}
                             </div>
                         </div>
                         <div className="page-info-item">
