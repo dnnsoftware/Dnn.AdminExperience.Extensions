@@ -1,4 +1,3 @@
-
 import React, { Component, PropTypes } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
@@ -57,6 +56,7 @@ function getSelectedTabBeingViewed(viewTab) {
 
 
 class App extends Component {
+
     constructor() {
         super();
         const date = new Date();
@@ -124,20 +124,6 @@ class App extends Component {
         });
     }
 
-    //Method to go back to referral panel.
-    goToReferralPanel(referral) {
-        let personaBar = window.parent.dnn ? window.parent.dnn.PersonaBar : null;
-        if (personaBar) {
-            personaBar.openPanel(referral, {}); //Open, panel should already be rendered, so no need to pass params.
-            this.updateReferral("", "");
-        }
-    }
-
-    //Call method to go back to referral panel
-    backToReferral(referral) {
-        this.goToReferralPanel(referral);
-    }
-
     //Resolves tab being viewed if view params are present.
     resolveTabBeingViewed(viewParams) {
 
@@ -190,7 +176,7 @@ class App extends Component {
                 const execute = () => {
                     if (parentId !== selectedId) {
                         let page = null;
-                        this._traverse((item, list, update) => {
+                        this.traverse((item, list, update) => {
                             if (item.id === parentId) {
                                 item.isOpen = true;
                                 item.hasChildren = true;
@@ -202,7 +188,7 @@ class App extends Component {
                         if (!page || !page.childListItems) {
                             this.props.getChildPageList(parentId)
                                 .then(data => {
-                                    this._traverse((item, list, update) => {
+                                    this.traverse((item, list, update) => {
                                         const left = () => {
                                             item.childListItems = data;
                                             item.isOpen = true;
@@ -226,6 +212,7 @@ class App extends Component {
         };
         this.props.getPageHierarchy(selectedId).then(buildTreeInternal);
     }
+
     notifyErrorIfNeeded(newProps) {
         if (newProps.error !== this.props.error) {
             const errorMessage = (newProps.error && newProps.error.message) || Localization.get("AnErrorOccurred");
@@ -233,16 +220,12 @@ class App extends Component {
         }
     }
 
-    onPageSettings(pageId) {
-        this.onLoadPage(pageId);
-    }
-
     onCreatePage() {
         this.props.onCreatePage((page) => {
             if (page && page.canAddContentToPage || page && page.pageType !== "normal" || utils.getIsSuperUser()) {
                 page.selected = true;
                 if (page.parentId && page.parentId !== -1) {
-                    this._traverse((item, list, updateStore) => {
+                    this.traverse((item, list, updateStore) => {
                         if (item.id === page.parentId) {
                             switch (true) {
                                 case item.childCount > 0 && !item.childListItems:
@@ -290,7 +273,7 @@ class App extends Component {
                 }
                 else {
                     this.props.getPageList().then(() => {
-                        this._traverse((item, list, updateStore) => {
+                        this.traverse((item, list, updateStore) => {
                             if (item.id === page.id) {
                                 item.isOpen = true;
                                 item.selected = true;
@@ -309,6 +292,7 @@ class App extends Component {
                 let self = this;
                 self.setEmptyStateMessage();
             }
+            PageActions.getPageList();
         });
     }
 
@@ -335,7 +319,7 @@ class App extends Component {
 
                 const right = () => {
 
-                    this._traverse((item, list, updateStore) => {
+                    this.traverse((item, list, updateStore) => {
                         if (item.id == update.oldParentId) {
                             item.childListItems.forEach((child, index) => {
                                 if (child.id === update.tabId) {
@@ -356,7 +340,7 @@ class App extends Component {
 
             const addToNewParent = () => {
                 if (update.parentId == -1) {
-                    this._traverse((item, list, updateStore) => {
+                    this.traverse((item, list, updateStore) => {
                         if (item.id === list[list.length - 1].id) {
                             (cachedItem) ? cachedItem.parentId = -1 : null;
                             const listCopy = [...list, cachedItem];
@@ -364,7 +348,7 @@ class App extends Component {
                         }
                     });
                 } else {
-                    this._traverse((item, list, updateStore) => {
+                    this.traverse((item, list, updateStore) => {
                         if (item.id == update.parentId) {
 
                             (cachedItem) ? cachedItem.parentId = item.id : null;
@@ -406,7 +390,8 @@ class App extends Component {
                     }
                 }
 
-                this._traverse((item, list, updateStore) => {
+                /*
+                this.traverse((item, list, updateStore) => {
                     if (item.id === update.tabId) {
                         item.name = page.name;
                         item.pageType = page.pageType;
@@ -416,10 +401,13 @@ class App extends Component {
                 });
                 this.buildTree(update.tabId);
                 //this.onLoadPage(update.tabId);
+                PageActions.getPageList();
                 resolve();
+                */
             });
         });
     }
+
     onLoadPage(pageId, callback) {
         const self = this;
         this.props.onLoadPage(pageId).then((data) => {
@@ -428,6 +416,7 @@ class App extends Component {
                 callback(data);
         });
     }
+
     onCancelPage(pageId) {
         this.props.changeSelectedPagePath("");
         this.props.onCancelPage(pageId);
@@ -435,10 +424,6 @@ class App extends Component {
 
     onChangeParentId(newParentId) {
         this.onChangePageField('oldParentId', this.props.selectedPage.parentId);
-    }
-
-    onSearchFocus() {
-
     }
 
     onSearchFieldChange(e) {
@@ -486,7 +471,7 @@ class App extends Component {
             let runUpdateStore = null;
             let pageList = null;
 
-            this._traverse((item, list, updateStore) => {
+            this.traverse((item, list, updateStore) => {
                 item.selected = false;
                 pageList = list;
                 runUpdateStore = updateStore;
@@ -535,7 +520,7 @@ class App extends Component {
 
         const left = () => {
             return () => {
-                this._traverse((item, list, updateStore) => {
+                this.traverse((item, list, updateStore) => {
                     if (item.id === props.selectedPage.parentId) {
                         let itemIndex = null;
                         item.childCount--;
@@ -609,14 +594,13 @@ class App extends Component {
             Localization.get("Cancel"),
             onConfirm);
     }
-
-
+    
     showCancelWithoutSavingDialogInEditMode(input) {
         const id = (typeof input === "object") ? this.props.selectedPage.tabId : input;
         if (this.props.selectedPageDirty) {
             const onConfirm = () => {
                 this.onLoadPage(id, (data) => {
-                    this._traverse((item, list, updateStore) => {
+                    this.traverse((item, list, updateStore) => {
                         if (item.id === id) {
                             Object.keys(this.props.selectedPage).forEach((key) => item[key] = this.props.selectedPage[key]);
                             this.props.updatePageListStore(list);
@@ -638,18 +622,6 @@ class App extends Component {
             this.props.changeSelectedPagePath("");
 
         }
-    }
-
-    isNewPage() {
-        const { selectedPage } = this.props;
-        return selectedPage.tabId === 0;
-    }
-
-    getPageTitle() {
-        const { selectedPage } = this.props;
-        return this.isNewPage() ?
-            Localization.get("AddPage") :
-            selectedPage.name;
     }
 
     getSettingsButtons() {
@@ -738,10 +710,6 @@ class App extends Component {
             }
         });
     }
-
-    onChangeCustomDetail() {
-
-    }
     
     onCancelSavePageAsTemplate() {
         const { props } = this;
@@ -766,9 +734,8 @@ class App extends Component {
                 <SaveAsTemplate
                     onCancel={this.onCancelSavePageAsTemplate.bind(this)} />);
     }
-
-
-    _traverse(comparator, pageListCopy) {
+    
+    traverse(comparator, pageListCopy) {
         let listItems = pageListCopy || JSON.parse(JSON.stringify(this.props.pageList));
         const cachedChildListItems = [];
         cachedChildListItems.push(listItems);
@@ -955,8 +922,7 @@ class App extends Component {
     toggleDropdownCalendar(bool) {
         typeof (bool) == "boolean" ? this.setState({ DropdownCalendarIsActive: bool }) : this.setState({ DropdownCalendarIsActive: !this.state.DropdownCalendarIsActive });
     }
-
-
+    
     onDayClick(newDay, isEndDate) {
         this.setState({ startAndEndDateDirty: true });
         const right = () => {
@@ -995,6 +961,7 @@ class App extends Component {
 
         this.setState({ filters, DropdownCalendarIsActive: null, toggleSearchMoreFlyout: false });
     }
+    
     getDateLabel() {
         let filterByDateText = utils.isPlatform() ? "FilterByModifiedDateText" : "FilterByPublishDateText";
         const { startDate, endDate, startAndEndDateDirty } = this.state;
@@ -1006,6 +973,7 @@ class App extends Component {
         }
         return label;
     }
+    
     saveSearchFilters(searchFields) {
         return new Promise((resolve) => this.setState({ searchFields }, () => resolve()));
     }
@@ -1108,6 +1076,7 @@ class App extends Component {
             this.setState({ inSearch: true, filtersUpdated: false });
         }
     }
+    
     clearSearch(callback) {
         let date = new Date();
         this.setState({
@@ -1137,6 +1106,7 @@ class App extends Component {
             }
         });
     }
+    
     showCancelWithoutSavingDialogAndRun(callback, cancelCallback) {
 
         const onConfirm = () => {
@@ -1156,12 +1126,13 @@ class App extends Component {
             onConfirm,
             onCancel);
     }
+    
     buildBreadCrumbPath(pageId) {
         let page = {};
         let selectedPath = [];
         const buildBreadCrumbPathInternal = () => {
             const addNode = (tabId) => {
-                this._traverse((item, list, update) => {
+                this.traverse((item, list, update) => {
                     if (item.id === tabId) {
                         page = item;
                         return;
@@ -1182,16 +1153,10 @@ class App extends Component {
         };
         buildBreadCrumbPathInternal();
     }
-    onBreadcrumbSelect(name) {
-    }
 
-    isOnInsertMode(){
-        return false;
-    }
+    renderPagesDetailEditor() {
 
-    render_PagesDetailEditor() {
-
-        const render_emptyState = () => {
+        const renderEmptyState = () => {
             const DefaultMessage = Localization.get("NoPageSelected");
             return (
                 <div className="empty-page-state">
@@ -1204,7 +1169,7 @@ class App extends Component {
         };
 
 
-        const render_pageDetails = () => {
+        const renderPageDetails = () => {
             const { props, state } = this;
             const { isContentLocalizationEnabled } = props;
             return (
@@ -1240,12 +1205,12 @@ class App extends Component {
         const { selectedPage } = this.props;
         return (
             <GridCell columnSize={100} className="treeview-page-details" >
-                {(selectedPage && selectedPage.tabId) ? render_pageDetails() : render_emptyState()}
+                {(selectedPage && selectedPage.tabId) ? renderPageDetails() : renderEmptyState()}
             </GridCell>
         );
     }
 
-    render_addPageEditor() {
+    renderAddPageEditor() {
         const { props } = this;
         const cancelAction = this.onCancelSettings.bind(this);
         const deleteAction = this.onDeleteSettings.bind(this);
@@ -1280,12 +1245,6 @@ class App extends Component {
         );
     }
 
-
-    render_pageList() {
-        return (
-            <PageList onPageSettings={this.onPageSettings.bind(this)} />
-        );
-    }
     distinct(list) {
         let distinctList = [];
         list.map((item) => {
@@ -1294,6 +1253,7 @@ class App extends Component {
         });
         return distinctList;
     }
+    
     getFilterByPageTypeOptions() {
         return [
             { value: "", label: Localization.get("lblAll") },
@@ -1303,6 +1263,7 @@ class App extends Component {
             { value: "file", label: Localization.get("lblFile") }
         ];
     }
+    
     getFilterByPageStatusOptions() {
         let filterByPageStatusOptions = [
             { value: "published", label: Localization.get("lblPublished") }
@@ -1312,6 +1273,7 @@ class App extends Component {
         }
         return filterByPageStatusOptions;
     }
+    
     getFilterByWorkflowOptions() {
         let workflowList = [];
         if (!utils.isPlatform() && this.props.workflowList.length <= 0) {
@@ -1320,17 +1282,19 @@ class App extends Component {
         this.props.workflowList.length ? workflowList = this.props.workflowList.map((item => { return { value: item.workflowId, label: item.workflowName }; })) : null;
         return [{ value: "", label: Localization.get("lblNone") }].concat(workflowList);
     }
+    
     getPageTypeLabel(pageType) {
         const filterByPageTypeOptions = this.getFilterByPageTypeOptions();
         return filterByPageTypeOptions.find(x => x.value === pageType.toLowerCase()) && filterByPageTypeOptions.find(x => x.value === pageType.toLowerCase()).label;
     }
+    
     getPublishStatusLabel(publishStatus) {
         const filterByPublishStatusOptions = this.getFilterByPageStatusOptions();
         return filterByPublishStatusOptions.find(x => x.value === publishStatus.toLowerCase()) && filterByPublishStatusOptions.find(x => x.value === publishStatus.toLowerCase()).label || publishStatus;
     }
 
     /* eslint-disable react/no-danger */
-    render_more_flyout() {
+    renderMoreFlyout() {
         const generateTags = (e) => {
             this.setState({ tags: e.target.value, filtersUpdated: true });
         };
@@ -1411,7 +1375,7 @@ class App extends Component {
             </div>);
     }
 
-    render_searchResults() {
+    renderSearchResults() {
         const { pageInContextComponents, searchList } = this.props;
         const render_card = (item) => {
             const onNameClick = (item) => {
@@ -1528,7 +1492,7 @@ class App extends Component {
                 <GridCell columnSize={100} style={{ padding: "20px" }}>
                     <GridCell columnSize={80} style={{ padding: "0px" }}>
                         <div className="tags-container">
-                            {this.state.filters ? this.render_filters() : null}
+                            {this.state.filters ? this.renderFilters() : null}
                         </div>
                     </GridCell>
                     <GridCell columnSize={20} style={{ textAlign: "right", padding: "10px", fontWeight: "bold", animation: "fadeIn .15s ease-in forwards" }}>
@@ -1569,16 +1533,16 @@ class App extends Component {
         return additionalPageSettings;
     }
     
-    render_details() {
+    renderDetails() {
         const {selectedPage} = this.props;
         const {inSearch} = this.state;
         const {selectedView} = this.props;
 
         switch (true){
             case inSearch:
-                return this.render_searchResults();
+                return this.renderSearchResults();
             case selectedPage && selectedPage.tabId === 0:
-                return this.render_addPageEditor();
+                return this.renderAddPageEditor();
             case selectedView === panels.ADD_MULTIPLE_PAGES_PANEL:
                 return this.getAddPages();
             case selectedView === panels.SAVE_AS_TEMPLATE_PANEL:
@@ -1587,11 +1551,11 @@ class App extends Component {
                 return this.getAdditionalPageSettings();
             case !selectedPage:
             default:
-                return this.render_PagesDetailEditor();
+                return this.renderPagesDetailEditor();
         }
     }
 
-    render_filters() {
+    renderFilters() {
         const { filters } = this.state;
         return filters
             .filter(filter => !!filter)
@@ -1644,7 +1608,7 @@ class App extends Component {
 
         const { props } = this;
         const { selectedPage } = props;
-        const { inSearch, headerDropdownSelection, toggleSearchMoreFlyout, searchTerm } = this.state;
+        const { inSearch, toggleSearchMoreFlyout, searchTerm } = this.state;
 
         const isListPagesAllowed = securityService.canSeePagesList();
        
@@ -1663,10 +1627,10 @@ class App extends Component {
                             }
                             { 
                                 selectedPage && this.getSettingsButtons()
-                            }                            
+                            }
                             {!inSearch && <BreadCrumbs items={this.props.selectedPagePath || []} onSelectedItem={this.onSelection.bind(this)} />}
                         </PersonaBarPageHeader>
-                        {toggleSearchMoreFlyout ? this.render_more_flyout() : null}
+                        {toggleSearchMoreFlyout ? this.renderMoreFlyout() : null}
                         <GridCell columnSize={100} style={{ padding: "30px 30px 16px 30px" }}>
                             <div className="search-container">
                                 {inSearch ?
@@ -1680,7 +1644,6 @@ class App extends Component {
                                         <input
                                             type="text"
                                             value={searchTerm}
-                                            onFocus={this.onSearchFocus.bind(this)}
                                             onChange={this.onSearchFieldChange.bind(this)}
                                             onKeyPress={(e) => { e.key === "Enter" ? this.onSearch() : null; }}
                                             placeholder="Search" />
@@ -1717,7 +1680,7 @@ class App extends Component {
                                         pageList={this.props.pageList}
                                         getChildPageList={this.props.getChildPageList}
                                         getPage={this.props.getPage.bind(this)}
-                                        _traverse={this._traverse.bind(this)}
+                                        traverse={this.traverse.bind(this)}
                                         showCancelDialog={this.showCancelWithoutSavingDialogInEditMode.bind(this)}
                                         selectedPageDirty={this.props.selectedPageDirty}
                                         activePage={this.props.selectedPage}
@@ -1736,7 +1699,7 @@ class App extends Component {
                                         enabled={!((selectedPage && selectedPage.tabId === 0) || inSearch)} />
                                 </div>
                                 <GridCell columnSize={760} type={"px"}>
-                                    {this.render_details()}
+                                    {this.renderDetails()}
                                 </GridCell>
                             </GridCell>
                         </GridCell>
@@ -1864,8 +1827,8 @@ function mapDispatchToProps(dispatch) {
         onCreatePage: PageActions.createPage,
         onUpdatePage: PageActions.updatePage,
         onDeletePage: PageActions.deletePage,
-        selectPageSettingTab: PageActions.selectPageSettingTab,
         onLoadPage: PageActions.loadPage,
+        selectPageSettingTab: PageActions.selectPageSettingTab,
         onSaveMultiplePages: AddPagesActions.addPages,
         onValidateMultiplePages: AddPagesActions.validatePages,
         onCancelAddMultiplePages: AddPagesActions.cancelAddMultiplePages,

@@ -20,7 +20,7 @@ export class PersonaBarPageTreeMenu extends Component {
 
 
 
-    render_tree(childListItems) {
+    renderTree(childListItems) {
         return (
             <PersonaBarPageTreeMenu
                 CallCustomAction={this.props.CallCustomAction}
@@ -29,30 +29,14 @@ export class PersonaBarPageTreeMenu extends Component {
                 onViewEditPage={this.props.onViewEditPage}
                 onDuplicatePage={this.props.onDuplicatePage}
                 listItems={childListItems}
-                _traverse={this.props._traverse}
+                traverse={this.props.traverse}
                 pageInContextComponents={this.props.pageInContextComponents}
             />
         );
     }
 
-
-    render_parentExpandIcon(item) {
-        return (
-            <PersonaBarExpandCollapseIcon isOpen={item.isOpen} item={item} />
-        );
-    }
-
-    render_parentExpandButton(item) {
-        return (
-            <div className="parent-expand-button" style={{ visibility: "hidden" }}>
-                {item.childCount > 0 ? this.render_parentExpandIcon(item) : <div className="parent-expand-icon"></div>}
-            </div>
-        );
-    }
-
-
-    render_li() {
-        const { listItems, _traverse } = this.props;
+    renderLi() {
+        const { listItems, traverse } = this.props;
 
         return listItems.map((item) => {
             return (
@@ -69,11 +53,11 @@ export class PersonaBarPageTreeMenu extends Component {
                                 onDuplicatePage={this.props.onDuplicatePage}
                                 item={item}
                                 pageInContextComponents={this.props.pageInContextComponents}
-                                _traverse={_traverse} />
+                                traverse={traverse} />
                             }
                         </div>
                     </div>
-                    {item.childListItems && item.isOpen ? this.render_tree(item.childListItems) : null}
+                    {item.childListItems && item.isOpen ? this.renderTree(item.childListItems) : null}
                 </li>
             );
         });
@@ -83,7 +67,7 @@ export class PersonaBarPageTreeMenu extends Component {
 
         return (
             <ul className="dnn-persona-bar-treeview-menu dnn-persona-bar-treeview-ul">
-                {this.render_li()}
+                {this.renderLi()}
             </ul>
         );
     }
@@ -96,7 +80,7 @@ PersonaBarPageTreeMenu.propTypes = {
     onViewPage: PropTypes.func.isRequired,
     onViewEditPage: PropTypes.func.isRequired,
     onDuplicatePage: PropTypes.func.isRequired,
-    _traverse: PropTypes.func.isRequired,
+    traverse: PropTypes.func.isRequired,
     listItems: PropTypes.array.isRequired,
     pageInContextComponents: PropTypes.array.isRequired
 };
