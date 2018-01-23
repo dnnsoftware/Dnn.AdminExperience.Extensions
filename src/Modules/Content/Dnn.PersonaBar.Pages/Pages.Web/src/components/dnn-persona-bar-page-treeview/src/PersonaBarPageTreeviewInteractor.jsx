@@ -1,22 +1,12 @@
-import React, {
-Component
-} from "react";
+import React, { Component } from "react";
 import ScrollArea from "react-scrollbar/dist/no-css";
-import {
-    PersonaBarPageTreeview
-} from "./PersonaBarPageTreeview";
-import {
-    PersonaBarPageTreeMenu
-} from "./PersonaBarPageTreeMenu";
-import {
-    PersonaBarPageTreeParentExpand
-} from "./PersonaBarPageTreeParentExpand";
+import { PersonaBarPageTreeview } from "./PersonaBarPageTreeview";
+import { PersonaBarPageTreeMenu } from "./PersonaBarPageTreeMenu";
+import { PersonaBarPageTreeParentExpand } from "./PersonaBarPageTreeParentExpand";
 import responseStatus from "../../../constants/responseStatus";
 import utils from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
-import {
-    PropTypes
-} from "prop-types";
+import { PropTypes } from "prop-types";
 import Promise from "promise";
 import GridCell from "dnn-grid-cell";
 import "./styles.less";
