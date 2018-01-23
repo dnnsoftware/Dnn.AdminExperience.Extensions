@@ -718,8 +718,6 @@ export class PersonaBarPageTreeviewInteractor extends Component {
         );
     }
 
-<<<<<<< HEAD
-=======
     setMouseOver(isMouseOver) {
         let hasChildren = this.state.pageList && this.state.pageList.some((page) => page.childCount > 0);
 
@@ -728,7 +726,6 @@ export class PersonaBarPageTreeviewInteractor extends Component {
         });
     }
 
->>>>>>> development
     render() {
         return (
             <GridCell
