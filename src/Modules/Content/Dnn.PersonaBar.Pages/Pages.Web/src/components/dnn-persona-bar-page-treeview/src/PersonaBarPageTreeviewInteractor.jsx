@@ -718,6 +718,17 @@ export class PersonaBarPageTreeviewInteractor extends Component {
         );
     }
 
+<<<<<<< HEAD
+=======
+    setMouseOver(isMouseOver) {
+        let hasChildren = this.state.pageList && this.state.pageList.some((page) => page.childCount > 0);
+
+        this.setState({
+            isMouseInTree: (isMouseOver && hasChildren)
+        });
+    }
+
+>>>>>>> development
     render() {
         return (
             <GridCell

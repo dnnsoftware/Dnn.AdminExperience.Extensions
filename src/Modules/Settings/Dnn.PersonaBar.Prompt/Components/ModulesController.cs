@@ -157,10 +157,24 @@ namespace Dnn.PersonaBar.Prompt.Components
         {
             message = new KeyValuePair<HttpStatusCode, string>();
             if (pageId.HasValue)
-                return ModuleController.Instance.GetModule(moduleId, pageId.Value, true);
+            {
+                var module = ModuleController.Instance.GetModule(moduleId, pageId.Value, true);
+                if (module != null)
+                {
+                    return module;
+                }
+                else
+                {
+                    message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.NotFound, string.Format(Localization.GetString("Prompt_ModuleNotFound", Constants.LocalResourcesFile), moduleId, pageId));
+                    return null;
+                }
+            }
 
             var modules = ModuleController.Instance.GetAllTabsModulesByModuleID(moduleId);
-            if (modules != null && modules.Count != 0) return modules[0] as ModuleInfo;
+            if (modules != null && modules.Count != 0)
+            {
+                return modules[0] as ModuleInfo;
+            }
 
             message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.NotFound, string.Format(Localization.GetString("Prompt_NoModule", Constants.LocalResourcesFile), moduleId));
             return null;
