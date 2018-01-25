@@ -8,7 +8,7 @@ import PersonaBarPageIcon from "./_PersonaBarPageIcon";
 import PersonaBarDraftPencilIcon from "./_PersonaBarDraftPencilIcon";
 
 export class PersonaBarPageTreeview extends Component {
-    
+
     constructor() {
         super();
         this.state = {};

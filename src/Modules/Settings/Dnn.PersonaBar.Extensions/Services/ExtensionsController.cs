@@ -977,6 +977,8 @@ namespace Dnn.PersonaBar.Extensions.Services
                         files.AddRange(GetFiles(folder, "*.htm"));
                         files.AddRange(GetFiles(folder, "*.cshtml"));
                         files.AddRange(GetFiles(folder, "*.vbhtml"));
+                        files.AddRange(GetFiles(folder, "*.html"));
+                        files.AddRange(GetFiles(folder, "*.htm"));
                         break;
                     case FileType.Template:
                         files.AddRange(GetFiles(Globals.HostMapPath + "Templates\\", ".module.template"));
