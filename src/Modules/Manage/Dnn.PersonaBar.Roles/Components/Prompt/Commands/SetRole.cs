@@ -66,7 +66,7 @@ namespace Dnn.PersonaBar.Roles.Components.Prompt.Commands
                     break;
             }
 
-            if ((string.IsNullOrEmpty(RoleName) && RoleId < 0) && string.IsNullOrEmpty(Description) && !IsPublic.HasValue && !AutoAssign.HasValue && string.IsNullOrEmpty(status))
+            if (RoleId > -1 && string.IsNullOrEmpty(RoleName) && string.IsNullOrEmpty(Description) && !IsPublic.HasValue && !AutoAssign.HasValue && string.IsNullOrEmpty(status))
             {
                 AddMessage(LocalizeString("Prompt_NothingToUpdate"));
             }
