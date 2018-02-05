@@ -470,4 +470,10 @@
   <data name="AllTypes.Text" xml:space="preserve">
     <value>All Types</value>
   </data>
+  <data name="SwitchOff.Text" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="SwitchOn.Text" xml:space="preserve">
+    <value>On</value>
+  </data>
 </root>
