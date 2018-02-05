@@ -49,7 +49,6 @@ export class Output extends Component {
             const style = props.isError ? "dnn-prompt-error" : `dnn-prompt-${props.style === "cmd" ? "cmd" : "ok"}`;
             return <TextLine key={DomKey.get("output")} txt={props.output} css={style}/>;
         }
-        props.busy(false);
     }
 
     renderData(data, fieldOrder) {
@@ -91,7 +90,6 @@ Output.PropTypes = {
     options: PropTypes.array,
     resultHtml: PropTypes.string,
     error: PropTypes.string,
-    busy: PropTypes.func.isRequired,
     IsPaging: PropTypes.func.isRequired
 };
 

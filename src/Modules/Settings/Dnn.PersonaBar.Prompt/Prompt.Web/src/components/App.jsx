@@ -42,9 +42,6 @@ export class App extends Component {
             this.cmdPrompt.scrollTop = this.cmdPrompt.scrollHeight;
         }
     }
-    busy(b) {
-        return;
-    }
 
     showGreeting() {
         this.actions.runLocalCommand("INFO", formatString(Localization.get("PromptGreeting"), util.version), "cmd");
@@ -165,7 +162,6 @@ export class App extends Component {
                             {...props}
                             className="Output"
                             scrollToBottom={this.scrollToBottom.bind(this)}
-                            busy={this.busy.bind(this)}
                             IsPaging={this.paging.bind(this)}></Output>
                     <br />
                     {!props.isBusy && <Input
@@ -173,7 +169,6 @@ export class App extends Component {
                         {...props}
                         actions={this.actions}
                         updateHistory={this.updateHistory.bind(this)}
-                        busy={this.busy.bind(this)}
                         paging={props.paging}
                         setHeight={this.setHeight.bind(this)} />}
                 </div>
