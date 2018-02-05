@@ -14,7 +14,6 @@ export class App extends Component {
 
     constructor(props) {
         super(props);
-        this.isBusy = false;
         this.isPaging = false;
         this.history = [];
         this.cmdOffset = 0; // reverse offset into history
@@ -44,7 +43,7 @@ export class App extends Component {
         }
     }
     busy(b) {
-        this.isBusy = b;
+        return;
     }
 
     showGreeting() {
@@ -87,6 +86,7 @@ export class App extends Component {
     }
 
     keyDownHandler(e) {
+        const { state, props } = this;
         //CTRL + Key
         if (e.ctrlKey) {
             if (e.keyCode === 192) {
@@ -104,17 +104,27 @@ export class App extends Component {
             }
             if (e.keyCode === 88) {
                 this.actions.endPaging();
+                this.setValue("");
                 this.setFocus(true);
                 return;
             }
         }
 
-        if (this.isBusy) return;
-        if (document.activeElement.className === "dnn-prompt-input" && document.activeElement.offsetParent !== null
-            && document.activeElement.offsetParent.className === "dnn-prompt-input-wrapper" && document.activeElement.tagName === "INPUT"
+        if (props.isBusy) return;
+        if (
+            document.activeElement.className.indexOf("dnn-prompt-input") > -1
+            && document.activeElement.offsetParent !== null
+            && document.activeElement.offsetParent.className.indexOf("dnn-prompt-input-wrapper") > -1
+            && document.activeElement.tagName === "INPUT"
             && document.activeElement.type === "text") {
             switch (e.keyCode) {
                 case 13: // enter key
+                    if(this.isPaging) {
+                        this.setValue("");
+                        this.runCmd();
+                        this.setFocus(false);
+                        return;
+                    }
                     return this.runCmd();
                 case 38: // Up arrow
                     if ((this.history.length + this.cmdOffset > 0)) {
@@ -133,8 +143,10 @@ export class App extends Component {
             }
         }
         if (this.isPaging && !e.ctrlKey && e.keyCode !== 88) {
-            e.preventDefault();
-            return this.runCmd();
+            this.setValue("");
+            this.setFocus(false);
+            this.runCmd();
+            return;
         }
     }
 
@@ -156,14 +168,14 @@ export class App extends Component {
                             busy={this.busy.bind(this)}
                             IsPaging={this.paging.bind(this)}></Output>
                     <br />
-                    <Input
+                    {!props.isBusy && <Input
                         ref={(el) => this.cmdPromptInputControl = el}
                         {...props}
                         actions={this.actions}
                         updateHistory={this.updateHistory.bind(this)}
                         busy={this.busy.bind(this)}
-                        paging={this.paging.bind(this)}
-                        setHeight={this.setHeight.bind(this)} />
+                        paging={props.paging}
+                        setHeight={this.setHeight.bind(this)} />}
                 </div>
                 </div>
             </PersonaBarPage>
@@ -181,6 +193,7 @@ App.PropTypes = {
     fieldOrder: PropTypes.array,
     commandList: PropTypes.array,
     style: PropTypes.string,
+    isBusy: PropTypes.bool,
     isHelp: PropTypes.bool,
     name: PropTypes.string,
     nextPageCommand: PropTypes.string,
@@ -198,6 +211,7 @@ function mapStateToProps(state) {
         output: state.output,
         data: state.data,
         paging: state.pagingInfo,
+        isBusy: state.isBusy,
         isHtml: state.isHtml,
         reload: state.reload,
         style: state.style,

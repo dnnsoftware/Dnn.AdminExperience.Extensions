@@ -34,7 +34,7 @@ export class Output extends Component {
         }
         else if (props.data) {
             const result = [];
-            if(props.paging !== null) {
+            if(props.paging !== null && props.paging !== undefined) {
                 props.IsPaging(props.paging.pageNo < props.paging.totalPages);
             }
             result.push(this.renderData(props.data, fieldOrder));
