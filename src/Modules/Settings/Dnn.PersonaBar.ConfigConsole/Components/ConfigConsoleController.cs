@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2017
+// Copyright (c) 2002-2018
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -63,7 +63,7 @@ namespace Dnn.PersonaBar.ConfigConsole.Components
         {
             ValidateFilePath(fileName);
 
-            var configDoc = new XmlDocument();
+            var configDoc = new XmlDocument { XmlResolver = null };
             configDoc.LoadXml(fileContent);
             Config.Save(configDoc, fileName);
         }
@@ -72,7 +72,7 @@ namespace Dnn.PersonaBar.ConfigConsole.Components
         {
             if (IsValidXmlMergDocument(fileContent))
             {
-                var doc = new XmlDocument();
+                var doc = new XmlDocument { XmlResolver = null };
                 doc.LoadXml(fileContent);
                 var app = DotNetNukeContext.Current.Application;
                 var merge = new DotNetNuke.Services.Installer.XmlMerge(doc, Globals.FormatVersion(app.Version), app.Description);

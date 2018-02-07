@@ -157,7 +157,7 @@
     <value>Unable to find a desktop module with the name '{0}' for this portal</value>
   </data>
   <data name="Prompt_ModuleAdded.Text" xml:space="preserve">
-    <value>Successfully added {0} new module{(1}</value>
+    <value>Successfully added {0} new module{1}</value>
   </data>
   <data name="Prompt_ModuleCopied.Text" xml:space="preserve">
     <value>Successfully copied the module.</value>
@@ -1199,5 +1199,8 @@
       &lt;tr&gt;&lt;td&gt;Application restarted&lt;/td&gt;&lt;/tr&gt;
       &lt;tr&gt;&lt;td&gt;Reloading in 3 seconds&lt;/td&gt;&lt;/tr&gt;
     &lt;/table&gt;</value>
+  </data>
+  <data name="InValidPortalId.Text" xml:space="preserve">
+    <value>Portal Id {0} does not belong to Site Group.</value>
   </data>
 </root>

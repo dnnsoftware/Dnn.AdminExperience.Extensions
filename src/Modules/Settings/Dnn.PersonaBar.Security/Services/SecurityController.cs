@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2017
+// Copyright (c) 2002-2018
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -689,7 +689,7 @@ namespace Dnn.PersonaBar.Security.Services
 
                 // load XML document
                 StreamReader oReader = new StreamReader(oStream);
-                XmlDocument oDoc = new XmlDocument();
+                XmlDocument oDoc = new XmlDocument { XmlResolver = null };
                 oDoc.LoadXml(oReader.ReadToEnd());
 
                 List<object> items = new List<object>();

@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2017
+// Copyright (c) 2002-2018
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -251,9 +251,9 @@ namespace Dnn.PersonaBar.Pages.Components
             }
         }
 
-        public TabInfo SavePageDetails(PageSettings pageSettings)
+        public TabInfo SavePageDetails(PortalSettings settings, PageSettings pageSettings)
         {
-            var portalSettings = PortalController.Instance.GetCurrentPortalSettings();
+            var portalSettings = settings ?? PortalController.Instance.GetCurrentPortalSettings();
             TabInfo tab = null;
             if (pageSettings.TabId > 0)
             {
@@ -272,7 +272,7 @@ namespace Dnn.PersonaBar.Pages.Components
             }
 
             var tabId = pageSettings.TabId <= 0
-                ? AddTab(pageSettings)
+                ? AddTab(portalSettings, pageSettings)
                 : UpdateTab(tab, pageSettings);
 
             return TabController.Instance.GetTab(tabId, portalSettings.PortalId);
@@ -350,8 +350,11 @@ namespace Dnn.PersonaBar.Pages.Components
                         bIsMatch = bIsMatch &
                                    Regex.IsMatch(tab.TabPath, tabPath.Replace("*", ".*"), RegexOptions.IgnoreCase);
                     if (!string.IsNullOrEmpty(tabSkin))
+                    {
+                        var escapedString = Regex.Replace(tabSkin, "([^\\w^\\*\\s]+)+", @"\$1", RegexOptions.Compiled|RegexOptions.ECMAScript|RegexOptions.IgnoreCase|RegexOptions.Multiline);
                         bIsMatch = bIsMatch &
-                                   Regex.IsMatch(tab.SkinSrc, tabSkin.Replace("*", ".*"), RegexOptions.IgnoreCase);
+                                   Regex.IsMatch(tab.SkinSrc, escapedString.Replace("*", ".*"), RegexOptions.IgnoreCase);
+                    }
 
                     if (bIsMatch)
                         finalList.Add(tab);
@@ -570,9 +573,9 @@ namespace Dnn.PersonaBar.Pages.Components
             return true;
         }
 
-        public virtual int AddTab(PageSettings pageSettings)
+        public virtual int AddTab(PortalSettings settings, PageSettings pageSettings)
         {
-            var portalSettings = PortalController.Instance.GetCurrentPortalSettings();
+            var portalSettings = settings ?? PortalController.Instance.GetCurrentPortalSettings();
             var portalId = portalSettings.PortalId;
             var tab = new TabInfo { PortalID = portalId, ParentId = pageSettings.ParentId ?? Null.NullInteger };
             UpdateTabInfoFromPageSettings(tab, pageSettings);

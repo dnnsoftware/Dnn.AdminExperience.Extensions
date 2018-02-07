@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2017
+// Copyright (c) 2002-2018
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -37,6 +37,8 @@ using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Localization;
+using System.Net;
+using Dnn.PersonaBar.Prompt.Components;
 
 namespace Dnn.PersonaBar.Recyclebin.Components
 {
@@ -255,7 +257,10 @@ namespace Dnn.PersonaBar.Recyclebin.Components
         {
             errorMessage = null;
             // restore module
-            var module = _moduleController.GetModule(moduleId, tabId, false);
+
+            KeyValuePair<HttpStatusCode, string> message;
+            var module = ModulesController.Instance.GetModule(PortalSettings, moduleId, tabId, out message);
+
             if (module != null)
             {
                 var totalRecords = 0;

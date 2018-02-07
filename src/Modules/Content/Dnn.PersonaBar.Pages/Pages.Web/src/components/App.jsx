@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from "react";
-import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import PersonaBarPageHeader from "dnn-persona-bar-page-header";
@@ -11,8 +10,7 @@ import {
     visiblePanelActions as VisiblePanelActions,
     visiblePageSettingsActions as VisiblePageSettingsActions,
     languagesActions as LanguagesActions,
-    pageHierarchyActions as PageHierarchyActions,
-    extensionActions as ExtensionsActions
+    pageHierarchyActions as PageHierarchyActions
 } from "../actions";
 import PageSettings from "./PageSettings/PageSettings";
 import AddPages from "./AddPages/AddPages";
@@ -26,20 +24,14 @@ import Sec from "./Security/Sec";
 import securityService from "../services/securityService";
 import permissionTypes from "../services/permissionTypes";
 import BreadCrumbs from "./BreadCrumbs";
-import cloneDeep from "lodash/clonedeep";
 import GridCell from "dnn-grid-cell";
-import OverflowText from "dnn-text-overflow-wrapper";
 import Promise from "promise";
-
-import { PagesSearchIcon, PagesVerticalMore, CalendarIcon, ArrowBack, EyeIcon, TreeEdit, TreeAnalytics } from "dnn-svg-icons";
-import Dropdown from "dnn-dropdown";
-import { XIcon } from "dnn-svg-icons";
+import SearchPageInput from "./SearchPage/SearchPageInput";
 
 import "./style.less";
 
-import DropdownDayPicker from "./DropdownDayPicker/DropdownDayPicker";
-
 import { PersonaBarPageTreeviewInteractor } from "./dnn-persona-bar-page-treeview";
+import SearchResult from "./SearchPage/SearchResult";
 
 function getSelectedTabBeingViewed(viewTab) {
     switch (viewTab) {
@@ -65,9 +57,7 @@ class App extends Component {
             referralText: "",
             busy: false,
             headerDropdownSelection: "Save Page Template",
-            toggleSearchMoreFlyout: false,
-            DropdownCalendarIsActive: null,
-
+            
             inSearch: false,
             searchTerm: "",
             filtersUpdated: false,
@@ -426,6 +416,7 @@ class App extends Component {
         this.onChangePageField('oldParentId', this.props.selectedPage.parentId);
     }
 
+<<<<<<< HEAD
     onSearchFieldChange(e) {
         let self = this;
         const currentSearchTerm = this.state.searchTerm;
@@ -443,6 +434,8 @@ class App extends Component {
         });
     }
 
+=======
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
     onAddMultiplePage() {
         this.clearEmptyStateMessage();
         this.selectPageSettingTab(0);
@@ -454,7 +447,7 @@ class App extends Component {
     /**
      * When on edit mode
      */
-    onEditMode(){
+    onEditMode() {
         const {selectedPage, selectedView} = this.props;
         return (selectedPage && selectedPage.tabId === 0 
             || selectedView === panels.SAVE_AS_TEMPLATE_PANEL
@@ -599,8 +592,13 @@ class App extends Component {
         const id = (typeof input === "object") ? this.props.selectedPage.tabId : input;
         if (this.props.selectedPageDirty) {
             const onConfirm = () => {
+<<<<<<< HEAD
                 this.onLoadPage(id, (data) => {
                     this.traverse((item, list, updateStore) => {
+=======
+                this.onLoadPage(id, () => {
+                    this._traverse((item, list) => {
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
                         if (item.id === id) {
                             Object.keys(this.props.selectedPage).forEach((key) => item[key] = this.props.selectedPage[key]);
                             this.props.updatePageListStore(list);
@@ -911,6 +909,7 @@ class App extends Component {
         this.noPermissionSelectionPageId = null;
         this.setState({ emptyStateMessage: null });
     }
+<<<<<<< HEAD
 
     onSearchMoreFlyoutClick() {
         this.setState({ toggleSearchMoreFlyout: !this.state.toggleSearchMoreFlyout }, () => {
@@ -922,6 +921,8 @@ class App extends Component {
     toggleDropdownCalendar(bool) {
         typeof (bool) == "boolean" ? this.setState({ DropdownCalendarIsActive: bool }) : this.setState({ DropdownCalendarIsActive: !this.state.DropdownCalendarIsActive });
     }
+=======
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
     
     onDayClick(newDay, isEndDate) {
         this.setState({ startAndEndDateDirty: true });
@@ -953,11 +954,12 @@ class App extends Component {
             let dateRangeText = Localization.get(utils.isPlatform() ? "ModifiedDateRange" : "PublishedDateRange");
             const fullStartDate = utils.formatDate(startDate);
             const fullEndDate = utils.formatDate(endDate);
-            const left = () => filters.push({ ref: "startAndEndDateDirty", tag: `${dateRangeText}: ${fullStartDate} - ${fullEndDate} ` });
-            const right = () => filters.push({ ref: "startAndEndDateDirty", tag: `${dateRangeText}: ${fullStartDate}` });
+            const dateInterval = () => filters.push({ ref: "startAndEndDateDirty", tag: `${dateRangeText}: ${fullStartDate} - ${fullEndDate} ` });
+            const justOneDate = () => filters.push({ ref: "startAndEndDateDirty", tag: `${dateRangeText}: ${fullStartDate}` });
 
-            fullStartDate != fullEndDate ? left() : right();
+            fullStartDate !== fullEndDate ? dateInterval() : justOneDate();
         }
+<<<<<<< HEAD
 
         this.setState({ filters, DropdownCalendarIsActive: null, toggleSearchMoreFlyout: false });
     }
@@ -974,44 +976,24 @@ class App extends Component {
         return label;
     }
     
+=======
+    }
+
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
     saveSearchFilters(searchFields) {
         return new Promise((resolve) => this.setState({ searchFields }, () => resolve()));
     }
 
-    onSearch() {
-        const { selectedPage } = this.props;
-        const { filtersUpdated } = this.state;
-        if (filtersUpdated) {
-            if (selectedPage) {
-                if (this.props.selectedView === 3) {
-                    if (this.props.dirtyTemplate) {
-                        this.showCancelWithoutSavingDialogAndRun(() => {
-                            this.props.onCancelSavePageAsTemplate();
-                            this.doSearch();
-                        }, () => {
-                            this.clearSearch();
-                        });   
-                    }                    
-                    else {
-                        this.props.onCancelAddMultiplePages();
-                        this.doSearch();
-                    }  
-                }
-                else if (this.props.selectedView === 4) {
-                    if (this.props.dirtyCustomDetails) {
-                        this.showCancelWithoutSavingDialogAndRun(() => {
-                            this.props.onCancelSavePageAsTemplate;
-                            this.doSearch();
-                        }, () => {
-                            this.clearSearch();
-                        }); 
-                    }
-                    else {
-                        this.props.onCancelSavePageAsTemplate;
-                        this.doSearch();
-                    }    
-                }
-                else {
+    onSearch(term) {
+        let newTerm = (term !== undefined) ? term : this.state.searchTerm;
+        this.setState({
+            searchTerm: newTerm,
+            filtersUpdated: true
+        },()=>{
+            const { selectedPage } = this.props;
+            const { filtersUpdated } = this.state;
+            if (filtersUpdated) {
+                if (selectedPage) {
                     this.lastActivePageId = selectedPage.tabId;
                     if (this.props.selectedPageDirty) {
                         this.showCancelWithoutSavingDialogAndRun(() => {
@@ -1023,32 +1005,18 @@ class App extends Component {
                         this.doSearch();
                     }
                 }
-            }            
-            else if (this.props.selectedView === 2) {
-                if (this.props.dirtyBulkPage) {
-                    this.showCancelWithoutSavingDialogAndRun(() => {
-                        this.props.onCancelAddMultiplePages();
-                        this.doSearch();
-                    }, () => {
-                        this.clearSearch();
-                    });    
-                }  
                 else {
-                    this.props.onCancelAddMultiplePages();
                     this.doSearch();
                 }          
             }
-            else {
-                this.doSearch();
-            }
-        }
-        this.setState({ DropdownCalendarIsActive: null, toggleSearchMoreFlyout: false });
+            this.setState({ DropdownCalendarIsActive: null});
+        });
     }
 
     doSearch() {
         const { selectedPage } = this.props;
-        if (selectedPage) {
-            this.onCancelPage();
+        if (selectedPage && this.props.selectedPageDirty) {
+            this.onCancelPage(selectedPage.tabId);
         }
 
         let { filtersUpdated, inSearch, searchTerm, filterByPageType, filterByPublishStatus, filterByWorkflow, startDate, endDate, startAndEndDateDirty, tags } = this.state;
@@ -1062,7 +1030,6 @@ class App extends Component {
                 tags = tags[tags.length - 1] == "," ? tags.split(",").filter(t => !!t).join() : tags;
             }
 
-
             let search = { tags: tags, searchKey: searchTerm, pageType: filterByPageType, publishStatus: filterByPublishStatus, workflowId: filterByWorkflow };
             search = Object.assign({}, search, searchDateRange);
             for (let prop in search) {
@@ -1070,18 +1037,47 @@ class App extends Component {
                     delete search[prop];
                 }
             }
-
+            
             this.generateFilters();
+            
             this.saveSearchFilters(search).then(() => this.props.searchAndFilterPageList(search));
             this.setState({ inSearch: true, filtersUpdated: false });
         }
     }
     
+<<<<<<< HEAD
+=======
+    clearAdvancedSearch() {
+        let date = new Date();
+        this.setState({
+            startDate: date,
+            endDate: date,
+            defaultDate: date,
+            startAndEndDateDirty: false,
+            filterByPageType: null,
+            filterByPublishStatus: null,
+            filterByWorkflow: null,
+            workflowList: [],
+            tags: "",
+            filters: [],
+            searchFields: {}
+        });
+        this.onSearch(this.state.searchTerm);
+    }
+
+    clearAdvancedSearchDateInterval(){
+        let date = new Date();
+        this.setState({
+            startDate:date,
+            endDate: date,
+            startAndEndDateDirty:false
+        });
+    }
+    
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
     clearSearch(callback) {
         let date = new Date();
         this.setState({
-            toggleSearchMoreFlyout: false,
-            DropdownCalendarIsActive: null,
             filtersUpdated: false,
             inSearch: false,
             searchTerm: "",
@@ -1132,13 +1128,17 @@ class App extends Component {
         let selectedPath = [];
         const buildBreadCrumbPathInternal = () => {
             const addNode = (tabId) => {
+<<<<<<< HEAD
                 this.traverse((item, list, update) => {
+=======
+                this._traverse((item) => {
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
                     if (item.id === tabId) {
                         page = item;
                         return;
                     }
                 });
-                //page && page.name && page.id && 
+                
                 selectedPath.push({ name: page.name, tabId: (page.id !== pageId ? page.id : null) });
                 const left = () => {
                     addNode(page.parentId);
@@ -1169,8 +1169,13 @@ class App extends Component {
         };
 
 
+<<<<<<< HEAD
         const renderPageDetails = () => {
             const { props, state } = this;
+=======
+        const render_pageDetails = () => {
+            const { props } = this;
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
             const { isContentLocalizationEnabled } = props;
             return (
                 <PageSettings
@@ -1245,6 +1250,7 @@ class App extends Component {
         );
     }
 
+<<<<<<< HEAD
     distinct(list) {
         let distinctList = [];
         list.map((item) => {
@@ -1252,18 +1258,29 @@ class App extends Component {
                 distinctList.push(item.trim().toLowerCase());
         });
         return distinctList;
+=======
+
+    render_pageList() {
+        return (
+            <PageList onPageSettings={this.onPageSettings.bind(this)} />
+        );
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
     }
     
     getFilterByPageTypeOptions() {
         return [
-            { value: "", label: Localization.get("lblAll") },
+            { value: "", label: Localization.get("lblNone") },
             { value: "normal", label: Localization.get("lblNormal") },
             { value: "tab", label: Localization.get("Existing") },
             { value: "url", label: Localization.get("lblUrl") },
             { value: "file", label: Localization.get("lblFile") }
         ];
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
     getFilterByPageStatusOptions() {
         let filterByPageStatusOptions = [
             { value: "published", label: Localization.get("lblPublished") }
@@ -1293,6 +1310,7 @@ class App extends Component {
         return filterByPublishStatusOptions.find(x => x.value === publishStatus.toLowerCase()) && filterByPublishStatusOptions.find(x => x.value === publishStatus.toLowerCase()).label || publishStatus;
     }
 
+<<<<<<< HEAD
     /* eslint-disable react/no-danger */
     renderMoreFlyout() {
         const generateTags = (e) => {
@@ -1409,85 +1427,42 @@ class App extends Component {
                 return path.split("/").join(" / ");
             };
 
+=======
+    updateSearchAdvancedTags(tags) {
+        this.setState({tags:tags,filtersUpdated:true});
+    }
 
-            let visibleMenus = [];
-            item.canViewPage && visibleMenus.push(<li onClick={() => this.onViewPage(item)}><div title={Localization.get("View")} dangerouslySetInnerHTML={{ __html: EyeIcon }} /></li>);
-            item.canAddContentToPage && visibleMenus.push(<li onClick={() => this.onViewEditPage(item)}><div title={Localization.get("Edit")} dangerouslySetInnerHTML={{ __html: TreeEdit }} /></li>);
-            if (pageInContextComponents && securityService.isSuperUser() && !utils.isPlatform()) {
-                let additionalMenus = cloneDeep(pageInContextComponents || []);
-                additionalMenus && additionalMenus.map(additionalMenu => {
-                    visibleMenus.push(<li onClick={() => (additionalMenu.OnClickAction && typeof additionalMenu.OnClickAction === "function")
-                        && this.CallCustomAction(additionalMenu.OnClickAction)}><div title={additionalMenu.title} dangerouslySetInnerHTML={{ __html: additionalMenu.icon }} /></li>);
-                });
-            }
-            return (
-                <GridCell columnSize={100}>
-                    <div className="search-item-card">
-                        {this.props.pageTypeSelectorComponents && this.props.pageTypeSelectorComponents.length > 0 &&                            
-                            this.props.pageTypeSelectorComponents.map(function (component) {
-                                const Component = component.component;
-                                return <div className="search-item-thumbnail"><Component page={item} /></div>;
-                            })
-                        }
-                        <div className={`search-item-details${utils.isPlatform() ? " full" : ""}`}>
-                            <div className="search-item-details-left">
-                                <h1 onClick={() => onNameClick(item)}><OverflowText text={item.name} /></h1>
-                                <h2><OverflowText text={getTabPath(item.tabpath)} /></h2>
-                            </div>
-                            <div className="search-item-details-right">
-                                <ul>
-                                    {visibleMenus}
-                                </ul>
-                            </div>
-                            <div className="search-item-details-list">
-                                <ul>
-                                    <li>
-                                        <p>{Localization.get("PageType")}:</p>
-                                        <p title={this.getPageTypeLabel(item.pageType)} onClick={() => { this.state.filterByPageType !== item.pageType && this.setState({ filterByPageType: item.pageType, filtersUpdated: true }, () => this.onSearch()); }} >{this.getPageTypeLabel(item.pageType)}</p>
-                                    </li>
-                                    <li>
-                                        <p>{Localization.get("lblPublishStatus")}:</p>
-                                        <p title={this.getPublishStatusLabel(item.publishStatus)} onClick={() => { this.state.filterByPublishStatus !== item.publishStatus && this.setState({ filterByPublishStatus: item.publishStatus, filtersUpdated: true }, () => this.onSearch()); }} >{this.getPublishStatusLabel(item.publishStatus)}</p>
-                                    </li>
-                                    <li>
-                                        <p >{Localization.get(utils.isPlatform() ? "lblModifiedDate" : "lblPublishDate")}:</p>
-                                        <p title={item.publishDate} onClick={() => { (this.state.startDate.toString() !== new Date(item.publishDate.split(" ")[0]).toString() || this.state.startDate.toString() !== this.state.endDate.toString()) && this.setState({ startDate: publishedDate, endDate: publishedDate, startAndEndDateDirty: true, filtersUpdated: true }, () => this.onSearch()); }}>{item.publishDate.split(" ")[0]}</p>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="search-item-details-list">
-                                <ul>
-                                    {!utils.isPlatform() && <li>
-                                        <p >{Localization.get("WorkflowTitle")}:</p>
-                                        <p title={item.workflowName} onClick={() => { this.state.filterByWorkflow !== item.workflowId && this.setState({ filterByWorkflow: item.workflowId, filterByWorkflowName: item.workflowName, filtersUpdated: true }, () => this.onSearch()); }}>{item.workflowName}</p>
-                                    </li>
-                                    }
-                                    <li style={{ width: !utils.isPlatform() ? "64%" : "99%" }}>
-                                        <p>{Localization.get("Tags")}:</p>
-                                        <p title={item.tags.join(",").trim(",")}>{
-                                            item.tags.map((tag, count) => {
-                                                return (
-                                                    <span>
-                                                        <span style={{ marginLeft: "5px" }} onClick={() => addToTags(tag)}>
-                                                            {tag}
-                                                        </span>
-                                                        {count < (item.tags.length - 1) && <span style={{ color: "#000" }}>
-                                                            ,
-                                                        </span>}
-                                                    </span>
-                                                );
-                                            })}
-                                        </p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </GridCell >
-            );
-        };
+    onApplyChangesDropdownDayPicker() {
+        const { startAndEndDateDirty, startDate, endDate } = this.state;
+        const fullStartDate = startDate.getDate() + startDate.getMonth() + startDate.getFullYear();
+        const fullEndDate = endDate.getDate() + endDate.getMonth() + endDate.getFullYear();
+        const condition = !startAndEndDateDirty && fullStartDate === fullEndDate;
+        condition ? this.setState({ startAndEndDateDirty: true, DropdownCalendarIsActive: null }) : this.setState({ DropdownCalendarIsActive: null });
+    }
+    
+    updateFilterByPageTypeOptions(data) { 
+        this.setState({ filterByPageType: data.value, filtersUpdated: true }); 
+    }
+    
+    updateFilterByPageStatusOptions(data) {
+        this.setState({ filterByPublishStatus: data.value, filtersUpdated: true });
+    } 
+    updateFilterByWorkflowOptions(data) {
+        this.setState({ filterByWorkflow: data.value, filterByWorkflowName: data.label, filtersUpdated: true });
+    }
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
 
+    updateFilterStartEndDate(startDate, endDate) {
+        this.setState({
+            startDate,endDate,
+            startAndEndDateDirty:true,
+            filtersUpdated:true
+        });
+    }
+
+    render_searchResults() {
         return (
+<<<<<<< HEAD
             <GridCell columnSize={100} className="fade-in">
                 <GridCell columnSize={100} style={{ padding: "20px" }}>
                     <GridCell columnSize={80} style={{ padding: "0px" }}>
@@ -1505,6 +1480,42 @@ class App extends Component {
                     </GridCell>
                 </GridCell>
             </GridCell>
+=======
+            <SearchResult 
+                filters={this.state.filters} 
+                tags={this.state.tags}
+                filterPageByType={this.state.filterByPageType}
+                filterByPublishStatus={this.state.filterByPublishStatus}
+                startDate={this.state.startDate} 
+                endDate={this.state.endDate}
+                getPageTypeLabel={this.getPageTypeLabel.bind(this)}
+                getPublishStatusLabel={this.getPublishStatusLabel.bind(this)}
+                getFilterByPageTypeOptions={this.getFilterByPageTypeOptions.bind(this)}
+                getFilterByPageStatusOptions={this.getFilterByPageStatusOptions.bind(this)}
+                getFilterByWorkflowOptions={this.getFilterByWorkflowOptions.bind(this)}
+                filterByWorkflow={this.state.filterByWorkflow}
+                onApplyChangesDropdownDayPicker={this.onApplyChangesDropdownDayPicker.bind(this)}
+                updateFilterByPageTypeOptions={this.updateFilterByPageTypeOptions.bind(this)}
+                updateFilterByPageStatusOptions={this.updateFilterByPageStatusOptions.bind(this)}
+                updateFilterByWorkflowOptions={this.updateFilterByWorkflowOptions.bind(this)}
+                filterByPageType={this.state.filterByPageType}
+                onDayClick={this.onDayClick.bind(this)}
+                startAndEndDateDirty={this.state.startAndEndDateDirty}
+                onSearch={this.onSearch.bind(this)}
+                clearSearch={this.clearSearch.bind(this)}
+                clearAdvancedSearch={this.clearAdvancedSearch.bind(this)}
+                clearAdvancedSearchDateInterval={this.clearAdvancedSearchDateInterval.bind(this)}
+                buildBreadCrumbPath={this.buildBreadCrumbPath.bind(this)} 
+                setEmptyStateMessage={this.setEmptyStateMessage.bind(this)}
+                onViewPage={this.onViewPage.bind(this)}
+                onViewEditPage={this.onViewEditPage.bind(this)}
+                CallCustomAction={this.CallCustomAction.bind(this)}
+                onLoadPage={this.onLoadPage.bind(this)}
+                updateSearchAdvancedTags={this.updateSearchAdvancedTags.bind(this)}
+                updateFilterStartEndDate={this.updateFilterStartEndDate.bind(this)}
+                buildTree={this.buildTree.bind(this)}
+            />
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
         );
     }
     
@@ -1538,7 +1549,7 @@ class App extends Component {
         const {inSearch} = this.state;
         const {selectedView} = this.props;
 
-        switch (true){
+        switch (true) {
             case inSearch:
                 return this.renderSearchResults();
             case selectedPage && selectedPage.tabId === 0:
@@ -1554,6 +1565,7 @@ class App extends Component {
                 return this.renderPagesDetailEditor();
         }
     }
+<<<<<<< HEAD
 
     renderFilters() {
         const { filters } = this.state;
@@ -1604,12 +1616,18 @@ class App extends Component {
             });
     }
 
+=======
+   
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
     render() {
-
         const { props } = this;
         const { selectedPage } = props;
+<<<<<<< HEAD
         const { inSearch, toggleSearchMoreFlyout, searchTerm } = this.state;
 
+=======
+        const { inSearch } = this.state;
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
         const isListPagesAllowed = securityService.canSeePagesList();
        
          /* eslint-disable react/no-danger */
@@ -1621,8 +1639,8 @@ class App extends Component {
                         <PersonaBarPageHeader title={Localization.get(inSearch ? "PagesSearchHeader" : "Pages")}>
                             {securityService.isSuperUser() &&
                                 <div> 
-                                    <Button type="primary" disabled={ this.onEditMode() || inSearch } size="large" onClick={this.onAddPage.bind(this)}>{Localization.get("AddPage")}</Button>
-                                    <Button type="secondary" disabled={ this.onEditMode() || inSearch } size="large" onClick={this.onAddMultiplePage.bind(this)}>{Localization.get("AddMultiplePages")}</Button>
+                                    <Button type="primary" disabled={ (this.onEditMode() || this.state.inSearch) } size="large" onClick={this.onAddPage.bind(this)}>{Localization.get("AddPage")}</Button>
+                                    <Button type="secondary" disabled={ (this.onEditMode() || this.state.inSearch) } size="large" onClick={this.onAddMultiplePage.bind(this)}>{Localization.get("AddMultiplePages")}</Button>
                                 </div>
                             }
                             { 
@@ -1630,6 +1648,7 @@ class App extends Component {
                             }
                             {!inSearch && <BreadCrumbs items={this.props.selectedPagePath || []} onSelectedItem={this.onSelection.bind(this)} />}
                         </PersonaBarPageHeader>
+<<<<<<< HEAD
                         {toggleSearchMoreFlyout ? this.renderMoreFlyout() : null}
                         <GridCell columnSize={100} style={{ padding: "30px 30px 16px 30px" }}>
                             <div className="search-container">
@@ -1670,10 +1689,16 @@ class App extends Component {
                                     />
                                 </div>
                             </div>
+=======
+                        <GridCell columnSize={100} style={{ padding: "30px 30px 16px 30px" }}>
+                            <SearchPageInput 
+                                inSearch={this.state.inSearch} onSearch={this.onSearch.bind(this)}
+                                clearSearch={this.clearSearch.bind(this)}  />
+>>>>>>> 3caa9e9f8af10b65957986b2d7dda709d4cf2418
                         </GridCell>
                         <GridCell columnSize={100} style={{ padding: "0px 30px 30px 30px" }} >
                             <GridCell columnSize={1096} type={"px"} className="page-container">
-                                <div className={((selectedPage && selectedPage.tabId === 0) || this.onEditMode() || inSearch) ? "tree-container disabled" : "tree-container"}>
+                                <div className={(this.onEditMode()|| this.state.inSearch) ? "tree-container disabled" : "tree-container"}>
                                     <PersonaBarPageTreeviewInteractor
                                         clearSelectedPage={this.props.clearSelectedPage}
                                         Localization={Localization}
