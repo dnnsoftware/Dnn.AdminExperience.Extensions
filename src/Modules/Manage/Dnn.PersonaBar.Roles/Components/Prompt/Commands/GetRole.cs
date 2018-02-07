@@ -23,12 +23,7 @@ namespace Dnn.PersonaBar.Roles.Components.Prompt.Commands
         public override void Init(string[] args, PortalSettings portalSettings, UserInfo userInfo, int activeTabId)
         {
             
-            RoleId = GetFlagValue(FlagId, "Role Id", -1, true, true);
-
-            if (RoleId < 0)
-            {
-                AddMessage(LocalizeString("Prompt_RoleIdNegative"));
-            }
+            RoleId = GetFlagValue(FlagId, "Role Id", -1, true, true, true);
         }
 
         public override ConsoleResultModel Run()

@@ -143,18 +143,14 @@ const PageService = function () {
         };
     };
 
-    const openPageInEditMode = function (id, url, callback) {
+    const openPageInEditMode = function (id, url) {
         const api = getPagesApi();
         return api.post("EditModeForPage?id=" + id, {})
-            .then(() => {
-                if(url){
-                    utils.getUtilities().closePersonaBar(function () {
-                        window.top.location.href = url;
-                    });
-                } else if( typeof callback === "function"){
-                    callback();
-                }
-            });
+            .then(() =>
+                utils.getUtilities().closePersonaBar(function () {
+                    window.top.location.href = url;
+                })
+            );
     };
 
     const getCachedPageCount = function (cacheProvider, pageId) {

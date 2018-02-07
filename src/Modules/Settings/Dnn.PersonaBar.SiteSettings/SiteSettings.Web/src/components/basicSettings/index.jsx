@@ -30,8 +30,8 @@ class BasicSettingsPanelBody extends Component {
         canEdit = util.settings.isHost || util.settings.isAdmin || util.settings.permissions.SITE_INFO_EDIT;
     }
 
-    loadData(newProps) {
-        const props = newProps ? newProps : this.props;
+    loadData() {
+        const {props} = this;
         if (props.basicSettings) {
             let portalIdChanged = false;
             let cultureCodeChanged = false;
@@ -86,24 +86,11 @@ class BasicSettingsPanelBody extends Component {
             state.error["title"] = false;
         }
 
-        if (!this.loadData(props)) {
-            this.setState({
-                basicSettings: Object.assign({}, props.basicSettings),
-                error: state.error,
-                triedToSubmit: false
-            });
-            return;
-        }
-        
-        props.dispatch(SiteInfoActions.getPortalSettings(props.portalId, props.cultureCode, (data) => {
-            this.setState({
-                basicSettings: Object.assign({}, data.Settings),
-                error: {
-                    title: false
-                },
-                triedToSubmit: false
-            });
-        }));
+        this.setState({
+            basicSettings: Object.assign({}, props.basicSettings),
+            error: state.error,
+            triedToSubmit: false
+        });
     }
 
     onSettingChange(key, event) {

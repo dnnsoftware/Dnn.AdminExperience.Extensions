@@ -132,8 +132,7 @@ export class App extends Component {
                     break;
             }
         }
-        if (this.isPaging && !e.ctrlKey && e.keyCode !== 88) {
-            e.preventDefault();
+        if (this.isPaging && !e.ctrlKey) {
             return this.runCmd();
         }
     }
@@ -142,19 +141,18 @@ export class App extends Component {
         const { props } = this;
         return (
             <PersonaBarPage isOpen={true} fullWidth={true}>
-                <div className="wrapper">
                 <div
                     className="dnn-prompt"
                     style={{ display: "block" }}
                     onKeyDown={this.keyDownHandler.bind(this)}
                     onClick={this.onClickHandler.bind(this)}
                     ref={(el) => this.cmdPrompt = el}>
-                        <Output
-                            {...props}
-                            className="Output"
-                            scrollToBottom={this.scrollToBottom.bind(this)}
-                            busy={this.busy.bind(this)}
-                            IsPaging={this.paging.bind(this)}></Output>
+                    <Output
+                        {...props}
+                        className="Output"
+                        scrollToBottom={this.scrollToBottom.bind(this)}
+                        busy={this.busy.bind(this)}
+                        IsPaging={this.paging.bind(this)}></Output>
                     <br />
                     <Input
                         ref={(el) => this.cmdPromptInputControl = el}
@@ -164,7 +162,6 @@ export class App extends Component {
                         busy={this.busy.bind(this)}
                         paging={this.paging.bind(this)}
                         setHeight={this.setHeight.bind(this)} />
-                </div>
                 </div>
             </PersonaBarPage>
         );

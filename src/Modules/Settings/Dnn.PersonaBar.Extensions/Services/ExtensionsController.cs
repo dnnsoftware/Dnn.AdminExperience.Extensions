@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2018
+// Copyright (c) 2002-2017
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -266,7 +266,6 @@ namespace Dnn.PersonaBar.Extensions.Services
                     AddFiles(response, path, root, "*.cshtml");
                     AddFiles(response, path, root, "*.vbhtml");
                     AddFiles(response, path, root, "*.html");
-                    AddFiles(response, path, root, "*.htm");
                 }
             }
 
@@ -973,8 +972,6 @@ namespace Dnn.PersonaBar.Extensions.Services
                 {
                     case FileType.Control:
                         files.AddRange(GetFiles(folder, "*.ascx"));
-                        files.AddRange(GetFiles(folder, "*.html"));
-                        files.AddRange(GetFiles(folder, "*.htm"));
                         files.AddRange(GetFiles(folder, "*.cshtml"));
                         files.AddRange(GetFiles(folder, "*.vbhtml"));
                         break;

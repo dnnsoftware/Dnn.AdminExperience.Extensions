@@ -3,10 +3,7 @@ import Parser from "html-react-parser";
 import DomKey from "../services/DomKey";
 
 const TextLine = ({txt, css}) => {
-    if(!txt){
-        return null;
-    }
-    const textLines = txt.split("\\n");
+    const textLines = txt.split("\n");
     const rows = textLines.map((line) => line ? <span key={DomKey.get("textline")} className={css}>{Parser(line)}</span> : null).reduce((prev,current) => {
         if (current !== "" && current !== null && current !== undefined) {
             return [...prev,current];

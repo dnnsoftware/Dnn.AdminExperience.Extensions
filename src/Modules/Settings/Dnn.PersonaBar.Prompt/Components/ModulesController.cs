@@ -11,13 +11,12 @@ using DotNetNuke.Framework;
 using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Localization;
-using Dnn.PersonaBar.Prompt.Common;
 
 namespace Dnn.PersonaBar.Prompt.Components
 {
     public class ModulesController : ServiceLocator<IModulesController, ModulesController>, IModulesController
     {
-        private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(ModulesController));        
+        private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(ModulesController));
 
         protected override Func<IModulesController> GetFactory()
         {
@@ -98,98 +97,75 @@ namespace Dnn.PersonaBar.Prompt.Components
 
         public ModuleInfo CopyModule(PortalSettings portalSettings, int moduleId, int sourcePageId, int targetPageId, string pane, bool includeSettings, out KeyValuePair<HttpStatusCode, string> message, bool moveBahaviour = false)
         {
-            var sourceModule = GetModule(portalSettings, moduleId, sourcePageId, out message);
-
+            message = new KeyValuePair<HttpStatusCode, string>();
+            var sourceModule = ModuleController.Instance.GetModule(moduleId, sourcePageId, true);
             if (sourceModule == null)
             {
+                message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.NotFound, string.Format(Localization.GetString("Prompt_ModuleNotFound", Constants.LocalResourcesFile), moduleId, sourcePageId));
                 return null;
             }
             var targetPage = TabController.Instance.GetTab(targetPageId, portalSettings.PortalId);
-
-            message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.NotFound, string.Format(Localization.GetString("Prompt_PageNotFound", Constants.LocalResourcesFile), targetPageId));
-
             if (targetPage == null)
-            {                
+            {
+                message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.NotFound, string.Format(Localization.GetString("Prompt_PageNotFound", Constants.LocalResourcesFile), targetPageId));
                 return null;
             }
-
-            if (targetPage.PortalID == portalSettings.PortalId  || PortalHelper.IsRequestForSiteGroup(targetPage.PortalID,portalSettings.PortalId))
+            try
             {
-                try
-                {
-                    if (moveBahaviour)
-                        ModuleController.Instance.MoveModule(sourceModule.ModuleID, sourceModule.TabID, targetPage.TabID, pane);
-                    else
-                        ModuleController.Instance.CopyModule(sourceModule, targetPage, pane, includeSettings);
-                    ModuleController.Instance.ClearCache(targetPageId);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex);
-                    message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.InternalServerError, Localization.GetString(moveBahaviour ? "Prompt_ErrorWhileMoving" : "Prompt_ErrorWhileCopying"));
-                }
-                // get the new module
-                return ModuleController.Instance.GetModule(sourceModule.ModuleID, targetPageId, true);
-
+                if (moveBahaviour)
+                    ModuleController.Instance.MoveModule(sourceModule.ModuleID, sourceModule.TabID, targetPage.TabID, pane);
+                else
+                    ModuleController.Instance.CopyModule(sourceModule, targetPage, pane, includeSettings);
             }
-            else
+            catch (Exception ex)
             {
-                return null;
-            }            
-        }      
-
-        public void DeleteModule(PortalSettings portalSettings, int moduleId, int pageId, out KeyValuePair<HttpStatusCode, string> message)
-        {         
-            var module = GetModule(portalSettings,moduleId,pageId,out message);
-
-            if (module != null)
-            {               
-                    try
-                    {
-                        ModuleController.Instance.DeleteTabModule(pageId, moduleId, true);
-                        ModuleController.Instance.ClearCache(pageId);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error(ex);
-                        message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.InternalServerError, string.Format(Localization.GetString("Prompt_FailedtoDeleteModule", Constants.LocalResourcesFile), moduleId));
-                    }             
-            }           
+                Logger.Error(ex);
+                message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.InternalServerError, Localization.GetString(moveBahaviour ? "Prompt_ErrorWhileMoving" : "Prompt_ErrorWhileCopying"));
+            }
+            // get the new module
+            return ModuleController.Instance.GetModule(sourceModule.ModuleID, targetPageId, true);
         }
 
-        public ModuleInfo GetModule(PortalSettings portalSettings, int moduleId, int? pageId, out KeyValuePair<HttpStatusCode, string> message)
+        public void DeleteModule(int moduleId, int pageId, out KeyValuePair<HttpStatusCode, string> message)
+        {
+            message = new KeyValuePair<HttpStatusCode, string>();
+            var modules = ModuleController.Instance.GetAllTabsModulesByModuleID(moduleId).Cast<ModuleInfo>().ToList();
+            if (modules.Count == 0)
+            {
+                message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.NotFound, string.Format(Localization.GetString("Prompt_NoModule", Constants.LocalResourcesFile), moduleId));
+                return;
+            }
+            if (modules.All(x => x.TabID != pageId))
+            {
+                message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.NotFound, string.Format(Localization.GetString("Prompt_ModuleNotFound", Constants.LocalResourcesFile), moduleId, pageId));
+                return;
+            }
+            try
+            {
+                // we can do a soft Delete
+                ModuleController.Instance.DeleteTabModule(pageId, moduleId, true);
+                ModuleController.Instance.ClearCache(pageId);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.InternalServerError, string.Format(Localization.GetString("Prompt_FailedtoDeleteModule", Constants.LocalResourcesFile), moduleId));
+            }
+        }
+
+        public ModuleInfo GetModule(int moduleId, int? pageId, out KeyValuePair<HttpStatusCode, string> message)
         {
             message = new KeyValuePair<HttpStatusCode, string>();
             if (pageId.HasValue)
-            {
-                var module = ModuleController.Instance.GetModule(moduleId, pageId.Value, true);
+                return ModuleController.Instance.GetModule(moduleId, pageId.Value, true);
 
-                if (module != null)
-                {
-                    if (module.PortalID == portalSettings.PortalId || PortalHelper.IsRequestForSiteGroup(module.PortalID, portalSettings.PortalId))
-                    {
-                        return module;
-                    }                    
-                }
-                else
-                {
-                    message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.NotFound, string.Format(Localization.GetString("Prompt_ModuleNotFound", Constants.LocalResourcesFile), moduleId, pageId));
-                    return null;
-                }
-            }
-            else
-            {
-                var modules = ModuleController.Instance.GetAllTabsModulesByModuleID(moduleId);
-                if (modules != null && modules.Count != 0)
-                {
-                    return modules[0] as ModuleInfo;
-                }
-            }
+            var modules = ModuleController.Instance.GetAllTabsModulesByModuleID(moduleId);
+            if (modules != null && modules.Count != 0) return modules[0] as ModuleInfo;
 
             message = new KeyValuePair<HttpStatusCode, string>(HttpStatusCode.NotFound, string.Format(Localization.GetString("Prompt_NoModule", Constants.LocalResourcesFile), moduleId));
             return null;
         }
-      
+
         public IEnumerable<ModuleInfo> GetModules(PortalSettings portalSettings, bool? deleted, out int total, string moduleName = null, string moduleTitle = null,
             int? pageId = null, int pageIndex = 0, int pageSize = 10)
         {

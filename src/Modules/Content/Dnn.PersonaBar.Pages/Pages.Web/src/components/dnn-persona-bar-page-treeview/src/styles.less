@@ -80,16 +80,19 @@
             fill: @curiousBlue;
         }
     }
-    .list-item-highlight {
-        color: @curiousBlue;
-    }
-    .list-item-dragover {
-        color: @curiousBlue;
-    }
+
     .list-item-disabled {
         color: @mountainMist;
         font-style: italic;
     }
+
+    .list-item-highlight, .list-item-dragover {
+        color: @curiousBlue;
+        &.list-item-disabled {
+            font-style: italic;
+        }
+    }
+
     .parent-expand-button {
         display: inline-block;
         position: relative;

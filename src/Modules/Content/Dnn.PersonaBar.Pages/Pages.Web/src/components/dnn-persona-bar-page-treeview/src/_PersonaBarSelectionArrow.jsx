@@ -14,30 +14,6 @@ export default class PersonaBarSelectionArrow extends Component {
         };
     }
 
-    hasAtLeastOnePermission(item){
-        switch (true) {
-            case item.canViewPage:
-            case item.canManagePage:
-            case item.canEditPage:
-            case item.canAddContentToPage:
-            case item.canCopyPage:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    toggleInContext(li) {
-        const { _traverse } = this.props;
-        let updateReduxStore, pageList = null;
-        _traverse((item, list, updateStore) => {
-            item.showInContextMenu = item.id === li.id ? !item.showInContextMenu : delete item.showInContextMenu;
-            updateReduxStore = updateStore;
-            pageList = list;
-        });
-        updateReduxStore(pageList);
-    }
-
     onMouseEnter() {
         this.setState({ showMenu: true });
     }
@@ -77,7 +53,7 @@ PersonaBarSelectionArrow.propTypes = {
     onViewEditPage: PropTypes.func.isRequired,
     onDuplicatePage: PropTypes.func.isRequired,
     CallCustomAction: PropTypes.func.isRequired,
-    _traverse: PropTypes.func.isRequired,
+    traverse: PropTypes.func.isRequired,
     item: PropTypes.object.isRequired,
     pageInContextComponents: PropTypes.array.isRequired
 };

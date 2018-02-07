@@ -15,9 +15,11 @@ export class PersonaBarPageTreeview extends Component {
     }
 
     trimName(item) {
-        let maxLength = 16;
-        let { name } = item;
-        return name.length > maxLength ? `${name.slice(0, maxLength)}...` : name;
+        let maxLength = 18;
+        let { tabpath } = item;
+        let newLength = tabpath.split(/\//).length * 2 + 2;
+        let depth = (newLength < maxLength) ? newLength : 1;
+        return (item.name.length > maxLength - depth) ? `${item.name.slice(0, maxLength - depth)}...` : item.name;
     }
 
     renderTree(item, childListItems) {
@@ -100,14 +102,11 @@ export class PersonaBarPageTreeview extends Component {
         const DRAG_HOVER = item.onDragOverState === true;
         const SELECTED = item.selected === true;
         const DISABLED = item.status !== "Visible";
+        const DISABLED_CLASSNAME = DISABLED ? "list-item-disabled" : "";
+        const DRAG_OVER_CLASSNAME = DRAG_HOVER ? "list-item-dragover" : "";
+        const SELECTED_CLASSNAME = SELECTED ? "list-item-highlight" : "";
 
-        if(DRAG_HOVER || SELECTED) {
-            return "list-item-highlight list-item-dragover";
-        } else if (DISABLED) {
-            return "list-item-disabled";
-        }
-
-        return "";
+        return `${DRAG_OVER_CLASSNAME} ${SELECTED_CLASSNAME} ${DISABLED_CLASSNAME}`.trim();
     }
 
     renderLi() {
@@ -168,6 +167,7 @@ export class PersonaBarPageTreeview extends Component {
                             <div className="draft-pencil">
                                 <PersonaBarDraftPencilIcon display={item.hasUnpublishedChanges} />
                             </div>
+
                         </div>
                         {((item.childListItems && !item.isOpen) || !item.childListItems) && index === total && this.renderDropZone("after", item)}
                     </div>
