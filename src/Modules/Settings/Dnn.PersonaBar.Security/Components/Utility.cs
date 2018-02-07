@@ -160,7 +160,7 @@ namespace Dnn.PersonaBar.Security.Components
             {
                 if (stream != null)
                 {
-                    var xmlDocument = new XmlDocument { XmlResolver = null };
+                    var xmlDocument = new XmlDocument();
                     xmlDocument.Load(stream);
 
                     return xmlDocument;

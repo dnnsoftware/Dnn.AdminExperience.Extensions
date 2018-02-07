@@ -186,9 +186,6 @@ function formatDate(dateValue, longformat) {
 
     return Moment(dateValue).locale(utilities.getCulture()).format(longformat === true ? "LLL" : "L");
 }
-function getUserMode(){
-    return config.userMode;
-}
 const utils = {
     init,
     load,
@@ -219,8 +216,7 @@ const utils = {
     getProductSKU,
     isPlatform,
     getIsAdminHostSystemPage,
-    formatDate,
-    getUserMode
+    formatDate
 };
 
 export default utils;

@@ -16,21 +16,15 @@ class PageTypeSelector extends Component {
         }
         return false;
     }
-    _getHierarchyLabel() {
-        const page = this.props.page;
-        if (page.hierarchy === null || page.hierarchy === "" || page.hierarchy === Localization.get("NoneSpecified")) {
-            return Localization.get("TopPage");
-        } else {
-            return page.hierarchy;
-        }
-    }
+
     render() {
         const {page, onChangePageType} = this.props;
         const createdDate = Localization.get("CreatedValue")
                                 .replace("[CREATEDDATE]", utils.formatDateNoTime(page.createdOnDate))
                                 .replace("[CREATEDUSER]", page.created || "System");
         
-        const hierarchy = this._getHierarchyLabel();        
+        const hierarchy = (page.hierarchy === null || page.hierarchy === "") ? Localization.get("TopPage") : page.hierarchy;
+        
         const components = this.getComponents(); 
 
         return (
@@ -44,44 +38,44 @@ class PageTypeSelector extends Component {
                     </div>
                     <div className="page-info-row">
                         <div className="page-info-item">
-                            <span className="page-info-item-label">
+                            <div className="page-info-item-label">
                                 {Localization.get("Created") + ": "}
-                            </span>
-                            <span className="page-info-item-value">
+                            </div>
+                            <div className="page-info-item-value">
                                 {createdDate}
-                            </span>
+                            </div>
                         </div>
                         <div className="page-info-item">
-                            <span className="page-info-item-label">
+                            <div className="page-info-item-label">
                                 {Localization.get("PageParent") + ": "}
-                            </span>
-                            <span className="page-info-item-value parent-page-name">
+                            </div>
+                            <div className="page-info-item-value parent-page-name">
                                 {hierarchy}
-                            </span>
+                            </div>
                         </div>
                         <div className="page-info-item">
-                            <span className="page-info-item-label">
+                            <div className="page-info-item-label">
                                 {Localization.get("Status") + ": "}
-                            </span>
-                            <span className="page-info-item-value">
+                            </div>
+                            <div className="page-info-item-value">
                                 {Localization.get("Status_" + page.status)}
-                            </span>
+                            </div>
                         </div>
                     </div>
-                    <div className="page-info-row">
-                        <div className="page-info-item page-type">
-                            <span className="page-info-item-label">
+                    <div className="page-info-row page-type">
+                        <div className="page-info-item">
+                            <div className="page-info-item-label">
                                 {Localization.get("PageType") + ": "}
-                            </span>
-                            <span className="page-info-item-value">
-                                <RadioButtons
-                                    options={[{value: "normal", label: Localization.get("Standard")},
+                            </div>
+                            <div className="page-info-item-value">
+                                <RadioButtons 
+                                    options={[{value: "normal", label: Localization.get("Standard")}, 
                                             {value: "tab", label: Localization.get("Existing")},
                                             {value: "url", label: Localization.get("Url")},
-                                            {value: "file", label: Localization.get("File")}]}
+                                            {value: "file", label: Localization.get("File")}]} 
                                     onChange={onChangePageType}
                                     value={page.pageType}/>
-                            </span>
+                            </div>
                         </div>
                     </div>
                 </div>

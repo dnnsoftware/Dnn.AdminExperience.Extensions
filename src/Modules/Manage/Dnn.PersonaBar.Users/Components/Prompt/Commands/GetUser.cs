@@ -26,8 +26,6 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
         private string Email { get; set; }
         private string Username { get; set; }
 
-        private const int UserIdZero = 0;
-
         public override void Init(string[] args, PortalSettings portalSettings, UserInfo userInfo, int activeTabId)
         {
             
@@ -82,25 +80,13 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
                 {
                     // do username lookup
                     var searchTerm = Username.Replace("%", "").Replace("*", "%");
-                    userId = (UserController.GetUsersByUserName(PortalId, searchTerm, -1, int.MaxValue, ref recCount, true, false).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? UserIdZero;
-
-                    // search against superusers if no regular user found
-                    if (userId == UserIdZero)
-                    {
-                        userId = (UserController.GetUsersByUserName(-1, searchTerm, -1, int.MaxValue, ref recCount, true, true).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? UserIdZero;
-                    }
+                    userId = (UserController.GetUsersByUserName(PortalId, searchTerm, -1, int.MaxValue, ref recCount, true, false).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? 0;
                 }
                 else if (!userId.HasValue && !string.IsNullOrEmpty(Email))
                 {
                     // must be email
                     var searchTerm = Email.Replace("%", "").Replace("*", "%");
-                    userId = (UserController.GetUsersByEmail(PortalId, searchTerm, -1, int.MaxValue, ref recCount, true, false).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? UserIdZero;
-
-                    // search against superusers if no regular user found
-                    if (userId == UserIdZero)
-                    {
-                        userId = (UserController.GetUsersByEmail(-1, searchTerm, -1, int.MaxValue, ref recCount, true, true).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? UserIdZero;
-                    }
+                    userId = (UserController.GetUsersByEmail(PortalId, searchTerm, -1, int.MaxValue, ref recCount, true, false).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? 0;
                 }
 
                 ConsoleErrorResultModel errorResultModel;

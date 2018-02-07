@@ -161,8 +161,8 @@ const pageActions = {
         };
     },
 
-    viewPage(id, url, callback) {
-        PagesService.openPageInEditMode(id, url, callback);
+    viewPage(id, url) {
+        PagesService.openPageInEditMode(id, url);
         return (dispatch) => {
 
         };

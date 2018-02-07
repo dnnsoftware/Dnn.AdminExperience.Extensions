@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2018
+// Copyright (c) 2002-2017
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -60,8 +60,8 @@ namespace Dnn.PersonaBar.SiteSettings.Components
         public void SaveLocalizedKeys(int portalId, string propertyName, string propertyCategory, string cultureCode, string propertyNameString,
             string propertyHelpString, string propertyRequiredString, string propertyValidationString, string categoryNameString)
         {
-            var portalResources = new XmlDocument { XmlResolver = null };
-            var defaultResources = new XmlDocument { XmlResolver = null };
+            var portalResources = new XmlDocument();
+            var defaultResources = new XmlDocument();
             XmlNode parent;
 
             defaultResources.Load(GetResourceFile("", Localization.SystemLocale, portalId));

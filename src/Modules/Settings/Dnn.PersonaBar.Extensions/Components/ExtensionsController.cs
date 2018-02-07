@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2018
+// Copyright (c) 2002-2017
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -167,7 +167,7 @@ namespace Dnn.PersonaBar.Extensions.Components
             try
             {
                 StreamReader myResponseReader = UpdateService.GetLanguageList();
-                var xmlDoc = new XmlDocument { XmlResolver = null };
+                var xmlDoc = new XmlDocument();
                 xmlDoc.Load(myResponseReader);
                 XmlNodeList languages = xmlDoc.SelectNodes("available/language");
 

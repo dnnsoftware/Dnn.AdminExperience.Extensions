@@ -1,7 +1,7 @@
 ﻿#region Copyright
 // 
 // DotNetNuke® - http://www.dotnetnuke.com
-// Copyright (c) 2002-2018
+// Copyright (c) 2002-2017
 // by DotNetNuke Corporation
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -212,7 +212,7 @@ namespace Dnn.PersonaBar.Themes.Services
                 var settings = new List<ListItemInfo>();
                 if (File.Exists(strFile))
                 {
-                    var xmlDoc = new XmlDocument { XmlResolver = null };
+                    var xmlDoc = new XmlDocument();
                     xmlDoc.Load(strFile);
                     foreach (XmlNode xmlSetting in xmlDoc.SelectNodes("//Settings/Setting"))
                     {
@@ -238,7 +238,7 @@ namespace Dnn.PersonaBar.Themes.Services
                 var value = string.Empty;
                 if (File.Exists(strFile))
                 {
-                    var xmlDoc = new XmlDocument { XmlResolver = null };
+                    var xmlDoc = new XmlDocument();
                     xmlDoc.Load(strFile);
                     foreach (XmlNode xmlSetting in xmlDoc.SelectNodes("//Settings/Setting"))
                     {
