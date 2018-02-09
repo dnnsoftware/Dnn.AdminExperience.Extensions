@@ -17,16 +17,14 @@ const PageService = function () {
             .then(response => toFrontEndPage(response));
     };
 
-    const savePage = function (page, hasChangeUrl) {
+    const savePage = function (page) {
         const api = getOverridablePagesApi();
         let request = page;
 
-        if (!hasChangeUrl) {
-            request = {
-                ...request,
-                url: ""
-            };
-        }
+        request = {
+            ...request,
+            url: ""
+        };
 
         return api.post("SavePageDetails", toBackEndPage(request));
     };
@@ -54,11 +52,6 @@ const PageService = function () {
     const deletePageModule = function (module) {
         const api = getPagesApi();
         return api.post("DeletePageModule", module);
-    };
-
-    const getPageUrlPreview = function (value) {
-        const api = getPagesApi();
-        return api.get("GetPageUrlPreview", { url: value });
     };
 
     const getNewPage = function (parentPage) {
@@ -143,14 +136,18 @@ const PageService = function () {
         };
     };
 
-    const openPageInEditMode = function (id, url) {
+    const openPageInEditMode = function (id, url, callback) {
         const api = getPagesApi();
         return api.post("EditModeForPage?id=" + id, {})
-            .then(() =>
-                utils.getUtilities().closePersonaBar(function () {
-                    window.top.location.href = url;
-                })
-            );
+            .then(() => {
+                if(url){
+                    utils.getUtilities().closePersonaBar(function () {
+                        window.top.location.href = url;
+                    });
+                } else if( typeof callback === "function"){
+                    callback();
+                }
+            });
     };
 
     const getCachedPageCount = function (cacheProvider, pageId) {
@@ -205,7 +202,6 @@ const PageService = function () {
         getNewPage,
         getCacheProviderList,
         deletePageModule,
-        getPageUrlPreview,
         copyAppearanceToDescendantPages,
         copyPermissionsToDescendantPages,
         openPageInEditMode,
