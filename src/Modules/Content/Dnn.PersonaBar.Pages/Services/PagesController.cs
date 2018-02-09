@@ -206,7 +206,7 @@ namespace Dnn.PersonaBar.Pages.Services
         {
             var adminTabId = PortalSettings.AdminTabId;
             var tabs = TabController.GetPortalTabs(PortalSettings.PortalId, adminTabId, false, true, false, true);
-            var pages = from p in _pagesController.GetPageList(parentId, searchKey)
+            var pages = from p in _pagesController.GetPageList(PortalSettings, parentId, searchKey)
                         select Converters.ConvertToPageItem<PageItem>(p, tabs);
             return Request.CreateResponse(HttpStatusCode.OK, pages);
         }
@@ -429,6 +429,13 @@ namespace Dnn.PersonaBar.Pages.Services
         {
             var providers = from p in OutputCachingProvider.GetProviderList() select p.Key;
             return Request.CreateResponse(HttpStatusCode.OK, providers);
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetPageUrlPreview(string url)
+        {
+            var cleanedUrl = _pagesController.CleanTabUrl(url);
+            return Request.CreateResponse(HttpStatusCode.OK, new { Url = cleanedUrl });
         }
 
         [HttpGet]
