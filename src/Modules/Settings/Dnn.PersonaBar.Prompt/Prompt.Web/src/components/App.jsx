@@ -89,17 +89,10 @@ export class App extends Component {
     }
 
     keyDownHandler(e) {
-<<<<<<< .mine
         const { state, props } = this;
 
         const lastPage = props.paging !== null && props.paging.pageNo === props.paging.totalPages;
 
-=======
-        const { state, props } = this;
-
-
-
->>>>>>> .theirs
         //CTRL + Key
         if (e.ctrlKey) {
             if (e.keyCode === 192) {
