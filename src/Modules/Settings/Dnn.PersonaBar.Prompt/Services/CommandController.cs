@@ -66,16 +66,15 @@ namespace Dnn.PersonaBar.Prompt.Services
         {
             PortalId = portalId;
             var portal = PortalController.Instance.GetPortal(PortalId);
-
             if (portal == null)
             {
                 var errorMessage = string.Format(Localization.GetString("Prompt_GetPortal_NotFound", Constants.LocalResourcesFile), portalId);
                 Logger.Error(errorMessage);
                 return AddLogAndReturnResponse(null, null, command, DateTime.Now, errorMessage);
             }
-
-            PortalSettings = new PortalSettings(PortalId);
-
+            
+                PortalSettings = new PortalSettings(PortalId);
+            
             return Cmd(command);
         }
 
