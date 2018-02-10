@@ -73,9 +73,9 @@ namespace Dnn.PersonaBar.Prompt.Services
                 Logger.Error(errorMessage);
                 return AddLogAndReturnResponse(null, null, command, DateTime.Now, errorMessage);
             }
-
+            
             PortalSettings = new PortalSettings(PortalId);
-
+            
             return Cmd(command);
         }
 
