@@ -95,6 +95,15 @@ const pageActions = {
         });
     },
 
+    searchAndFilterPagedPageList(params) {
+        return (dispatch) => PagesService.searchAndFilterPageList(params).then(searchResult => {
+            dispatch({
+                type: SearchListActionTypes.SAVE_SEARCH_RESULT,
+                data: { searchResult }
+            });
+        });
+    },
+
     getWorkflowsList() {
         return (dispatch) => PagesService.getWorkflowsList().then(workflowList => {
             dispatch({

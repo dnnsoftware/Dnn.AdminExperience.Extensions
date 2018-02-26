@@ -74,6 +74,7 @@ class App extends Component {
 
             tags: "",
             filters: [],
+            pageIndex:0,
             searchFields: {}
         };
         this.lastActivePageId = null;
@@ -940,7 +941,7 @@ class App extends Component {
         filterByPageType ? filters.push({ ref: "filterByPageType", tag: `${Localization.get("PageType")}: ${this.getPageTypeLabel(filterByPageType)}` }) : null;
         filterByPublishStatus ? filters.push({ ref: "filterByPublishStatus", tag: `${Localization.get("lblPublishStatus")}: ${this.getPublishStatusLabel(filterByPublishStatus)}` }) : null;
         filterByWorkflow ? filters.push({ ref: "filterByWorkflow", tag: `${Localization.get("WorkflowTitle")}: ${filterByWorkflowName}` }) : null;
-
+        
         if (startAndEndDateDirty) {
             let dateRangeText = Localization.get(utils.isPlatform() ? "ModifiedDateRange" : "PublishedDateRange");
             const fullStartDate = utils.formatDate(startDate);
@@ -1002,7 +1003,17 @@ class App extends Component {
                 tags = tags[tags.length - 1] == "," ? tags.split(",").filter(t => !!t).join() : tags;
             }
 
-            let search = { tags: tags, searchKey: searchTerm, pageType: filterByPageType, publishStatus: filterByPublishStatus, workflowId: filterByWorkflow };
+            let search = { 
+                tags: tags, 
+                searchKey: searchTerm, 
+                pageType: filterByPageType, 
+                publishStatus: filterByPublishStatus, 
+                workflowId: filterByWorkflow,
+                pageSize: 10 
+            };
+
+            
+            
             search = Object.assign({}, search, searchDateRange);
             for (let prop in search) {
                 if (!search[prop]) {
@@ -1010,11 +1021,22 @@ class App extends Component {
                 }
             }
             
-            this.generateFilters();
+            search = Object.assign({},search,{pageIndex:this.state.pageIndex});
             
-            this.saveSearchFilters(search).then(() => this.props.searchAndFilterPageList(search));
+            this.generateFilters();
+
+            this.saveSearchFilters(search).then(() => this.props.searchAndFilterPagedPageList(search));
             this.setState({ inSearch: true, filtersUpdated: false });
         }
+    }
+
+    onSearchScroll(page) {
+        this.setState({
+            pageIndex: page,
+            filtersUpdated:true
+        },()=>{
+            this.doSearch();
+        });
     }
     
     clearAdvancedSearch() {
@@ -1317,6 +1339,7 @@ class App extends Component {
                 updateSearchAdvancedTags={this.updateSearchAdvancedTags.bind(this)}
                 updateFilterStartEndDate={this.updateFilterStartEndDate.bind(this)}
                 buildTree={this.buildTree.bind(this)}
+                onSearchScroll={this.onSearchScroll.bind(this)}
             />
         );
     }
@@ -1440,9 +1463,8 @@ class App extends Component {
 App.propTypes = {
     dispatch: PropTypes.func.isRequired,
     pageList: PropTypes.array.isRequired,
-    searchList: PropTypes.array.isRequired,
     searchPageList: PropTypes.func.isRequired,
-    searchAndFilterPageList: PropTypes.func.isRequired,
+    searchAndFilterPagedPageList: PropTypes.func.isRequired,
     getChildPageList: PropTypes.func.isRequired,
     getWorkflowsList: PropTypes.func.isRequired,
     selectedView: PropTypes.number,
@@ -1511,7 +1533,6 @@ App.propTypes = {
 function mapStateToProps(state) {
     return {
         pageList: state.pageList.pageList,
-        searchList: state.searchList.searchList,
         selectedView: state.visiblePanel.selectedPage,
         selectedCustomPageSettings : state.visiblePageSettings.panelId,
         selectedPage: state.pages.selectedPage,
@@ -1543,7 +1564,7 @@ function mapDispatchToProps(dispatch) {
         getNewPage: PageActions.getNewPage,
         getPageList: PageActions.getPageList,
         searchPageList: PageActions.searchPageList,
-        searchAndFilterPageList: PageActions.searchAndFilterPageList,
+        searchAndFilterPagedPageList: PageActions.searchAndFilterPagedPageList,
         getWorkflowsList: PageActions.getWorkflowsList,
         getPage: PageActions.getPage,
         viewPage: PageActions.viewPage,

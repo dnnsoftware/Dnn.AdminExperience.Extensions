@@ -4,68 +4,121 @@ import GridCell from "dnn-grid-cell";
 import Localization from "../../localization";
 import SearchAdvanced from "./SearchAdvanced";
 import SearchResultCard from "./SearchResultCard";
+import LazyLoad from "./LazyLoad/LazyLoad";
 
 class SearchResult extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            pageList:[],
+            page:0
+        };
 
     }
 
-    distinct(list) {
-        let distinctList = [];
-        list.map((item) => {
-            if (item.trim() !== "" && distinctList.indexOf(item.trim().toLowerCase()) === -1)
-                distinctList.push(item.trim().toLowerCase());
-        });
-        return distinctList;
+    loadMore(page) {
+        if (page <= 12){
+            this.props.onSearchScroll(page);
+            this.setState({
+                page:page
+            });
+        }
     }
-    
+
+    hasMoreItems() {
+        if (this.props.searchResult.TotalResults === this.props.searchList.length) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
     
     /* eslint-disable react/no-danger */
     render() {
-        const { searchList } = this.props;
+        const { searchResult, searchList } = this.props;
+        const loader = <div key={-1} className={"lazy-loading"} ></div>;
 
-        return (
+        return ((this.props.searchResult !== null)?
             <GridCell columnSize={100} className="fade-in">
                 <GridCell columnSize={100} style={{ padding: "20px" }}>
                     <SearchAdvanced {...this.props} />
                     <GridCell columnSize={100} style={{ textAlign: "center", padding: "10px", fontWeight: "bold", animation: "fadeIn .15s ease-in forwards" }}>
-                        <p>{searchList.length === 0 ? Localization.get("NoPageFound").toUpperCase() : (`${searchList.length} ` + Localization.get(searchList.length > 1 ? "lblPagesFound" : "lblPageFound").toUpperCase())}</p>
+                        <p>{searchResult.TotalResults === 0 ? Localization.get("NoPageFound").toUpperCase() : (`${searchResult.TotalResults} ` + Localization.get(searchResult.TotalResults > 1 ? "lblPagesFound" : "lblPageFound").toUpperCase())}</p>
                     </GridCell>
                     <GridCell columnSize={100}>
-                        {searchList.map((item) => {
-                            return (
-                                <SearchResultCard 
-                                    item={item}
-                                    clearSearch={this.props.clearSearch}
-                                    onLoadPage={this.props.onLoadPage}
-                                    buildBreadCrumbPath={this.props.buildBreadCrumbPath}
-                                    setEmptyStateMessage={this.props.setEmptyStateMessage}
-                                    tags={this.props.tags}
-                                    onSearch={this.props.onSearch}
-                                    onViewPage={this.props.onViewPage}
-                                    onViewEditPage={this.props.onViewEditPage}
-                                    CallCustomAction={this.props.CallCustomAction}
-                                    getPageTypeLabel={this.props.getPageTypeLabel}
-                                    getPublishStatusLabel={this.props.getPublishStatusLabel}
-                                    filterByPageType={this.props.filterByPageType}
-                                    filterByPublishStatus={this.props.filterByPublishStatus}
-                                    updateFilterByPageStatusOptions={this.props.updateFilterByPageStatusOptions}
-                                    updateFilterByPageTypeOptions={this.props.updateFilterByPageTypeOptions}
-                                    updateFilterByWorkflowOptions={this.props.updateFilterByWorkflowOptions}
-                                    updateFilterStartEndDate={this.props.updateFilterStartEndDate}
-                                    startDate={this.props.startDate}
-                                    endDate={this.props.endDate} 
-                                    pageInContextComponents={this.props.pageInContextComponents} 
-                                    pageTypeSelectorComponents={this.props.pageTypeSelectorComponents}
-                                    updateSearchAdvancedTags={this.props.updateSearchAdvancedTags}
-                                    filterByWorkflow={this.props.filterByWorkflow}  />
-                            );
-                        })}
+                    <div>
+                        <LazyLoad 
+                            pageIndex={0} 
+                            loadMore={this.loadMore.bind(this)}
+                            hasMore={searchList.length !== searchResult.TotalResults}
+                            loadingComponent={loader}
+                        >
+                        {searchList.map((item,index) => {
+                                return (
+                                    <SearchResultCard key={index}
+                                        item={item}
+                                        clearSearch={this.props.clearSearch}
+                                        onLoadPage={this.props.onLoadPage}
+                                        buildBreadCrumbPath={this.props.buildBreadCrumbPath}
+                                        setEmptyStateMessage={this.props.setEmptyStateMessage}
+                                        tags={this.props.tags}
+                                        onSearch={this.props.onSearch}
+                                        onViewPage={this.props.onViewPage}
+                                        onViewEditPage={this.props.onViewEditPage}
+                                        CallCustomAction={this.props.CallCustomAction}
+                                        getPageTypeLabel={this.props.getPageTypeLabel}
+                                        getPublishStatusLabel={this.props.getPublishStatusLabel}
+                                        filterByPageType={this.props.filterByPageType}
+                                        filterByPublishStatus={this.props.filterByPublishStatus}
+                                        updateFilterByPageStatusOptions={this.props.updateFilterByPageStatusOptions}
+                                        updateFilterByPageTypeOptions={this.props.updateFilterByPageTypeOptions}
+                                        updateFilterByWorkflowOptions={this.props.updateFilterByWorkflowOptions}
+                                        updateFilterStartEndDate={this.props.updateFilterStartEndDate}
+                                        startDate={this.props.startDate}
+                                        endDate={this.props.endDate} 
+                                        pageInContextComponents={this.props.pageInContextComponents} 
+                                        pageTypeSelectorComponents={this.props.pageTypeSelectorComponents}
+                                        updateSearchAdvancedTags={this.props.updateSearchAdvancedTags}
+                                        filterByWorkflow={this.props.filterByWorkflow}  />
+                                );})}
+                        </LazyLoad>
+                            
+                            <div>
+                            {/* {searchList.map((item,index) => {
+                                return (
+                                    <SearchResultCard key={index}
+                                        item={item}
+                                        clearSearch={this.props.clearSearch}
+                                        onLoadPage={this.props.onLoadPage}
+                                        buildBreadCrumbPath={this.props.buildBreadCrumbPath}
+                                        setEmptyStateMessage={this.props.setEmptyStateMessage}
+                                        tags={this.props.tags}
+                                        onSearch={this.props.onSearch}
+                                        onViewPage={this.props.onViewPage}
+                                        onViewEditPage={this.props.onViewEditPage}
+                                        CallCustomAction={this.props.CallCustomAction}
+                                        getPageTypeLabel={this.props.getPageTypeLabel}
+                                        getPublishStatusLabel={this.props.getPublishStatusLabel}
+                                        filterByPageType={this.props.filterByPageType}
+                                        filterByPublishStatus={this.props.filterByPublishStatus}
+                                        updateFilterByPageStatusOptions={this.props.updateFilterByPageStatusOptions}
+                                        updateFilterByPageTypeOptions={this.props.updateFilterByPageTypeOptions}
+                                        updateFilterByWorkflowOptions={this.props.updateFilterByWorkflowOptions}
+                                        updateFilterStartEndDate={this.props.updateFilterStartEndDate}
+                                        startDate={this.props.startDate}
+                                        endDate={this.props.endDate} 
+                                        pageInContextComponents={this.props.pageInContextComponents} 
+                                        pageTypeSelectorComponents={this.props.pageTypeSelectorComponents}
+                                        updateSearchAdvancedTags={this.props.updateSearchAdvancedTags}
+                                        filterByWorkflow={this.props.filterByWorkflow}  />
+                                );})} */}
+                            </div>
+                        </div>
                     </GridCell>
                 </GridCell>
             </GridCell>
-        );
+        :<div></div>);
     }
 }
 
@@ -73,6 +126,7 @@ class SearchResult extends Component {
 SearchResult.propTypes = {
     pageInContextComponents : PropTypes.array,
     searchList : PropTypes.array,
+    searchResult : PropTypes.object,
     pageTypeSelectorComponents : PropTypes.array,
     filters : PropTypes.array.isRequired,
     tags : PropTypes.string.isRequired,
@@ -85,7 +139,6 @@ SearchResult.propTypes = {
     onSearch : PropTypes.func.isRequired,
     clearSearch : PropTypes.func.isRequired,
     clearAdvancedSearch : PropTypes.func.isRequired,
-
     buildBreadCrumbPath : PropTypes.func.isRequired,
     setEmptyStateMessage : PropTypes.func.isRequired,
     onViewPage : PropTypes.func.isRequired,
@@ -98,6 +151,7 @@ SearchResult.propTypes = {
     updateFilterByWorkflowOptions : PropTypes.func.isRequired,
     updateFilterStartEndDate : PropTypes.func.isRequired,
     filterByWorkflow: PropTypes.string.isRequired,
+    onSearchScroll: PropTypes.func,
     buildTree : PropTypes.func.isRequired
 
 };
@@ -105,6 +159,7 @@ SearchResult.propTypes = {
 const mapStateToProps = (state) => {
     return {
         pageInContextComponents : state.extensions.pageInContextComponents,
+        searchResult : state.searchList.searchResult,
         searchList : state.searchList.searchList,
         pageTypeSelectorComponents: state.extensions.pageTypeSelectorComponents
     };

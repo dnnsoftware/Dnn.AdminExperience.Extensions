@@ -1,0 +1,46 @@
+import React, { Component, PropTypes } from "react";
+
+class LazyLoad extends Component {
+    constructor(props) {
+        super(props);
+        this.addListenerToFindBottom();
+        this.state = {
+            page: props.pageIndex
+        };
+    }
+
+    addListenerToFindBottom() {
+        document.onscroll =  () => {
+            let pos = document.documentElement.scrollTop + window.innerHeight; 
+            if (pos === document.documentElement.scrollHeight) {
+                if (this.props.hasMore) {
+                    this.setState({
+                        page:this.state.page+1
+                    }, ()=>{
+                        this.props.loadMore(this.state.page);
+                    });
+                }
+            }
+        }; 
+    }
+
+    render() {
+        return (
+            <div>
+                <div>{this.props.children}</div>
+                {this.props.hasMore?<div style={{"text-align":"center"}}>{this.props.loadingComponent}</div>:null}
+            </div>
+        );
+    }
+}
+
+LazyLoad.propTypes = {
+    pageIndex: PropTypes.number.isRequired,
+    loadMore: PropTypes.func.isRequired,
+    hasMore: PropTypes.bool.isRequired,
+    useWindow: PropTypes.bool,
+    children: PropTypes.node.isRequired,
+    loadingComponent: PropTypes.node
+};
+
+export default LazyLoad;
