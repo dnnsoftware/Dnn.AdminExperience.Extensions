@@ -76,7 +76,12 @@ namespace Dnn.PersonaBar.Roles.Components.Prompt.Commands
         {
             try
             {
+
                 var existingRole = RoleController.Instance.GetRoleById(PortalId, RoleId);
+                if (existingRole.IsSystemRole)
+                {
+                    throw new Exception("Cannot change system roles");
+                }
                 var roleDto = new RoleDto
                 {
                     Id = RoleId,
