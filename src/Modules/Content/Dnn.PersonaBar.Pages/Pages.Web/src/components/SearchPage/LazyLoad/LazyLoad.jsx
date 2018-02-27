@@ -11,7 +11,10 @@ class LazyLoad extends Component {
 
     addListenerToFindBottom() {
         document.onscroll =  () => {
-            let pos = document.documentElement.scrollTop + window.innerHeight; 
+            // Internet Explorer
+            let scrollY = window.scrollY?window.scrollY:document.documentElement.scrollTop;
+            
+            let pos = scrollY + window.innerHeight; 
             if (pos === document.documentElement.scrollHeight) {
                 if (this.props.hasMore) {
                     this.setState({
