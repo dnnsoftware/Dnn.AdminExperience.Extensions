@@ -9,10 +9,18 @@ class LazyLoad extends Component {
         };
     }
 
+    componentWillReceiveProps(newProps){
+        if (newProps.filtersUpdated) {
+            this.setState({
+                page:0
+            });
+        }
+    }
+
     addListenerToFindBottom() {
         document.onscroll =  () => {
             // Internet Explorer
-            let scrollY = window.scrollY?window.scrollY:document.documentElement.scrollTop;
+            let scrollY = window.scrollY ? window.scrollY : document.documentElement.scrollTop;
             
             let pos = scrollY + window.innerHeight; 
             if (pos === document.documentElement.scrollHeight) {
@@ -43,7 +51,8 @@ LazyLoad.propTypes = {
     hasMore: PropTypes.bool.isRequired,
     useWindow: PropTypes.bool,
     children: PropTypes.node.isRequired,
-    loadingComponent: PropTypes.node
+    loadingComponent: PropTypes.node,
+    filtersUpdated: PropTypes.bool
 };
 
 export default LazyLoad;

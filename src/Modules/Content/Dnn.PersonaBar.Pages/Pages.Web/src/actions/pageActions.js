@@ -95,11 +95,14 @@ const pageActions = {
         });
     },
 
-    searchAndFilterPagedPageList(params) {
+    searchAndFilterPagedPageList(params,filtersUpdated) {
         return (dispatch) => PagesService.searchAndFilterPageList(params).then(searchResult => {
             dispatch({
                 type: SearchListActionTypes.SAVE_SEARCH_RESULT,
-                data: { searchResult }
+                data: { 
+                    searchResult,
+                    filtersUpdated 
+                }
             });
         });
     },

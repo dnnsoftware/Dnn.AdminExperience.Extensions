@@ -17,7 +17,12 @@ class SearchResult extends Component {
     }
 
     loadMore(page) {
-        if (page <= 12){
+        if (this.props.filtersUpdated) {
+            this.props.onSearchScroll(0);
+            this.setState({
+                page:0
+            });
+        } else {
             this.props.onSearchScroll(page);
             this.setState({
                 page:page
@@ -53,72 +58,42 @@ class SearchResult extends Component {
                             loadMore={this.loadMore.bind(this)}
                             hasMore={searchList.length !== searchResult.TotalResults}
                             loadingComponent={loader}
+                            filtersUpdated={this.props.filtersUpdated}
                         >
                         {searchList.map((item,index) => {
-                                return (
-                                    <SearchResultCard key={index}
-                                        item={item}
-                                        clearSearch={this.props.clearSearch}
-                                        onLoadPage={this.props.onLoadPage}
-                                        buildBreadCrumbPath={this.props.buildBreadCrumbPath}
-                                        setEmptyStateMessage={this.props.setEmptyStateMessage}
-                                        tags={this.props.tags}
-                                        onSearch={this.props.onSearch}
-                                        onViewPage={this.props.onViewPage}
-                                        onViewEditPage={this.props.onViewEditPage}
-                                        CallCustomAction={this.props.CallCustomAction}
-                                        getPageTypeLabel={this.props.getPageTypeLabel}
-                                        getPublishStatusLabel={this.props.getPublishStatusLabel}
-                                        filterByPageType={this.props.filterByPageType}
-                                        filterByPublishStatus={this.props.filterByPublishStatus}
-                                        updateFilterByPageStatusOptions={this.props.updateFilterByPageStatusOptions}
-                                        updateFilterByPageTypeOptions={this.props.updateFilterByPageTypeOptions}
-                                        updateFilterByWorkflowOptions={this.props.updateFilterByWorkflowOptions}
-                                        updateFilterStartEndDate={this.props.updateFilterStartEndDate}
-                                        startDate={this.props.startDate}
-                                        endDate={this.props.endDate} 
-                                        pageInContextComponents={this.props.pageInContextComponents} 
-                                        pageTypeSelectorComponents={this.props.pageTypeSelectorComponents}
-                                        updateSearchAdvancedTags={this.props.updateSearchAdvancedTags}
-                                        filterByWorkflow={this.props.filterByWorkflow}  />
-                                );})}
-                        </LazyLoad>
-                            
-                            <div>
-                            {/* {searchList.map((item,index) => {
-                                return (
-                                    <SearchResultCard key={index}
-                                        item={item}
-                                        clearSearch={this.props.clearSearch}
-                                        onLoadPage={this.props.onLoadPage}
-                                        buildBreadCrumbPath={this.props.buildBreadCrumbPath}
-                                        setEmptyStateMessage={this.props.setEmptyStateMessage}
-                                        tags={this.props.tags}
-                                        onSearch={this.props.onSearch}
-                                        onViewPage={this.props.onViewPage}
-                                        onViewEditPage={this.props.onViewEditPage}
-                                        CallCustomAction={this.props.CallCustomAction}
-                                        getPageTypeLabel={this.props.getPageTypeLabel}
-                                        getPublishStatusLabel={this.props.getPublishStatusLabel}
-                                        filterByPageType={this.props.filterByPageType}
-                                        filterByPublishStatus={this.props.filterByPublishStatus}
-                                        updateFilterByPageStatusOptions={this.props.updateFilterByPageStatusOptions}
-                                        updateFilterByPageTypeOptions={this.props.updateFilterByPageTypeOptions}
-                                        updateFilterByWorkflowOptions={this.props.updateFilterByWorkflowOptions}
-                                        updateFilterStartEndDate={this.props.updateFilterStartEndDate}
-                                        startDate={this.props.startDate}
-                                        endDate={this.props.endDate} 
-                                        pageInContextComponents={this.props.pageInContextComponents} 
-                                        pageTypeSelectorComponents={this.props.pageTypeSelectorComponents}
-                                        updateSearchAdvancedTags={this.props.updateSearchAdvancedTags}
-                                        filterByWorkflow={this.props.filterByWorkflow}  />
-                                );})} */}
-                            </div>
+                            return (
+                                <SearchResultCard key={index}
+                                    item={item}
+                                    clearSearch={this.props.clearSearch}
+                                    onLoadPage={this.props.onLoadPage}
+                                    buildBreadCrumbPath={this.props.buildBreadCrumbPath}
+                                    setEmptyStateMessage={this.props.setEmptyStateMessage}
+                                    tags={this.props.tags}
+                                    onSearch={this.props.onSearch}
+                                    onViewPage={this.props.onViewPage}
+                                    onViewEditPage={this.props.onViewEditPage}
+                                    CallCustomAction={this.props.CallCustomAction}
+                                    getPageTypeLabel={this.props.getPageTypeLabel}
+                                    getPublishStatusLabel={this.props.getPublishStatusLabel}
+                                    filterByPageType={this.props.filterByPageType}
+                                    filterByPublishStatus={this.props.filterByPublishStatus}
+                                    updateFilterByPageStatusOptions={this.props.updateFilterByPageStatusOptions}
+                                    updateFilterByPageTypeOptions={this.props.updateFilterByPageTypeOptions}
+                                    updateFilterByWorkflowOptions={this.props.updateFilterByWorkflowOptions}
+                                    updateFilterStartEndDate={this.props.updateFilterStartEndDate}
+                                    startDate={this.props.startDate}
+                                    endDate={this.props.endDate} 
+                                    pageInContextComponents={this.props.pageInContextComponents} 
+                                    pageTypeSelectorComponents={this.props.pageTypeSelectorComponents}
+                                    updateSearchAdvancedTags={this.props.updateSearchAdvancedTags}
+                                    filterByWorkflow={this.props.filterByWorkflow}  />
+                            );})}
+                        </LazyLoad>                            
                         </div>
                     </GridCell>
                 </GridCell>
             </GridCell>
-        :<div></div>);
+        :null);
     }
 }
 
@@ -132,6 +107,7 @@ SearchResult.propTypes = {
     tags : PropTypes.string.isRequired,
     filterByPageType : PropTypes.string.isRequired,
     filterByPublishStatus : PropTypes.bool.isRequired,
+    filtersUpdated : PropTypes.bool.isRequired,
     startDate : PropTypes.instanceOf(Date).isRequired,
     endDate : PropTypes.instanceOf(Date).isRequired,
     getPageTypeLabel : PropTypes.func.isRequired,
@@ -152,7 +128,8 @@ SearchResult.propTypes = {
     updateFilterStartEndDate : PropTypes.func.isRequired,
     filterByWorkflow: PropTypes.string.isRequired,
     onSearchScroll: PropTypes.func,
-    buildTree : PropTypes.func.isRequired
+    buildTree : PropTypes.func.isRequired,
+    pageIndex: PropTypes.number
 
 };
 

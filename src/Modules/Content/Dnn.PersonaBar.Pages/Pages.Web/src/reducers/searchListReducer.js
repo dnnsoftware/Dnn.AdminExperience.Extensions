@@ -6,11 +6,24 @@ export default function searchListReducer(state = { searchList:[], searchResult:
         case ActionTypes.SAVE_SEARCH_LIST:
             return {...state, searchList: action.data.searchList};
         case ActionTypes.SAVE_SEARCH_RESULT:
-            return {
-                ...state, 
-                searchResult: action.data.searchResult,
-                searchList: state.searchList.concat(action.data.searchResult.Results)
-            };
+            if (action.data.filtersUpdated) {
+                return {
+                    ...state, 
+                    searchResult: action.data.searchResult,
+                    searchList: action.data.searchResult.Results,
+                    filtersUpdated : action.data.filtersUpdated,
+                    filterPage: action.data.filterPage
+                };
+            } else {
+                return {
+                    ...state, 
+                    searchResult: action.data.searchResult,
+                    searchList: state.searchList.concat(action.data.searchResult.Results),
+                    filtersUpdated : action.data.filtersUpdated
+                };
+            }
+
+            
         default:
             return state;
     }
