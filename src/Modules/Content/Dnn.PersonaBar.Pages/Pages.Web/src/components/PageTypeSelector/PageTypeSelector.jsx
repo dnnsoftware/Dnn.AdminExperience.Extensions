@@ -33,6 +33,32 @@ class PageTypeSelector extends Component {
         const hierarchy = this._getHierarchyLabel();        
         const components = this.getComponents(); 
 
+        let pageParentInfoStyle = null;
+        let parentPageStyleLabel = null;
+        let parentPageStyleContent = null;
+        
+
+        if (hierarchy.length < 31) {
+            parentPageStyleLabel = {"display":"inline"};
+            parentPageStyleContent = {
+                "display":"inline"
+            };
+        } else {
+            pageParentInfoStyle = {"margin":"10px 0px 10px 0px"};
+            parentPageStyleLabel = {
+                "display":"inline-block",
+                "width":"50px;",
+                "vertical-align":"top"
+            };
+            
+            parentPageStyleContent = {
+                "display":"inline-block",
+                "width":"600px",
+                "word-wrap":"break-word",
+                "padding-left":"10px"
+            };
+        }
+
         return (
             <div className={styles.pageTypeSelector}>
                 <div>
@@ -51,13 +77,13 @@ class PageTypeSelector extends Component {
                                 {createdDate}
                             </span>
                         </div>
-                        <div className="page-info-item">
-                            <span className="page-info-item-label">
+                        <div className="page-info-item" style={pageParentInfoStyle}>
+                            <div className="page-info-item-label" style={parentPageStyleLabel}>
                                 {Localization.get("PageParent") + ": "}
-                            </span>
-                            <span className="page-info-item-value parent-page-name">
+                            </div>
+                            <div className="page-info-item-value parent-page-name" style={parentPageStyleContent}>
                                 {hierarchy}
-                            </span>
+                            </div>
                         </div>
                         <div className="page-info-item">
                             <span className="page-info-item-label">

@@ -21,10 +21,7 @@
             display: inline-block;
             word-break: keep-all;
             white-space: nowrap;
-            overflow-x: hidden;
-            max-width: ~"calc(100% - 80px)";
-            text-overflow: ellipsis;
-
+            
             &.page-type {
                 text-overflow: clip;
                 -ms-text-overflow: clip;
@@ -39,6 +36,9 @@
                 margin-right: 30px;
                 &.parent-page-name {
                     word-break: break-all;
+                    white-space: normal;
+                    min-width: 50px;
+                    
                 }
 
                 .dnn-radio-buttons {
