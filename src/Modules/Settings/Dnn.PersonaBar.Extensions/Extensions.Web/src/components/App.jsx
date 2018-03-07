@@ -59,14 +59,14 @@ class App extends Component {
         const { props } = this;
 
         document.addEventListener("installPortalTheme", (e) => {
-            props.dispatch(InstallationActions.setIsPortalPackage(true, () => {
+            props.dispatch(InstallationActions.setIsPortalPackage(false, () => {
                 this.selectPanel(3);
             }));
             this.updateReferrerInfo(e);
         }, false);
 
         if (util.settings.installPortalTheme) {
-            props.dispatch(InstallationActions.setIsPortalPackage(true, () => {
+            props.dispatch(InstallationActions.setIsPortalPackage(false, () => {
                 this.selectPanel(3);
             }));
             this.updateReferrerInfo(util.settings);
