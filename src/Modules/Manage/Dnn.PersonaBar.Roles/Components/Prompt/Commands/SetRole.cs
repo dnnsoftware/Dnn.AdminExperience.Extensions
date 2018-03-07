@@ -80,7 +80,7 @@ namespace Dnn.PersonaBar.Roles.Components.Prompt.Commands
                 var existingRole = RoleController.Instance.GetRoleById(PortalId, RoleId);
                 if (existingRole.IsSystemRole)
                 {
-                    throw new Exception("Cannot change system roles");
+                    throw new Exception("Cannot modify System Roles.");
                 }
                 var roleDto = new RoleDto
                 {
@@ -107,7 +107,7 @@ namespace Dnn.PersonaBar.Roles.Components.Prompt.Commands
             catch (Exception ex)
             {
                 Logger.Error(ex);
-                return new ConsoleErrorResultModel(LocalizeString("RoleUpdated.Error"));
+                return new ConsoleErrorResultModel(LocalizeString(!String.IsNullOrEmpty(ex.Message) ? ex.Message : "RoleUpdated.Error"));
             }
         }
     }
