@@ -309,11 +309,11 @@
   <data name="RoleUpdated.Error" xml:space="preserve">
     <value>Failed to update the role. Please try later.</value>
   </data>
-  <data name="RoleUpdated.SystemRoleError" xml:space="preserve">
-    <value>Cannot modify System Roles.</value>
-  </data>
   <data name="RoleUpdated.Message" xml:space="preserve">
     <value>Role updated successfully.</value>
+  </data>
+  <data name="RoleUpdated.SystemRoleError" xml:space="preserve">
+    <value>"Cannot modify System Roles."</value>
   </data>
   <data name="securityModeListLabel.Help" xml:space="preserve">
     <value>Choose the security mode for this role/group.</value>
