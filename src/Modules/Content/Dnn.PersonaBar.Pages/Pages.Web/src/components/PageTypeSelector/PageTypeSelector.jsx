@@ -5,6 +5,9 @@ import Localization from "../../localization";
 import RadioButtons from "dnn-radio-buttons";
 import utils from "../../utils";
 
+
+const MAX_PAGE_PARENT_SIZE_TOOGLE = 180;
+
 class PageTypeSelector extends Component {
 
     constructor(props) {
@@ -33,17 +36,16 @@ class PageTypeSelector extends Component {
 
     componentDidMount() {
         const pageSelectorDOM = ReactDOM.findDOMNode(this);
-        if (pageSelectorDOM.querySelector("#parentPageValue").offsetWidth > 180) {
+        if (pageSelectorDOM.querySelector("#parentPageValue").offsetWidth > MAX_PAGE_PARENT_SIZE_TOOGLE) {
             pageSelectorDOM.querySelector("#pageParent").className = "page-info-item page-parent-info-style-large";
             pageSelectorDOM.querySelector("#pageParentLabel").className = "page-info-item-label parent-page-style-label-large";
             pageSelectorDOM.querySelector("#pageParentContent").className = "page-info-item-value parent-page-name parent-page-style-content-large";
         }
-        console.log("Component did mount",pageSelectorDOM.querySelector("#parentPageValue").offsetWidth);
     }
 
     _calculateParentPageSize(parentPageRef) {
         if (parentPageRef !== null) {
-            this.pageParentLarge = (parentPageRef.offsetWidth > 180);
+            this.pageParentLarge = (parentPageRef.offsetWidth > MAX_PAGE_PARENT_SIZE_TOOGLE);
         }
     }
 
