@@ -107,7 +107,6 @@
     <Compile Include="Components\Prompt\Commands\ListRoles.cs" />
     <Compile Include="Components\Prompt\Commands\NewRole.cs" />
     <Compile Include="Components\Prompt\Commands\SetRole.cs" />
-    <Compile Include="Components\Prompt\Exceptions\SetRoleException.cs" />
     <Compile Include="Components\Prompt\Models\RoleModel.cs" />
     <Compile Include="Components\Prompt\Models\RoleModelBase.cs" />
     <Compile Include="Components\RolesController.cs" />
