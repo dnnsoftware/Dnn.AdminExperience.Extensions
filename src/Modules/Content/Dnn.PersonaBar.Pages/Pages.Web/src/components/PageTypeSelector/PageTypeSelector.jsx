@@ -1,10 +1,16 @@
 import React, {Component, PropTypes} from "react";
+import ReactDOM from "react-dom";
 import styles from "./style.less";
 import Localization from "../../localization";
 import RadioButtons from "dnn-radio-buttons";
 import utils from "../../utils";
 
 class PageTypeSelector extends Component {
+
+    constructor(props) {
+        super(props);
+        this.pageParentLarge = false;
+    }
 
     getComponents() {
         const {props} = this;
@@ -24,41 +30,33 @@ class PageTypeSelector extends Component {
             return page.hierarchy;
         }
     }
+
+    componentDidMount() {
+        const pageSelectorDOM = ReactDOM.findDOMNode(this);
+        if (pageSelectorDOM.querySelector("#parentPageValue").offsetWidth > 180) {
+            pageSelectorDOM.querySelector("#pageParent").className = "page-info-item page-parent-info-style-large";
+            pageSelectorDOM.querySelector("#pageParentLabel").className = "page-info-item-label parent-page-style-label-large";
+            pageSelectorDOM.querySelector("#pageParentContent").className = "page-info-item-value parent-page-name parent-page-style-content-large";
+        }
+        console.log("Component did mount",pageSelectorDOM.querySelector("#parentPageValue").offsetWidth);
+    }
+
+    _calculateParentPageSize(parentPageRef) {
+        if (parentPageRef !== null) {
+            this.pageParentLarge = (parentPageRef.offsetWidth > 180);
+        }
+    }
+
+
     render() {
-        const {page, onChangePageType} = this.props;
+        const { page, onChangePageType } = this.props;
         const createdDate = Localization.get("CreatedValue")
                                 .replace("[CREATEDDATE]", utils.formatDateNoTime(page.createdOnDate))
                                 .replace("[CREATEDUSER]", page.created || "System");
         
         const hierarchy = this._getHierarchyLabel();        
-        const components = this.getComponents(); 
-
-        let pageParentInfoStyle = null;
-        let parentPageStyleLabel = null;
-        let parentPageStyleContent = null;
-        
-
-        if (hierarchy.length < 31) {
-            parentPageStyleLabel = {"display":"inline"};
-            parentPageStyleContent = {
-                "display":"inline"
-            };
-        } else {
-            pageParentInfoStyle = {"margin":"10px 0px 10px 0px"};
-            parentPageStyleLabel = {
-                "display":"inline-block",
-                "width":"50px;",
-                "vertical-align":"top"
-            };
-            
-            parentPageStyleContent = {
-                "display":"inline-block",
-                "width":"600px",
-                "word-wrap":"break-word",
-                "padding-left":"10px"
-            };
-        }
-
+        const components = this.getComponents();
+                
         return (
             <div className={styles.pageTypeSelector}>
                 <div>
@@ -77,13 +75,15 @@ class PageTypeSelector extends Component {
                                 {createdDate}
                             </span>
                         </div>
-                        <div className="page-info-item" style={pageParentInfoStyle}>
-                            <div className="page-info-item-label" style={parentPageStyleLabel}>
+                        <div id="pageParent" className={this.pageParentLarge ? "page-info-item page-parent-info-style-large" : "page-info-item"}>
+                            <span id="pageParentLabel" className={this.pageParentLarge ? "page-info-item-label parent-page-style-label-large" : "page-info-item-label"}>
                                 {Localization.get("PageParent") + ": "}
-                            </div>
-                            <div className="page-info-item-value parent-page-name" style={parentPageStyleContent}>
-                                {hierarchy}
-                            </div>
+                            </span>
+                            <span id="pageParentContent" className={this.pageParentLarge ? "page-info-item-value parent-page-name parent-page-style-content-large" : "page-info-item-value parent-page-name"}>
+                                 <span id="parentPageValue" ref={(parentPageRef)=>this._calculateParentPageSize(parentPageRef)} >
+                                    {hierarchy}
+                                </span>
+                            </span>
                         </div>
                         <div className="page-info-item">
                             <span className="page-info-item-label">
