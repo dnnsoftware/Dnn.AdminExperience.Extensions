@@ -21,10 +21,18 @@ const PageService = function () {
         const api = getOverridablePagesApi();
         let request = page;
 
-        request = {
-            ...request,
-            url: ""
-        };
+        if (page.tabId === 0 && !securityService.isSuperUser()) {
+            request = {
+                ...request,
+                parentId: page.parentId !== undefined && page.parentId !== null ? utils.getCurrentPageId() : page.parentId
+            };
+        }
+        else {
+            request = {
+                ...request,
+                url: ""
+            };
+        }
 
         return api.post("SavePageDetails", toBackEndPage(request));
     };
