@@ -50,7 +50,7 @@ namespace Dnn.PersonaBar.Pages.Components.Prompt.Commands
         private bool? PageVisible { get; set; }
         private int Page { get; set; }
         private int Max { get; set; } = 10;
-
+        
         public override void Init(string[] args, PortalSettings portalSettings, UserInfo userInfo, int activeTabId)
         {
 
@@ -74,6 +74,13 @@ namespace Dnn.PersonaBar.Pages.Components.Prompt.Commands
             int total;
 
             IEnumerable<DotNetNuke.Entities.Tabs.TabInfo> lstTabs;
+
+            // --delete is assumed to be null (default) when empty. 
+            // If we want a different default value for empty flags, this case is not covered yet
+            if(null == Deleted && HasFlag(FlagDeleted))
+            {
+                Deleted = true;
+            }
 
             lstTabs = PagesController.Instance.GetPageList(PortalSettings, Deleted, PageName, PageTitle, PagePath, PageSkin, PageVisible, ParentId ?? -1, out total, string.Empty, Page > 0 ? Page - 1 : 0, max, ParentId == null);
             var totalPages = total / max + (total % max == 0 ? 0 : 1);
