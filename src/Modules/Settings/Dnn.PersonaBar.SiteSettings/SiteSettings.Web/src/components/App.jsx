@@ -2,7 +2,8 @@ import React, { Component, PropTypes } from "react";
 import { connect } from "react-redux";
 import PersonaBarPageHeader from "dnn-persona-bar-page-header";
 import {
-    visiblePanel as VisiblePanelActions
+    visiblePanel as VisiblePanelActions,
+    siteInfo
 } from "../actions";
 import Body from "./body";
 import PersonaBarPage from "dnn-persona-bar-page";
@@ -56,14 +57,13 @@ class App extends Component {
     }
 
     changePortalId(portalId) {
+        const { props } = this;
         if (portalId === undefined) return;
         this.setState({
-            bodyShowing: false
+            bodyShowing: true,
+            portalId
         }, () => {
-            this.setState({
-                bodyShowing: true,
-                portalId
-            });
+            props.dispatch(siteInfo.updatePortalId(portalId));
         });
     }
 
@@ -233,7 +233,7 @@ class App extends Component {
 App.PropTypes = {
     dispatch: PropTypes.func.isRequired,
     selectedPage: PropTypes.number,
-    portalId: PropTypes.number,
+    siteInfo: PropTypes.object,
     cultureCode: PropTypes.string
 };
 
@@ -241,7 +241,8 @@ App.PropTypes = {
 function mapStateToProps(state) {
     return {
         selectedPage: state.visiblePanel.selectedPage,
-        selectedPageVisibleIndex: state.visiblePanel.selectedPageVisibleIndex
+        selectedPageVisibleIndex: state.visiblePanel.selectedPageVisibleIndex,
+        siteInfo: state.siteInfo
     };
 }
 
