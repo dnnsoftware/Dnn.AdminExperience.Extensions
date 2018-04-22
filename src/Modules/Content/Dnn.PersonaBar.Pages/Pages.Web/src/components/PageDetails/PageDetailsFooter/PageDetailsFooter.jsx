@@ -1,4 +1,6 @@
-import React, {Component, PropTypes} from "react";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import styles from "./style.less";
 import GridSystem from "dnn-grid-system";
 import GridCell from "dnn-grid-cell";
@@ -23,6 +25,11 @@ class PageDetailsFooter extends Component {
         onChangeField(key, value);
     }
 
+    _changePageVisibility(value){
+        // console.log('this.props.page', this.props.page);
+        this.onChangeValue("includeInMenu",value);
+    }
+
     getLeftColumnComponents(normalPage, pageType, includeTemplates) {
         const {page, errors} = this.props;
         let defaultLeftColumnComponents;
@@ -32,7 +39,7 @@ class PageDetailsFooter extends Component {
                 onChangePageName={this.onChangeField.bind(this, "name")} />];
         } else {
             defaultLeftColumnComponents = [<DisplayInMenu includeInMenu={page.includeInMenu}
-                onChangeIncludeInMenu={this.onChangeValue.bind(this, "includeInMenu")} />];
+                onChangeIncludeInMenu={this._changePageVisibility.bind(this)} />];
             if (includeTemplates && page.tabId === 0) {
                 defaultLeftColumnComponents.push(
                     <Template templates={page.templates} 
@@ -142,4 +149,10 @@ PageDetailsFooter.propTypes = {
     components: PropTypes.array.isRequired
 };
 
-export default PageDetailsFooter;
+const mapStateToProps = (state) => {
+    return {
+        page:state.pages.selectedPage
+    };
+};
+
+export default connect(mapStateToProps)(PageDetailsFooter);
