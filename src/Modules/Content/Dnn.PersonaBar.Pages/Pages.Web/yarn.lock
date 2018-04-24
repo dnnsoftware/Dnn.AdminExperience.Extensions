@@ -21,8 +21,8 @@
   resolved "https://www.myget.org/F/dnn-software-public/npm/@types/knockout/-/@types/knockout-3.4.36.tgz#4b8cc1afbaf735ae63cb8e62b69451e17474e489"
 
 "@types/node@*":
-  version "9.6.6"
-  resolved "https://www.myget.org/F/dnn-software-public/npm/@types/node/-/@types/node-9.6.6.tgz#439b91f9caf3983cad2eef1e11f6bedcbf9431d2"
+  version "9.6.5"
+  resolved "https://www.myget.org/F/dnn-software-public/npm/@types/node/-/@types/node-9.6.5.tgz#ee700810fdf49ac1c399fc5980b7559b3e5a381d"
 
 "@types/redux@3.6.31":
   version "3.6.31"
@@ -1042,8 +1042,8 @@ chalk@^1.0.0, chalk@^1.1.1, chalk@^1.1.3:
     supports-color "^2.0.0"
 
 chalk@^2.0.0, chalk@^2.0.1, chalk@^2.3.2:
-  version "2.4.0"
-  resolved "https://www.myget.org/F/dnn-software-public/npm/chalk/-/chalk-2.4.0.tgz#a060a297a6b57e15b61ca63ce84995daa0fe6e52"
+  version "2.3.2"
+  resolved "https://www.myget.org/F/dnn-software-public/npm/chalk/-/chalk-2.3.2.tgz#250dc96b07491bfd601e648d66ddf5f60c7a5c65"
   dependencies:
     ansi-styles "^3.2.1"
     escape-string-regexp "^1.0.5"
@@ -2360,11 +2360,11 @@ fs.realpath@^1.0.0:
   resolved "https://www.myget.org/F/dnn-software-public/npm/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
 
 fsevents@^1.0.0, fsevents@^1.1.1:
-  version "1.2.0"
-  resolved "https://www.myget.org/F/dnn-software-public/npm/fsevents/-/fsevents-1.2.0.tgz#e11a5ff285471e4cc43ab9cd09bb7986c565dcdc"
+  version "1.1.3"
+  resolved "https://www.myget.org/F/dnn-software-public/npm/fsevents/-/fsevents-1.1.3.tgz#11f82318f5fe7bb2cd22965a108e9306208216d8"
   dependencies:
-    nan "^2.9.2"
-    node-pre-gyp "^0.9.0"
+    nan "^2.3.0"
+    node-pre-gyp "^0.6.39"
 
 function-bind@^1.0.2, function-bind@^1.1.0, function-bind@^1.1.1:
   version "1.1.1"
@@ -3405,8 +3405,8 @@ jsbn@~0.1.0:
   resolved "https://www.myget.org/F/dnn-software-public/npm/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
 jsdom@^11.5.1:
-  version "11.8.0"
-  resolved "https://www.myget.org/F/dnn-software-public/npm/jsdom/-/jsdom-11.8.0.tgz#a52e9a7d2b931284f62c80dad5f17d7390499d8b"
+  version "11.7.0"
+  resolved "https://www.myget.org/F/dnn-software-public/npm/jsdom/-/jsdom-11.7.0.tgz#8b45b657dae90d6d2d3a5f5d1126bb7102d0a172"
   dependencies:
     abab "^1.0.4"
     acorn "^5.3.0"
@@ -3851,7 +3851,7 @@ mute-stream@0.0.5:
   version "0.0.5"
   resolved "https://www.myget.org/F/dnn-software-public/npm/mute-stream/-/mute-stream-0.0.5.tgz#8fbfabb0a98a253d3184331f9e8deb7372fac6c0"
 
-nan@^2.9.2:
+nan@^2.3.0:
   version "2.10.0"
   resolved "https://www.myget.org/F/dnn-software-public/npm/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
 
@@ -3949,20 +3949,21 @@ node-notifier@^5.2.1:
     shellwords "^0.1.1"
     which "^1.3.0"
 
-node-pre-gyp@^0.9.0:
-  version "0.9.1"
-  resolved "https://www.myget.org/F/dnn-software-public/npm/node-pre-gyp/-/node-pre-gyp-0.9.1.tgz#f11c07516dd92f87199dbc7e1838eab7cd56c9e0"
+node-pre-gyp@^0.6.39:
+  version "0.6.39"
+  resolved "https://www.myget.org/F/dnn-software-public/npm/node-pre-gyp/-/node-pre-gyp-0.6.39.tgz#c00e96860b23c0e1420ac7befc5044e1d78d8649"
   dependencies:
     detect-libc "^1.0.2"
+    hawk "3.1.3"
     mkdirp "^0.5.1"
-    needle "^2.2.0"
     nopt "^4.0.1"
-    npm-packlist "^1.1.6"
     npmlog "^4.0.2"
     rc "^1.1.7"
+    request "2.81.0"
     rimraf "^2.6.1"
     semver "^5.3.0"
-    tar "^4"
+    tar "^2.2.1"
+    tar-pack "^3.4.0"
 
 nomnom@~1.6.2:
   version "1.6.2"
@@ -5560,8 +5561,8 @@ supports-color@^3.1.0, supports-color@^3.1.1, supports-color@^3.1.2, supports-co
     has-flag "^1.0.0"
 
 supports-color@^5.3.0:
-  version "5.4.0"
-  resolved "https://www.myget.org/F/dnn-software-public/npm/supports-color/-/supports-color-5.4.0.tgz#1c6b337402c2137605efe19f10fec390f6faab54"
+  version "5.3.0"
+  resolved "https://www.myget.org/F/dnn-software-public/npm/supports-color/-/supports-color-5.3.0.tgz#5b24ac15db80fa927cf5227a4a33fd3c4c7676c0"
   dependencies:
     has-flag "^3.0.0"
 
@@ -5830,11 +5831,11 @@ url-parse@1.0.x:
     requires-port "1.0.x"
 
 url-parse@^1.1.8, url-parse@^1.2.0:
-  version "1.4.0"
-  resolved "https://www.myget.org/F/dnn-software-public/npm/url-parse/-/url-parse-1.4.0.tgz#6bfdaad60098c7fe06f623e42b22de62de0d3d75"
+  version "1.3.0"
+  resolved "https://www.myget.org/F/dnn-software-public/npm/url-parse/-/url-parse-1.3.0.tgz#04a06c420d22beb9804f7ada2d57ad13160a4258"
   dependencies:
-    querystringify "^2.0.0"
-    requires-port "^1.0.0"
+    querystringify "~1.0.0"
+    requires-port "~1.0.0"
 
 url@~0.10.1:
   version "0.10.3"
