@@ -37,11 +37,11 @@ namespace Dnn.PersonaBar.Pages.Components
 
             if (aliasPortal != null && portalSettings.PortalId != aliasPortal.PortalID)
             {
-                    return new PageUrlResult
-                    {
-                        Success = false,
-                        ErrorMessage = Localization.GetString("CustomUrlPortalAlias.Error"),
-                        SuggestedUrlPath = ""
+                return new PageUrlResult
+                {
+                    Success = false,
+                    ErrorMessage = Localization.GetString("CustomUrlPortalAlias.Error"),
+                    SuggestedUrlPath = String.Empty
                     };
             }
 
