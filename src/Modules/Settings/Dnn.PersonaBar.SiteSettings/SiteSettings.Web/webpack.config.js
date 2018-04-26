@@ -60,10 +60,7 @@ module.exports = {
         })
     ] : [
             new webpack.DefinePlugin({
-                VERSION: JSON.stringify(packageJson.version),
-                "process.env": {
-                    "NODE_ENV": JSON.stringify("development")
-                }
+                VERSION: JSON.stringify(packageJson.version)
             })
         ]
 };
