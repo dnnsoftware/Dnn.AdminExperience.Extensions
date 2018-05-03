@@ -5,18 +5,14 @@ import reducers from "../reducers/promptReducers";
 import DevTools from "../containers/DevTools";
 import { IS_DEV} from "../globals/promptInit";
 
-/* eslint-disable no-undef */
-const IS_PRODUCTION = process.env.NODE_ENV === "production";
-
 export default function configureStore(initialState) {
-    const store = createStore(
-        rootReducer,
-        initialState,
-        compose(
-            IS_PRODUCTION ?
-                applyMiddleware(thunkMiddleware) :
-                applyMiddleware(thunkMiddleware, reduxImmutableStateInvariant()), DevTools.instrument()
-        )
-    );
-    return store;
+    let enhancer;
+
+    if (IS_DEV) {
+        enhancer = compose(applyMiddleware(thunkMiddleware, reduxImmutableStateInvariant()), DevTools.instrument());
+    } else {
+        enhancer = applyMiddleware(thunkMiddleware);
+}
+
+    return createStore(reducers, initialState, enhancer);
 }
