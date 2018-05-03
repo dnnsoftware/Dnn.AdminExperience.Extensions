@@ -29,9 +29,9 @@ namespace Dnn.PersonaBar.Recyclebin.Components.Prompt.Commands
         private bool DeleteChildren { get; set; }
 
         public PurgePage() : this(
-            TabController.Instance, 
-            RecyclebinController.Instance, 
-            new ContentVerifier(PortalController.Instance,PortalGroupController.Instance)
+            TabController.Instance,
+            RecyclebinController.Instance,
+            new ContentVerifier()
             )
         {
         }
