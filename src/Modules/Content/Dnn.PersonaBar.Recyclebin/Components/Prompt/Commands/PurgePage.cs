@@ -6,7 +6,7 @@ using Dnn.PersonaBar.Library.Prompt.Models;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Tabs;
 using DotNetNuke.Entities.Users;
-using Dnn.PersonaBar.Common;
+using Dnn.PersonaBar.Library.Helper;
 
 namespace Dnn.PersonaBar.Recyclebin.Components.Prompt.Commands
 {
@@ -28,7 +28,11 @@ namespace Dnn.PersonaBar.Recyclebin.Components.Prompt.Commands
         private int PageId { get; set; }
         private bool DeleteChildren { get; set; }
 
-        public PurgePage() : this(TabController.Instance, RecyclebinController.Instance, ContentVerifier.Instance)
+        public PurgePage() : this(
+            TabController.Instance, 
+            RecyclebinController.Instance, 
+            new ContentVerifier(PortalController.Instance,PortalGroupController.Instance)
+            )
         {
         }
 

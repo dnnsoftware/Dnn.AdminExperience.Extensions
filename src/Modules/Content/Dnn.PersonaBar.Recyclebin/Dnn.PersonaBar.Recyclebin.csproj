@@ -148,10 +148,6 @@
     <Content Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Dnn.PersonaBar.Common\Dnn.PersonaBar.Common.csproj">
-      <Project>{5CFCF09B-8514-448A-AD9D-9173D68F9A1A}</Project>
-      <Name>Dnn.PersonaBar.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Settings\Dnn.PersonaBar.Prompt\Dnn.PersonaBar.Prompt.csproj">
       <Project>{29521c64-3269-40da-9b4c-cd492246c889}</Project>
       <Name>Dnn.PersonaBar.Prompt</Name>

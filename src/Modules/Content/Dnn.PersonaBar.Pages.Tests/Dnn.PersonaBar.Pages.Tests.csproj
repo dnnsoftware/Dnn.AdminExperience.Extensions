@@ -59,10 +59,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Dnn.PersonaBar.Common\Dnn.PersonaBar.Common.csproj">
-      <Project>{5CFCF09B-8514-448A-AD9D-9173D68F9A1A}</Project>
-      <Name>Dnn.PersonaBar.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Dnn.PersonaBar.Recyclebin\Dnn.PersonaBar.Recyclebin.csproj">
       <Project>{35AD8ED3-CBC3-4208-83D1-660EBC908DE2}</Project>
       <Name>Dnn.PersonaBar.Recyclebin</Name>
