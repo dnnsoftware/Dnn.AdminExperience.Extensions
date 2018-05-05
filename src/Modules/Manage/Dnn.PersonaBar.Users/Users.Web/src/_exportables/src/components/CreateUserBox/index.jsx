@@ -11,6 +11,8 @@ import { CommonUsersActions } from "../../actions";
 import {validateEmail} from "../../helpers";
 import utilities from "utils";
 import styles from "./style.less";
+import Password from "../common/Password";
+
 
 const inputStyle = { width: "100%" };
 const newUserRegistrationDetails = {
@@ -46,6 +48,37 @@ class CreateUserBox extends Component {
         };
         this.submitted = false;
     }
+
+    validateConfirmPassword(e){
+        const UserDetails = this.state.UserDetails;
+        let {confirmPassword} = this.state;
+        confirmPassword = e.target.value;
+        this.setState({ confirmPassword });
+
+        if (UserDetails.password !== e.target.value) {
+            this.setState(
+                {
+                    errors:{
+                        ...this.state.errors,
+                        passwordsMatch:true
+                    }
+                }
+            );
+        } else {
+            this.setState({errors:{passwordsMatch:false}});
+        }
+    }
+
+    onChangePassword(event) {
+        this.setState({
+            UserDetails:{
+                ...this.state.UserDetails,password: event.target.value
+            },
+            errors:{...this.state.errors, password:false}
+        }); 
+    }
+
+
     onChange(key, item) {
         let {UserDetails} = this.state;
         if (key === "randomPassword" || key === "authorize" || key === "notify") {
@@ -102,7 +135,7 @@ class CreateUserBox extends Component {
         });
     }
     validateForm() {
-        const {props, state } = this;
+        const {props } = this;
 
         let valid = true;
         let requiresQuestionAndAnswer = props.appSettings.applicationSettings.settings.requiresQuestionAndAnswer;
@@ -147,7 +180,7 @@ class CreateUserBox extends Component {
                 valid = false;
             }
 
-            if(requiresQuestionAndAnswer){
+            if (requiresQuestionAndAnswer){
                 if (UserDetails.question === "") {
                     errors.question = true;
                     valid = false;
@@ -220,29 +253,28 @@ class CreateUserBox extends Component {
                     </GridSystem>
                     {!state.UserDetails.randomPassword && <GridCell><hr/></GridCell>}
                     {!state.UserDetails.randomPassword && <GridSystem>
-                        <div>
-                            <SingleLineInputWithError label={Localization.get("Password") }
-                                error={state.errors.password}
-                                onChange={this.onChange.bind(this, "password") }
-                                tooltipMessage={Localization.get("Password.Help")}
-                                errorMessage={Localization.get("Password.Required") }
-                                style={inputStyle}
+
+
+                            <Password 
+                                error={state.errors} 
+                                onChangePassword={this.onChangePassword.bind(this)} 
+                                style={inputStyle} 
                                 inputStyle={!requiresQuestionAndAnswer ? { marginBottom: 15 } : { marginBottom: 0 }}
-                                type="password"
-                                autoComplete="off"
-                                value={state.UserDetails.password}  tabIndex={7}/>
-                        </div>
-                        <div>
+                                UserDetails={this.state.UserDetails}
+                            />
+                           
                             <SingleLineInputWithError label={Localization.get("Confirm") }
                                 error={state.errors.confirmPassword || state.errors.passwordsMatch}
-                                onChange={this.onChange.bind(this, "confirmPassword") }
+                                onChange={this.onChange.bind(this,"confirmPassword") }
+                                // onKeyUp={this.validateConfirmPassword.bind(this)}
                                 tooltipMessage={Localization.get("Confirm.Help")}
                                 errorMessage={state.errors.confirmPassword ? Localization.get("Confirm.Required") : Localization.get("ConfirmMismatch.ErrorMessage") }
                                 style={inputStyle}
                                 type="password"
                                 autoComplete="off"
                                 inputStyle={!requiresQuestionAndAnswer ? { marginBottom: 15 } : { marginBottom: 0 }}
-                                value={state.confirmPassword}  tabIndex={8}/></div>
+                                value={state.confirmPassword}  tabIndex={8}/>
+
                     </GridSystem>
                     }
                     {requiresQuestionAndAnswer && <GridSystem>
