@@ -90,6 +90,11 @@ class UserService {
         const sf = this.getServiceFramework("Users");
         sf.post("RemoveUserRole", payload, callback, errorCallback);
     }
+    
+    getPasswordStrengthOptions(callback, errorCallback){
+        const sf = this.getServiceFramework("Users");
+        sf.get("GetPasswordStrengthOptions",{},callback,errorCallback);
+    }
 }
 const userService = new UserService();
 export default userService;

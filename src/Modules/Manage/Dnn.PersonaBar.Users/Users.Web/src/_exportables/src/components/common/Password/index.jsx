@@ -2,24 +2,30 @@ import React, { Component,PropTypes  } from "react";
 import SingleLineInputWithError from "dnn-single-line-input-with-error";
 import Localization from "localization";
 import passwordStrength from "utils/PasswordStrength";
-import "./style.less";
+import {CommonUsersService as UserService} from "../../../services";
 
-//TODO: Replace with configuration from server
-const defaultPasswordOptions = {
-    minLength:7,
-    minNumberOfSpecialChars:1,
-    validationExpression:""
-};
+import "./style.less";
 
 class Password extends Component {
     constructor(props) {
         super(props);
+        this.passwordStrengthOptions = {
+            minLength:7,
+            minNumberOfSpecialChars:1,
+            validationExpression:""        
+        };
+    }
+
+    componentDidMount(){
         
+        UserService.getPasswordStrengthOptions((data)=>{
+            this.passwordStrengthOptions = data;
+        });
     }
 
     _getStrength(){
         let password = this.props.UserDetails.password;
-        let pStrength = passwordStrength(password,defaultPasswordOptions);
+        let pStrength = passwordStrength(password,this.passwordStrengthOptions);
         if (password.length <= 2 ) {
             return null;
         }
@@ -34,10 +40,8 @@ class Password extends Component {
         }
         return "weak";
     }
-
    
     render() {
-        
         return (
             <div>
                 <SingleLineInputWithError label={Localization.get("Password") }
