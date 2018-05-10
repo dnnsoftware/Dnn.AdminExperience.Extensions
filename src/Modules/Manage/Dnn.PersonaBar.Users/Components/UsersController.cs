@@ -499,7 +499,7 @@ namespace Dnn.PersonaBar.Users.Components
                     usersContract.SortAscending,
                     usersContract.PageIndex,
                     usersContract.PageSize,
-                    string.IsNullOrEmpty(usersContract.SearchText) ? "" : usersContract.SearchText.TrimEnd('%') + "%",
+                    string.IsNullOrEmpty(usersContract.SearchText) ? "" : "%" + usersContract.SearchText.TrimEnd('%') + "%",
                     includeAuthorized,
                     includeDeleted,
                     includeSuperUsers));
