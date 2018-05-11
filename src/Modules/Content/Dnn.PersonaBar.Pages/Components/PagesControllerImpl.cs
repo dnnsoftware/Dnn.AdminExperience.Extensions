@@ -556,10 +556,11 @@ namespace Dnn.PersonaBar.Pages.Components
             {
                 return true;
             }
-
+                        
             bool modified;
             //Clean Url
             var options = UrlRewriterUtils.ExtendOptionsForCustomURLs(UrlRewriterUtils.GetOptionsFromSettings(new FriendlyUrlSettings(portalSettings.PortalId)));
+            urlPath = GetLocalPath(urlPath);
             urlPath = FriendlyUrlController.CleanNameForUrl(urlPath, options, out modified);
             if (modified)
             {
@@ -1271,6 +1272,16 @@ namespace Dnn.PersonaBar.Pages.Components
 
             //Copy Modules
             CopyModulesFromSourceTab(tab, sourceTab, includedModules);
+        }
+
+        public string GetLocalPath(string url)
+        {
+            if (url.Length > 1)
+            {
+                url = url.TrimEnd(new[] { '/' });
+                url = url.Remove(0, url.LastIndexOf('/'));
+            }
+            return url;
         }
 
         private void CopySourceTabProperties(TabInfo tab, TabInfo sourceTab)
