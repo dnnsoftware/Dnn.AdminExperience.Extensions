@@ -60,7 +60,6 @@ namespace Dnn.PersonaBar.Pages.Components
         PageUrlResult CreateCustomUrl(SeoUrl dto);
         PageUrlResult UpdateCustomUrl(SeoUrl dto);
         PageUrlResult DeleteCustomUrl(UrlIdDto dto);
-        PagePermissions GetPermissionsData(int pageId);
-        string GetLocalPath(string absoluteURL);
+        PagePermissions GetPermissionsData(int pageId);        
     }
 }
