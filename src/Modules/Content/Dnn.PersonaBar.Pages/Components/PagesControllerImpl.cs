@@ -60,20 +60,45 @@ namespace Dnn.PersonaBar.Pages.Components
         private readonly ITemplateController _templateController;
         private readonly IDefaultPortalThemeController _defaultPortalThemeController;
         private readonly ICloneModuleExecutionContext _cloneModuleExecutionContext;
+        private readonly IStaticDependenciesResolver _staticDependenciesResolver;
 
         public const string PageTagsVocabulary = "PageTags";
-        private static readonly IList<string> TabSettingKeys = new List<string> { "CustomStylesheet" };
+        private static readonly IList<string> TabSettingKeys = new List<string> { "CustomStylesheet" };        
+
         private PortalSettings PortalSettings { get; set; }
 
         public PagesControllerImpl()
+            : this(
+                  TabController.Instance,
+                  ModuleController.Instance,
+                  PageUrlsController.Instance,
+                  TemplateController.Instance,
+                  DefaultPortalThemeController.Instance,
+                  CloneModuleExecutionContext.Instance,
+                  new StaticDependenciesResolver()
+                  )
         {
-            _tabController = TabController.Instance;
-            _moduleController = ModuleController.Instance;
-            _pageUrlsController = PageUrlsController.Instance;
-            _templateController = TemplateController.Instance;
-            _defaultPortalThemeController = DefaultPortalThemeController.Instance;
-            _cloneModuleExecutionContext = CloneModuleExecutionContext.Instance;
         }
+
+        public PagesControllerImpl(
+            ITabController tabController,
+            IModuleController moduleController,
+            IPageUrlsController pageUrlsController,
+            ITemplateController templateController,
+            IDefaultPortalThemeController defaultPortalThemeController,
+            ICloneModuleExecutionContext cloneModuleExecutionContext,
+            IStaticDependenciesResolver pagesControllerStaticDependencies
+            )
+        {
+            _tabController = tabController;
+            _moduleController = moduleController;
+            _pageUrlsController = pageUrlsController;
+            _templateController = templateController;
+            _defaultPortalThemeController = defaultPortalThemeController;
+            _cloneModuleExecutionContext = cloneModuleExecutionContext;
+            _staticDependenciesResolver = pagesControllerStaticDependencies;
+        }
+
 
         public bool IsValidTabPath(TabInfo tab, string newTabPath, string newTabName, out string errorMessage)
         {
@@ -273,7 +298,7 @@ namespace Dnn.PersonaBar.Pages.Components
 
             string errorMessage;
             string field;
-            if (!ValidatePageSettingsData(pageSettings, tab, out field, out errorMessage))
+            if (!ValidatePageSettingsData(PortalSettings, pageSettings, tab, out field, out errorMessage))
             {
                 throw new PageValidationException(field, errorMessage);
             }
@@ -454,7 +479,7 @@ namespace Dnn.PersonaBar.Pages.Components
             return tabModules.Values.Where(m => !m.IsDeleted && !m.AllTabs);
         }
 
-        protected virtual bool ValidatePageSettingsData(PageSettings pageSettings, TabInfo tab, out string invalidField, out string errorMessage)
+        protected virtual bool ValidatePageSettingsData(PortalSettings portalSettings, PageSettings pageSettings, TabInfo tab, out string invalidField, out string errorMessage)
         {
             errorMessage = string.Empty;
             invalidField = string.Empty;
@@ -479,7 +504,6 @@ namespace Dnn.PersonaBar.Pages.Components
             }
 
             var parentId = pageSettings.ParentId ?? tab?.ParentId ?? Null.NullInteger;
-            var portalSettings = PortalSettings ?? PortalController.Instance.GetCurrentPortalSettings();
 
             if (pageSettings.PageType == "template")
             {
@@ -539,7 +563,7 @@ namespace Dnn.PersonaBar.Pages.Components
                     break;
             }
 
-            return ValidatePageUrlSettings(pageSettings, tab, ref invalidField, ref errorMessage);
+            return ValidatePageUrlSettings(portalSettings, pageSettings, tab, ref invalidField, ref errorMessage);
         }
 
         protected virtual int GetTemplateParentId(int portalId)
@@ -547,24 +571,20 @@ namespace Dnn.PersonaBar.Pages.Components
             return Null.NullInteger;
         }
 
-        private bool ValidatePageUrlSettings(PageSettings pageSettings, TabInfo tab, ref string invalidField, ref string errorMessage)
+        public bool ValidatePageUrlSettings(PortalSettings portalSettings, PageSettings pageSettings, TabInfo tab, ref string invalidField, ref string errorMessage)
         {
-            var portalSettings = PortalSettings ?? PortalController.Instance.GetCurrentPortalSettings();
             var urlPath = !string.IsNullOrEmpty(pageSettings.Url) ? pageSettings.Url.TrimStart('/') : string.Empty;
 
             if (string.IsNullOrEmpty(urlPath))
             {
                 return true;
             }
-                        
-            bool modified;
-            //Clean Url
-            var options = UrlRewriterUtils.ExtendOptionsForCustomURLs(UrlRewriterUtils.GetOptionsFromSettings(new FriendlyUrlSettings(portalSettings.PortalId)));
-            urlPath = GetLocalPath(urlPath);
-            // As FriendlyUrlController.CleanNameForUrl is static method call, then is should be wrapped up in an interface call with same arguments
-            // and also need to move the ValidatePageUrlSettings to interface and add all dependencies to injection
 
-            urlPath = FriendlyUrlController.CleanNameForUrl(urlPath, options, out modified);
+            bool modified;
+            //Clean Url            
+            var options = _staticDependenciesResolver.GetExtendOptionsForURLs(portalSettings.PortalId);
+            urlPath = GetLocalPath(urlPath);
+            urlPath = _staticDependenciesResolver.CleanNameForUrl(urlPath, options, out modified);
             if (modified)
             {
                 errorMessage = Localization.GetString("UrlPathCleaned");
@@ -573,7 +593,7 @@ namespace Dnn.PersonaBar.Pages.Components
             }
 
             //Validate for uniqueness
-            FriendlyUrlController.ValidateUrl(urlPath, tab?.TabID ?? Null.NullInteger, portalSettings, out modified);
+            _staticDependenciesResolver.ValidateUrl(urlPath, tab?.TabID ?? Null.NullInteger, portalSettings, out modified);
             if (modified)
             {
                 errorMessage = Localization.GetString("UrlPathNotUnique");

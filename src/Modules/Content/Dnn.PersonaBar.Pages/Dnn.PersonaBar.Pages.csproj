@@ -120,6 +120,7 @@
     <Compile Include="Components\IPageManagementController.cs" />
     <Compile Include="Components\IPagesController.cs" />
     <Compile Include="Components\IPageUrlsController.cs" />
+    <Compile Include="Components\IStaticDependenciesResolver.cs" />
     <Compile Include="Components\ITemplateController.cs" />
     <Compile Include="Components\IDefaultPortalThemeController.cs" />
     <Compile Include="Components\Localization.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Components\Prompt\Models\PageModel.cs" />
     <Compile Include="Components\Prompt\Models\PageModelBase.cs" />
     <Compile Include="Components\PublishStatus.cs" />
+    <Compile Include="Components\StaticDependenciesResolver.cs" />
     <Compile Include="Components\WorkflowHelper.cs" />
     <Compile Include="Components\XssCleaner.cs" />
     <Compile Include="Components\PageUrlsController.cs" />
