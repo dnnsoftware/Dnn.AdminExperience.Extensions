@@ -96,13 +96,13 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
             if (!string.IsNullOrEmpty(Username))
             {
                 // do username lookup
-                var searchTerm = Username.Replace("%", "").Replace("*", "");
+                var searchTerm = Username.Trim().TrimEnd(new char[] { '%', '*' }); // Username.Replace("%", "").Replace("*", "");
                 getUsersContract.SearchText = searchTerm;
             }
             else if (!string.IsNullOrEmpty(Email))
             {
                 // must be email
-                var searchTerm = Email.Replace("%", "").Replace("*", "");
+                var searchTerm = Email.Trim().TrimEnd(new char[] { '%', '*' }); //.Replace("%", "").Replace("*", "");
                 getUsersContract.SearchText = searchTerm;
             }
             else if (!string.IsNullOrEmpty(Role))
