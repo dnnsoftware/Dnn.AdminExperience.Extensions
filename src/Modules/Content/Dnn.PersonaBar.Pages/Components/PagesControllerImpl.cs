@@ -560,10 +560,7 @@ namespace Dnn.PersonaBar.Pages.Components
             bool modified;
             //Clean Url
             var options = UrlRewriterUtils.ExtendOptionsForCustomURLs(UrlRewriterUtils.GetOptionsFromSettings(new FriendlyUrlSettings(portalSettings.PortalId)));
-            urlPath = GetLocalPath(urlPath);
-            // As FriendlyUrlController.CleanNameForUrl is static method call, then is should be wrapped up in an interface call with same arguments
-            // and also need to move the ValidatePageUrlSettings to interface and add all dependencies to injection
-
+            urlPath = GetLocalPath(urlPath);            
             urlPath = FriendlyUrlController.CleanNameForUrl(urlPath, options, out modified);
             if (modified)
             {
