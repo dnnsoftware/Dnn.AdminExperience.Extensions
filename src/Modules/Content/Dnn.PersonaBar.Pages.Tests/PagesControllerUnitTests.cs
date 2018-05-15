@@ -47,7 +47,7 @@ namespace Dnn.PersonaBar.Pages.Tests
 
             _staticDependenciesResolverMock.Setup(d => d.GetExtendOptionsForURLs(It.IsAny<int>())).Returns(friendlyOptions);
             _staticDependenciesResolverMock.Setup(d => d.CleanNameForUrl(It.IsAny<string>(), friendlyOptions, out modified)).Returns(expected);
-            _staticDependenciesResolverMock.Setup(d => d.ValidateUrl(It.IsAny<string>(),It.IsAny<int>(),It.IsAny<PortalSettings>(), out modified));
+            _staticDependenciesResolverMock.Setup(d => d.ValidateUrl(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<PortalSettings>(), out modified));
 
             _pagesController = new PagesControllerImpl(
                 _tabControllerMockMock.Object,
@@ -71,7 +71,8 @@ namespace Dnn.PersonaBar.Pages.Tests
 
             // Assert
             Assert.IsTrue(result);
-            _staticDependenciesResolverMock.Verify(d=>d.CleanNameForUrl(expected,friendlyOptions,out modified),Times.Once());
-        }       
+            _staticDependenciesResolverMock.VerifyAll();
+            _staticDependenciesResolverMock.Verify(d => d.CleanNameForUrl(expected, friendlyOptions, out modified), Times.Once());
+        }
     }
 }
