@@ -1299,9 +1299,9 @@ namespace Dnn.PersonaBar.Pages.Components
 
         private string GetLocalPath(string url)
         {
+            url = url.TrimEnd(new[] { '/' });
             if (url.Length > 1 && url.IndexOf('/') > -1)
             {
-                url = url.TrimEnd(new[] { '/' });
                 url = url.Remove(0, url.LastIndexOf('/'));
             }
             return url;

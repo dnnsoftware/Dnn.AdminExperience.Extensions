@@ -37,6 +37,7 @@ namespace Dnn.PersonaBar.Pages.Tests
 
         [TestCase("http://www.websitename.com/home/", "/home")]
         [TestCase("/news/", "/news")]
+        [TestCase("contactus/", "contactus")]
         [TestCase("blogs", "blogs")]
         public void ValidatePageUrlSettings_CleanNameForUrl_URLArgumentShouldBeLocalPath(string inputUrl, string expected)
         {
