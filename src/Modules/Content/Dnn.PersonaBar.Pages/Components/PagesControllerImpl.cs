@@ -573,7 +573,7 @@ namespace Dnn.PersonaBar.Pages.Components
 
         public bool ValidatePageUrlSettings(PortalSettings portalSettings, PageSettings pageSettings, TabInfo tab, ref string invalidField, ref string errorMessage)
         {
-            var urlPath = !string.IsNullOrEmpty(pageSettings.Url) ? pageSettings.Url.TrimStart('/') : string.Empty;
+            var urlPath = pageSettings.Url;
 
             if (string.IsNullOrEmpty(urlPath))
             {

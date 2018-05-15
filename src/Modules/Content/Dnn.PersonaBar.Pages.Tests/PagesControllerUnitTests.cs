@@ -35,15 +35,14 @@ namespace Dnn.PersonaBar.Pages.Tests
             _staticDependenciesResolverMock = new Mock<IStaticDependenciesResolver>();
         }
 
-        [Test]
-        public void ValidatePageUrlSettings_CleanNameForUrl_URLArgumentShouldBeLocalPath()
+        [TestCase("http://www.websitename.com/home/", "/home")]
+        [TestCase("/news/", "/news")]
+        [TestCase("blogs", "blogs")]
+        public void ValidatePageUrlSettings_CleanNameForUrl_URLArgumentShouldBeLocalPath(string inputUrl, string expected)
         {
             // Arrange
             var friendlyOptions = new FriendlyUrlOptions();
             var modified = false;
-            var expected = "/home";
-            var inputUrl = "http://www.websitename.com/home/";
-
 
             _staticDependenciesResolverMock.Setup(d => d.GetExtendOptionsForURLs(It.IsAny<int>())).Returns(friendlyOptions);
             _staticDependenciesResolverMock.Setup(d => d.CleanNameForUrl(It.IsAny<string>(), friendlyOptions, out modified)).Returns(expected);
