@@ -36,12 +36,14 @@ namespace Dnn.PersonaBar.Pages.Tests
         }
 
         [Test]
-        public void Validate_PageAbsoluteURL_ShouldReturnFalse()
+        public void ValidatePageUrlSettings_CleanNameForUrl_URLArgumentShouldBeLocalPath()
         {
             // Arrange
             var friendlyOptions = new FriendlyUrlOptions();
             var modified = false;
             var expected = "/home";
+            var inputUrl = "http://www.websitename.com/home/";
+
 
             _staticDependenciesResolverMock.Setup(d => d.GetExtendOptionsForURLs(It.IsAny<int>())).Returns(friendlyOptions);
             _staticDependenciesResolverMock.Setup(d => d.CleanNameForUrl(It.IsAny<string>(), friendlyOptions, out modified)).Returns(expected);
@@ -59,7 +61,7 @@ namespace Dnn.PersonaBar.Pages.Tests
 
             PortalSettings portalSettings = new PortalSettings();
             PageSettings pageSettings = new PageSettings();
-            pageSettings.Url = "http://www.websitename.com/home/";
+            pageSettings.Url = inputUrl;
             TabInfo tabInfo = new TabInfo();
             string inValidField = string.Empty;
             string errorMessage = string.Empty;
@@ -69,6 +71,7 @@ namespace Dnn.PersonaBar.Pages.Tests
 
             // Assert
             Assert.IsTrue(result);
+            _staticDependenciesResolverMock.Verify(d=>d.CleanNameForUrl(expected,friendlyOptions,out modified),Times.Once());
         }       
     }
 }
