@@ -108,6 +108,11 @@ class SiteLanguageSelector extends Component {
         let options = [];
         if (props.portals !== undefined) {
             options = props.portals.map((item) => {
+                if (item.IsCurrentPortal && state.portalId === undefined) {
+                    this.setState({
+                        portalId: item.PortalID
+                    });
+                }
                 return {
                     label: item.PortalName, value: item.PortalID
                 };
