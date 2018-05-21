@@ -10,9 +10,9 @@ namespace Dnn.PersonaBar.Pages.Components
             return FriendlyUrlController.CleanNameForUrl(urlPath, options, out modified);
         }
         
-        public void ValidateUrl(string urlPath, int v, PortalSettings portalSettings, out bool modified)
+        public void ValidateUrl(string urlPath, int tabld, PortalSettings portalSettings, out bool modified)
         {
-            FriendlyUrlController.ValidateUrl(urlPath, v, portalSettings, out modified);
+            FriendlyUrlController.ValidateUrl(urlPath, tabld, portalSettings, out modified);
         }
     }
 }
