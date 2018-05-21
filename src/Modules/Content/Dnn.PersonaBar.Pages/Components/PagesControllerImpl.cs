@@ -20,7 +20,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -60,7 +59,8 @@ namespace Dnn.PersonaBar.Pages.Components
         private readonly ITemplateController _templateController;
         private readonly IDefaultPortalThemeController _defaultPortalThemeController;
         private readonly ICloneModuleExecutionContext _cloneModuleExecutionContext;
-        private readonly IStaticDependenciesResolver _staticDependenciesResolver;
+        private readonly IUrlRewriterUtilsWrapper _urlRewriterUtilsWrapper;
+        private readonly IFriendlyUrlWrapper _friendlyUrlWrapper;
 
         public const string PageTagsVocabulary = "PageTags";
         private static readonly IList<string> TabSettingKeys = new List<string> { "CustomStylesheet" };        
@@ -75,7 +75,8 @@ namespace Dnn.PersonaBar.Pages.Components
                   TemplateController.Instance,
                   DefaultPortalThemeController.Instance,
                   CloneModuleExecutionContext.Instance,
-                  new StaticDependenciesResolver()
+                  new UrlRewriterUtilsWrapper(),
+                  new FriendlyUrlWrapper()
                   )
         {
         }
@@ -87,7 +88,8 @@ namespace Dnn.PersonaBar.Pages.Components
             ITemplateController templateController,
             IDefaultPortalThemeController defaultPortalThemeController,
             ICloneModuleExecutionContext cloneModuleExecutionContext,
-            IStaticDependenciesResolver pagesControllerStaticDependencies
+            IUrlRewriterUtilsWrapper urlRewriterUtilsWrapper,
+            IFriendlyUrlWrapper friendlyUrlWrapper
             )
         {
             _tabController = tabController;
@@ -96,7 +98,8 @@ namespace Dnn.PersonaBar.Pages.Components
             _templateController = templateController;
             _defaultPortalThemeController = defaultPortalThemeController;
             _cloneModuleExecutionContext = cloneModuleExecutionContext;
-            _staticDependenciesResolver = pagesControllerStaticDependencies;
+            _urlRewriterUtilsWrapper = urlRewriterUtilsWrapper;
+            _friendlyUrlWrapper = friendlyUrlWrapper;
         }
 
 
@@ -582,9 +585,9 @@ namespace Dnn.PersonaBar.Pages.Components
 
             bool modified;
             //Clean Url            
-            var options = _staticDependenciesResolver.GetExtendOptionsForURLs(portalSettings.PortalId);
+            var options = _urlRewriterUtilsWrapper.GetExtendOptionsForURLs(portalSettings.PortalId);
             urlPath = GetLocalPath(urlPath);
-            urlPath = _staticDependenciesResolver.CleanNameForUrl(urlPath, options, out modified);
+            urlPath = _friendlyUrlWrapper.CleanNameForUrl(urlPath, options, out modified);
             if (modified)
             {
                 errorMessage = Localization.GetString("UrlPathCleaned");
@@ -593,7 +596,7 @@ namespace Dnn.PersonaBar.Pages.Components
             }
 
             //Validate for uniqueness
-            _staticDependenciesResolver.ValidateUrl(urlPath, tab?.TabID ?? Null.NullInteger, portalSettings, out modified);
+            _friendlyUrlWrapper.ValidateUrl(urlPath, tab?.TabID ?? Null.NullInteger, portalSettings, out modified);
             if (modified)
             {
                 errorMessage = Localization.GetString("UrlPathNotUnique");

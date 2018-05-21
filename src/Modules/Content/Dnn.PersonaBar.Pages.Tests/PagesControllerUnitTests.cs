@@ -19,7 +19,8 @@ namespace Dnn.PersonaBar.Pages.Tests
         Mock<ITemplateController> _templateControllerMock;
         Mock<IDefaultPortalThemeController> _defaultPortalThemeControllerMock;
         Mock<ICloneModuleExecutionContext> _cloneModuleExecutionContextMock;
-        Mock<IStaticDependenciesResolver> _staticDependenciesResolverMock;
+        Mock<IUrlRewriterUtilsWrapper> _urlRewriterUtilsWrapperMock;
+        Mock<IFriendlyUrlWrapper> _friendlyUrlWrapperMock;
 
         PagesControllerImpl _pagesController;
 
@@ -32,7 +33,8 @@ namespace Dnn.PersonaBar.Pages.Tests
             _templateControllerMock = new Mock<ITemplateController>();
             _defaultPortalThemeControllerMock = new Mock<IDefaultPortalThemeController>();
             _cloneModuleExecutionContextMock = new Mock<ICloneModuleExecutionContext>();
-            _staticDependenciesResolverMock = new Mock<IStaticDependenciesResolver>();
+            _urlRewriterUtilsWrapperMock = new Mock<IUrlRewriterUtilsWrapper>();
+            _friendlyUrlWrapperMock = new Mock<IFriendlyUrlWrapper>();
         }
 
         [TestCase("http://www.websitename.com/home/", "/home")]
@@ -45,9 +47,9 @@ namespace Dnn.PersonaBar.Pages.Tests
             var friendlyOptions = new FriendlyUrlOptions();
             var modified = false;
 
-            _staticDependenciesResolverMock.Setup(d => d.GetExtendOptionsForURLs(It.IsAny<int>())).Returns(friendlyOptions);
-            _staticDependenciesResolverMock.Setup(d => d.CleanNameForUrl(It.IsAny<string>(), friendlyOptions, out modified)).Returns(expected);
-            _staticDependenciesResolverMock.Setup(d => d.ValidateUrl(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<PortalSettings>(), out modified));
+            _urlRewriterUtilsWrapperMock.Setup(d => d.GetExtendOptionsForURLs(It.IsAny<int>())).Returns(friendlyOptions);
+            _friendlyUrlWrapperMock.Setup(d => d.CleanNameForUrl(It.IsAny<string>(), friendlyOptions, out modified)).Returns(expected);
+            _friendlyUrlWrapperMock.Setup(d => d.ValidateUrl(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<PortalSettings>(), out modified));
 
             _pagesController = new PagesControllerImpl(
                 _tabControllerMockMock.Object,
@@ -56,7 +58,8 @@ namespace Dnn.PersonaBar.Pages.Tests
                 _templateControllerMock.Object,
                 _defaultPortalThemeControllerMock.Object,
                 _cloneModuleExecutionContextMock.Object,
-                _staticDependenciesResolverMock.Object
+                _urlRewriterUtilsWrapperMock.Object,
+                _friendlyUrlWrapperMock.Object
                 );
 
             PortalSettings portalSettings = new PortalSettings();
@@ -71,8 +74,8 @@ namespace Dnn.PersonaBar.Pages.Tests
 
             // Assert
             Assert.IsTrue(result);
-            _staticDependenciesResolverMock.VerifyAll();
-            _staticDependenciesResolverMock.Verify(d => d.CleanNameForUrl(expected, friendlyOptions, out modified), Times.Once());
+            _urlRewriterUtilsWrapperMock.VerifyAll();
+            _friendlyUrlWrapperMock.Verify(d => d.CleanNameForUrl(expected, friendlyOptions, out modified), Times.Once());
         }
     }
 }
