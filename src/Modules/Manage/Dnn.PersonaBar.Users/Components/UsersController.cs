@@ -488,20 +488,6 @@ namespace Dnn.PersonaBar.Users.Components
             return user.IsSuperUser || user.IsInRole(portalSettings.AdministratorRoleName);
         }
 
-        private static string applyWildcard(string searchText)
-        {
-            string pattern = "";
-            if(!string.IsNullOrEmpty(searchText))
-            {
-                pattern = searchText.Replace('*', '%');
-                string prefix = pattern.StartsWith("%") ? "%" : "";
-                // prevent strings like "abc%def"
-                pattern = string.Format("{0}{1}%",prefix, pattern.Replace("%",""));
-                
-            }
-            return pattern;
-        }
-
         private static IEnumerable<UserBasicDto> GetUsers(GetUsersContract usersContract,
             bool? includeAuthorized, bool? includeDeleted, bool? includeSuperUsers, out int totalRecords)
         {
@@ -513,7 +499,7 @@ namespace Dnn.PersonaBar.Users.Components
                     usersContract.SortAscending,
                     usersContract.PageIndex,
                     usersContract.PageSize,
-                    string.IsNullOrEmpty(usersContract.SearchText) ? "" : applyWildcard(usersContract.SearchText),
+                    string.IsNullOrEmpty(usersContract.SearchText) ? "" : usersContract.SearchText.Trim(),
                     includeAuthorized,
                     includeDeleted,
                     includeSuperUsers));
