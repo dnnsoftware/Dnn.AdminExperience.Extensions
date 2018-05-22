@@ -5,11 +5,7 @@ namespace Dnn.PersonaBar.Users.Components.Helpers
 {
     public class SearchTextHelper
     {
-        public static string Parse(string searchText)
-        {
-            return prepareSearchString(searchText);
-        }
-
+        
         private static string getInStringSearchPattern(string searchText)
         {
             var pattern = new StringBuilder();
@@ -72,7 +68,7 @@ namespace Dnn.PersonaBar.Users.Components.Helpers
             return pattern.ToString();
         }
 
-        private static string prepareSearchString(string searchText)
+        public static string Parse(string searchText)
         {
             var pattern = "";
 

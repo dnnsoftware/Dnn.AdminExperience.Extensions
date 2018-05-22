@@ -114,6 +114,7 @@
     <Compile Include="Components\Dto\UserBasicDto.cs" />
     <Compile Include="Components\Dto\UserFilters.cs" />
     <Compile Include="Components\Dto\UserRoleDto.cs" />
+    <Compile Include="Components\Helpers\SearchTextHelper.cs" />
     <Compile Include="Components\Prompt\Commands\AddRoles.cs" />
     <Compile Include="Components\Prompt\Commands\DeleteUser.cs" />
     <Compile Include="Components\Prompt\Commands\GetUser.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="Components\UsersController.cs" />
     <Compile Include="Data\IUsersDataService.cs" />
     <Compile Include="Data\UsersDataService.cs" />
+    <Compile Include="Test\PersonaBarPromptListUsersTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\UsersController.cs" />
   </ItemGroup>

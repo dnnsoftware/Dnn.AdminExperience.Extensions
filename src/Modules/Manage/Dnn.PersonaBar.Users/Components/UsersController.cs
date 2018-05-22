@@ -47,6 +47,7 @@ using MembershipProvider = DotNetNuke.Security.Membership.MembershipProvider;
 using System.Net;
 using DotNetNuke.Services.Mail;
 using Dnn.PersonaBar.Users.Components.Helpers;
+using System.Data;
 
 namespace Dnn.PersonaBar.Users.Components
 {
@@ -379,7 +380,7 @@ namespace Dnn.PersonaBar.Users.Components
 
         #region Private Methods
 
-        private static IEnumerable<UserBasicDto> GetUsersFromDb(GetUsersContract usersContract, bool isSuperUser, out int totalRecords)
+        private IEnumerable<UserBasicDto> GetUsersFromDb(GetUsersContract usersContract, bool isSuperUser, out int totalRecords)
         {
             totalRecords = 0;
             IEnumerable<UserBasicDto> users = null;
@@ -489,14 +490,29 @@ namespace Dnn.PersonaBar.Users.Components
             return user.IsSuperUser || user.IsInRole(portalSettings.AdministratorRoleName);
         }
 
-        private static IEnumerable<UserBasicDto> GetUsers(GetUsersContract usersContract,
+        private IEnumerable<UserBasicDto> GetUsers(GetUsersContract usersContract,
             bool? includeAuthorized, bool? includeDeleted, bool? includeSuperUsers, out int totalRecords)
         {
 
             var parsedSearchText = string.IsNullOrEmpty(usersContract.SearchText) ? "" : SearchTextHelper.Parse(usersContract.SearchText.Trim());
 
             List<UserBasicDto2> records = CBO.FillCollection<UserBasicDto2>(
-                DataProvider.Instance().ExecuteReader(
+                CallGetUsersBySearchTerm(
+                    usersContract,
+                    includeAuthorized, 
+                    includeDeleted, 
+                    includeSuperUsers));
+
+            totalRecords = records.Count == 0 ? 0 : records[0].TotalCount;
+            return records;
+        }
+
+        protected virtual IDataReader CallGetUsersBySearchTerm(GetUsersContract usersContract,
+            bool? includeAuthorized, bool? includeDeleted, bool? includeSuperUsers)
+        {
+            var parsedSearchText = string.IsNullOrEmpty(usersContract.SearchText) ? "" : SearchTextHelper.Parse(usersContract.SearchText.Trim());
+
+            return DataProvider.Instance().ExecuteReader(
                     "Personabar_GetUsersBySearchTerm",
                     usersContract.PortalId,
                     string.IsNullOrEmpty(usersContract.SortColumn) ? "Joined" : usersContract.SortColumn,
@@ -506,10 +522,7 @@ namespace Dnn.PersonaBar.Users.Components
                     parsedSearchText,
                     includeAuthorized,
                     includeDeleted,
-                    includeSuperUsers));
-
-            totalRecords = records.Count == 0 ? 0 : records[0].TotalCount;
-            return records;
+                    includeSuperUsers);
         }
 
         #endregion
