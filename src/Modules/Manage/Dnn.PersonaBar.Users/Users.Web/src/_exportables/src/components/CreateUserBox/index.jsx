@@ -1,4 +1,5 @@
-import React, {PropTypes, Component} from "react";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import GridCell from "dnn-grid-cell";
 import GridSystem from "dnn-grid-system";
@@ -49,26 +50,6 @@ class CreateUserBox extends Component {
         this.submitted = false;
     }
 
-    validateConfirmPassword(e){
-        const UserDetails = this.state.UserDetails;
-        let {confirmPassword} = this.state;
-        confirmPassword = e.target.value;
-        this.setState({ confirmPassword });
-
-        if (UserDetails.password !== e.target.value) {
-            this.setState(
-                {
-                    errors:{
-                        ...this.state.errors,
-                        passwordsMatch:true
-                    }
-                }
-            );
-        } else {
-            this.setState({errors:{passwordsMatch:false}});
-        }
-    }
-
     onChangePassword(event) {
         this.setState({
             UserDetails:{
@@ -98,7 +79,7 @@ class CreateUserBox extends Component {
     save() {
         this.submitted = true;
         if (this.validateForm()) {
-            this.props.dispatch(CommonUsersActions.createUser(this.state.UserDetails, this.props.filter, () => {
+            this.props.save(CommonUsersActions.createUser(this.state.UserDetails, this.props.filter, () => {
                 this.cancel();
                 utilities.notify(Localization.get("UserCreated"), 3000);
             }));
@@ -180,7 +161,7 @@ class CreateUserBox extends Component {
                 valid = false;
             }
 
-            if (requiresQuestionAndAnswer){
+            if (requiresQuestionAndAnswer) {
                 if (UserDetails.question === "") {
                     errors.question = true;
                     valid = false;
@@ -266,7 +247,6 @@ class CreateUserBox extends Component {
                             <SingleLineInputWithError label={Localization.get("Confirm") }
                                 error={state.errors.confirmPassword || state.errors.passwordsMatch}
                                 onChange={this.onChange.bind(this,"confirmPassword") }
-                                // onKeyUp={this.validateConfirmPassword.bind(this)}
                                 tooltipMessage={Localization.get("Confirm.Help")}
                                 errorMessage={state.errors.confirmPassword ? Localization.get("Confirm.Required") : Localization.get("ConfirmMismatch.ErrorMessage") }
                                 style={inputStyle}
@@ -317,15 +297,19 @@ class CreateUserBox extends Component {
 }
 
 CreateUserBox.propTypes = {
-    dispatch: PropTypes.func.isRequired,
+    save: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     style: PropTypes.object,
     filter: PropTypes.number,
     appSettings: PropTypes.object
 };
 
-function mapStateToProps() {
-    return {};
-}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        save : (callback) =>{
+            dispatch(callback);
+        }
+    };
+};
 
-export default connect(mapStateToProps)(CreateUserBox);
+export default connect(()=>{},mapDispatchToProps)(CreateUserBox);

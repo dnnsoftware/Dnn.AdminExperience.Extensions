@@ -69,7 +69,7 @@ class UserService {
         const sf = this.getServiceFramework("Users");
         sf.post("UpdateAuthorizeStatus?" + serializeQueryStringParameters(userDetails), null, callback, errorCallback);
     }
-    unlockUser(userDetails, callback, errorCallback){
+    unlockUser(userDetails, callback, errorCallback) {
         const sf = this.getServiceFramework("Users");
         sf.post("UnlockUser?" + serializeQueryStringParameters(userDetails), null, callback, errorCallback);
     }
@@ -91,9 +91,9 @@ class UserService {
         sf.post("RemoveUserRole", payload, callback, errorCallback);
     }
     
-    getPasswordStrengthOptions(callback, errorCallback){
+    passwordStrengthOptions(callback, errorCallback) {
         const sf = this.getServiceFramework("Users");
-        sf.get("GetPasswordStrengthOptions",{},callback,errorCallback);
+        sf.get("PasswordStrengthOptions",{},callback,errorCallback);
     }
 }
 const userService = new UserService();

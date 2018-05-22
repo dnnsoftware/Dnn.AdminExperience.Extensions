@@ -12,10 +12,10 @@ namespace Dnn.PersonaBar.Users.Components.Dto
         [DataMember(Name = "minLength")]
         public int MinLength { get; set; }
 
-        [DataMember(Name ="minNumberOfSpecialChars")]
+        [DataMember(Name = "minNumberOfSpecialChars")]
         public int MinNumberOfSpecialChars { get; set; }
 
-        [DataMember(Name ="validationExpression")]
+        [DataMember(Name = "validationExpression")]
         public string ValidationExpression { get; set; }
     }
 }

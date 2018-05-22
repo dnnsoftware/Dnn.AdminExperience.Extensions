@@ -1,44 +1,20 @@
-import React, { Component,PropTypes  } from "react";
+import React, { Component  } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import SingleLineInputWithError from "dnn-single-line-input-with-error";
 import Localization from "localization";
-import passwordStrength from "utils/PasswordStrength";
-import {CommonUsersService as UserService} from "../../../services";
+import { getPasswordStrength } from "utils/PasswordStrength";
+import {CommonUsersActions as UserActions } from "../../../actions";
 
 import "./style.less";
 
 class Password extends Component {
     constructor(props) {
         super(props);
-        this.passwordStrengthOptions = {
-            minLength:7,
-            minNumberOfSpecialChars:1,
-            validationExpression:""        
-        };
     }
 
-    componentDidMount(){
-        
-        UserService.getPasswordStrengthOptions((data)=>{
-            this.passwordStrengthOptions = data;
-        });
-    }
-
-    _getStrength(){
-        let password = this.props.UserDetails.password;
-        let pStrength = passwordStrength(password,this.passwordStrengthOptions);
-        if (password.length <= 2 ) {
-            return null;
-        }
-        if (pStrength.rating <3 ) {
-            return "weak";
-        }
-        if (pStrength.rating < 5) {
-            return "fair";
-        }
-        if (pStrength.rating >= 5) {
-            return "strong";
-        }
-        return "weak";
+    componentDidMount() {
+        this.props.loadPasswordStrengthOptions();
     }
    
     render() {
@@ -55,8 +31,10 @@ class Password extends Component {
                                 autoComplete="off"
                                 value={this.props.UserDetails.password}  tabIndex={7}/>
 
-                <div id="passwordStrenghBar" className={"passwordStrength " + this._getStrength(this.props.UserDetails.password)}></div>
-                <div id="passwordStrengthLabel" className={"passwordStrengthLabel " + this._getStrength(this.props.UserDetails.password)}>{this._getStrength(this.props.UserDetails.password)}</div>
+                <div id="passwordStrengthBar" className={"passwordStrength " + getPasswordStrength(this.props.UserDetails.password, this.props.passwordStrengthOptions)}></div>
+                <div id="passwordStrengthLabel" className={"passwordStrengthLabel " + getPasswordStrength(this.props.UserDetails.password, this.props.passwordStrengthOptions)}>
+                    {getPasswordStrength(this.props.UserDetails.password, this.props.passwordStrengthOptions)}
+                </div>
             </div>
         );
     }
@@ -67,8 +45,23 @@ Password.propTypes = {
     style: PropTypes.object.isRequired,
     UserDetails: PropTypes.object.isRequired,
     requiresQuestionAndAnswer : PropTypes.bool.isRequired,
-    onChangePassword : PropTypes.func.isRequired
-
+    onChangePassword : PropTypes.func.isRequired,
+    passwordStrengthOptions : PropTypes.object,
+    loadPasswordStrengthOptions : PropTypes.func
 };
 
-export default Password;
+const mapStateToProps = (state) => {
+    return {
+        passwordStrengthOptions : state.users.passwordStrengthOptions
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        loadPasswordStrengthOptions : () =>{
+            dispatch(UserActions.passwordStrength());
+        }
+    };
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(Password) ;

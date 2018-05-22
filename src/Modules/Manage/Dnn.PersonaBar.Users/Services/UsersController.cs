@@ -623,7 +623,7 @@ namespace Dnn.PersonaBar.Users.Services
         [HttpGet]
         [ValidateAntiForgeryToken]
         [AdvancedPermission(MenuName = Components.Constants.MenuName, Permission = Components.Constants.ManageRoles)]
-        public HttpResponseMessage GetPasswordStrengthOptions()
+        public HttpResponseMessage PasswordStrengthOptions()
         {
             var settings = new MembershipPasswordSettings(PortalId);
 
