@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Dnn.PersonaBar.Users.Components.Helpers
 {
-    public class SearchTextHelper
+    public class SearchTextFilter
     {
         
         private static string getInStringSearchPattern(string searchText)
@@ -68,7 +68,7 @@ namespace Dnn.PersonaBar.Users.Components.Helpers
             return pattern.ToString();
         }
 
-        public static string Parse(string searchText)
+        public static string Apply(string searchText)
         {
             var pattern = "";
 
