@@ -70,6 +70,10 @@ namespace Dnn.PersonaBar.Users.Components.Helpers
 
         public static string Apply(string searchText)
         {
+            if(string.IsNullOrEmpty(searchText))
+            {
+                return null;
+            }
             var pattern = "";
 
             var prefixWildcard = searchText.StartsWith("%") || searchText.StartsWith("*");
