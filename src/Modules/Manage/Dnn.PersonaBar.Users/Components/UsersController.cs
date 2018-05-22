@@ -46,6 +46,7 @@ using DotNetNuke.Security.Roles;
 using MembershipProvider = DotNetNuke.Security.Membership.MembershipProvider;
 using System.Net;
 using DotNetNuke.Services.Mail;
+using Dnn.PersonaBar.Users.Components.Helpers;
 
 namespace Dnn.PersonaBar.Users.Components
 {
@@ -491,6 +492,9 @@ namespace Dnn.PersonaBar.Users.Components
         private static IEnumerable<UserBasicDto> GetUsers(GetUsersContract usersContract,
             bool? includeAuthorized, bool? includeDeleted, bool? includeSuperUsers, out int totalRecords)
         {
+
+            var parsedSearchText = string.IsNullOrEmpty(usersContract.SearchText) ? "" : SearchTextHelper.Parse(usersContract.SearchText.Trim());
+
             List<UserBasicDto2> records = CBO.FillCollection<UserBasicDto2>(
                 DataProvider.Instance().ExecuteReader(
                     "Personabar_GetUsersBySearchTerm",
@@ -499,7 +503,7 @@ namespace Dnn.PersonaBar.Users.Components
                     usersContract.SortAscending,
                     usersContract.PageIndex,
                     usersContract.PageSize,
-                    string.IsNullOrEmpty(usersContract.SearchText) ? "" : usersContract.SearchText.Trim(),
+                    parsedSearchText,
                     includeAuthorized,
                     includeDeleted,
                     includeSuperUsers));
