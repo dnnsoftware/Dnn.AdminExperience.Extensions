@@ -7,6 +7,7 @@ using Dnn.PersonaBar.Library.Prompt;
 using Dnn.PersonaBar.Library.Prompt.Models;
 using Dnn.PersonaBar.Pages.Components.Security;
 using Dnn.PersonaBar.Pages.Components.Prompt.Commands;
+using System;
 
 namespace Dnn.PersonaBar.Pages.Tests
 {
@@ -16,157 +17,109 @@ namespace Dnn.PersonaBar.Pages.Tests
         private Mock<ITabController> _tabControllerMock;
         private Mock<IContentVerifier> _contentVerifierMock;
         private Mock<ISecurityService> _securityServiceMock;
+        private PortalSettings _portalSettings;
+        private IConsoleCommand _getCommand;
+        private TabInfo _tab;
+
+        private int _tabId = 21;
+        private int _testPortalId = 1;        
 
         [SetUp]
         public void RunBeforeAnyTest()
         {
+            _tab = new TabInfo();
+            _tab.TabID = _tabId;
+            _tab.PortalID = _testPortalId;
+
+            _portalSettings = new PortalSettings();
+            _portalSettings.PortalId = _testPortalId;
+
             _tabControllerMock = new Mock<ITabController>();
             _securityServiceMock = new Mock<ISecurityService>();
-            _contentVerifierMock = new Mock<IContentVerifier>();
+            _contentVerifierMock = new Mock<IContentVerifier>();            
+        }
+
+        private void SetupCommand()
+        {
+            _getCommand = new GetPage(_tabControllerMock.Object, _securityServiceMock.Object, _contentVerifierMock.Object);
+
+            var args = new[] { "get-page", _tabId.ToString() };
+            _getCommand.Initialize(args, _portalSettings, null, _tabId);
         }
 
         [Test]
         public void Run_GetPageWithValidCommand_ShouldSuccessResponse()
         {
             // Arrange
-            var tabId = 21;
-            int testPortalId = 1;
-
-            TabInfo tab = new TabInfo();
-            tab.TabID = tabId;
-            tab.PortalID = testPortalId;
-
-            PortalSettings portalSettings = new PortalSettings();
-            portalSettings.PortalId = testPortalId;
-
             _securityServiceMock.SetReturnsDefault(true);
-            _tabControllerMock.Setup(t => t.GetTab(tabId, testPortalId)).Returns(tab);
+            _tabControllerMock.Setup(t => t.GetTab(_tabId, _testPortalId)).Returns(_tab);
             _contentVerifierMock.SetReturnsDefault(true);
 
-            IConsoleCommand getCommand = new GetPage(_tabControllerMock.Object, _securityServiceMock.Object, _contentVerifierMock.Object);
-
-            var args = new[] { "get-page", tabId.ToString() };
-            getCommand.Initialize(args, portalSettings, null, tabId);
+            SetupCommand();
 
             // Act
-            var result = getCommand.Run();
+            var result = _getCommand.Run();
 
             // Assert
             Assert.IsFalse(result.IsError);
             Assert.IsNotNull(result.Data);
             Assert.AreEqual(1, result.Records);
             Assert.IsFalse(result is ConsoleErrorResultModel);
-
-            _tabControllerMock.Verify(t => t.GetTab(tabId, testPortalId));
-            _securityServiceMock.Verify(s => s.CanManagePage(tabId));
-            _contentVerifierMock.Verify(c => c.IsContentExistsForRequestedPortal(testPortalId, portalSettings, false));
-        }
+          }
 
         [Test]
         public void Run_GetPageWithValidCommandForNonExistingTab_ShouldErrorResponse()
         {
-            // Arrange
-            var tabId = 212;
-            int testPortalId = 1;
-
-            TabInfo nullTab = null;
-
-            TabInfo tab = new TabInfo();
-            tab.TabID = tabId;
-            tab.PortalID = testPortalId;
-
-            PortalSettings portalSettings = new PortalSettings();
-            portalSettings.PortalId = testPortalId;
-
-            _tabControllerMock.SetReturnsDefault(nullTab);
+            // Arrange            
+            _tab = null;            
+            _tabControllerMock.SetReturnsDefault(_tab);
             _securityServiceMock.SetReturnsDefault(true);
             _contentVerifierMock.SetReturnsDefault(false);
 
-            IConsoleCommand getCommand = new GetPage(_tabControllerMock.Object, _securityServiceMock.Object, _contentVerifierMock.Object);
-
-            var args = new[] { "get-page", tabId.ToString() };
-            getCommand.Initialize(args, portalSettings, null, tabId);
+            SetupCommand();
 
             // Act
-            var result = getCommand.Run();
+            var result = _getCommand.Run();
 
             // Assert
             Assert.IsTrue(result.IsError);
             Assert.IsTrue(result is ConsoleErrorResultModel);
-
-            _tabControllerMock.Verify(t => t.GetTab(tabId, testPortalId), Times.Once);
-            _securityServiceMock.Verify(s => s.CanManagePage(tabId), Times.Never);
-            _contentVerifierMock.Verify(c => c.IsContentExistsForRequestedPortal(tabId, portalSettings, false), Times.Never);
         }
 
         [Test]
         public void Run_GetPageWithValidCommandForRequestedPortalNotAllowed_ShouldErrorResponse()
         {
-            // Arrange
-            var tabId = 212;
-            int testPortalId = 1;
-
-            TabInfo tab = new TabInfo();
-            tab.TabID = tabId;
-            tab.PortalID = testPortalId;
-
-            PortalSettings portalSettings = new PortalSettings();
-            portalSettings.PortalId = testPortalId;
-
-            _tabControllerMock.SetReturnsDefault(tab);
+            // Arrange            
+            _tabControllerMock.SetReturnsDefault(_tab);
             _securityServiceMock.SetReturnsDefault(true);
             _contentVerifierMock.SetReturnsDefault(false);
 
-            IConsoleCommand getCommand = new GetPage(_tabControllerMock.Object, _securityServiceMock.Object, _contentVerifierMock.Object);
-
-            var args = new[] { "get-page", tabId.ToString() };
-            getCommand.Initialize(args, portalSettings, null, tabId);
+            SetupCommand();
 
             // Act
-            var result = getCommand.Run();
+            var result = _getCommand.Run();
 
             // Assert
             Assert.IsTrue(result.IsError);
             Assert.IsTrue(result is ConsoleErrorResultModel);
-
-            _securityServiceMock.Verify(s => s.CanManagePage(tabId), Times.Once);
-            _tabControllerMock.Verify(t => t.GetTab(tabId, testPortalId), Times.Once);
-            _contentVerifierMock.Verify(c => c.IsContentExistsForRequestedPortal(testPortalId, portalSettings, false), Times.Once);
         }
 
         [Test]
         public void Run_GetPageWithValidCommandForPortalNotAllowed_ShouldErrorResponse()
         {
             // Arrange
-            var tabId = 212;
-            int testPortalId = 1;
-
-            TabInfo tab = new TabInfo();
-            tab.TabID = tabId;
-            tab.PortalID = testPortalId;
-
-            PortalSettings portalSettings = new PortalSettings();
-            portalSettings.PortalId = testPortalId;
-
-            _tabControllerMock.SetReturnsDefault(tab);
+            _tabControllerMock.SetReturnsDefault(_tab);
             _securityServiceMock.SetReturnsDefault(false);
             _contentVerifierMock.SetReturnsDefault(false);
 
-            IConsoleCommand getCommand = new GetPage(_tabControllerMock.Object, _securityServiceMock.Object, _contentVerifierMock.Object);
-
-            var args = new[] { "get-page", tabId.ToString() };
-            getCommand.Initialize(args, portalSettings, null, tabId);
+            SetupCommand();
 
             // Act
-            var result = getCommand.Run();
+            var result = _getCommand.Run();
 
             // Assert
             Assert.IsTrue(result.IsError);
-            Assert.IsTrue(result is ConsoleErrorResultModel);
-
-            _securityServiceMock.Verify(s => s.CanManagePage(tabId), Times.Once);
-            _tabControllerMock.Verify(t => t.GetTab(tabId, testPortalId), Times.Once);
-            _contentVerifierMock.Verify(c => c.IsContentExistsForRequestedPortal(testPortalId, portalSettings, false), Times.Never);
+            Assert.IsTrue(result is ConsoleErrorResultModel);            
         }
     }
 }
