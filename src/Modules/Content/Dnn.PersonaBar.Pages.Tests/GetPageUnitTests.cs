@@ -7,7 +7,6 @@ using Dnn.PersonaBar.Library.Prompt;
 using Dnn.PersonaBar.Library.Prompt.Models;
 using Dnn.PersonaBar.Pages.Components.Security;
 using Dnn.PersonaBar.Pages.Components.Prompt.Commands;
-using System;
 
 namespace Dnn.PersonaBar.Pages.Tests
 {
@@ -22,7 +21,7 @@ namespace Dnn.PersonaBar.Pages.Tests
         private TabInfo _tab;
 
         private int _tabId = 21;
-        private int _testPortalId = 1;        
+        private int _testPortalId = 1;
 
         [SetUp]
         public void RunBeforeAnyTest()
@@ -36,7 +35,7 @@ namespace Dnn.PersonaBar.Pages.Tests
 
             _tabControllerMock = new Mock<ITabController>();
             _securityServiceMock = new Mock<ISecurityService>();
-            _contentVerifierMock = new Mock<IContentVerifier>();            
+            _contentVerifierMock = new Mock<IContentVerifier>();
         }
 
         private void SetupCommand()
@@ -65,13 +64,13 @@ namespace Dnn.PersonaBar.Pages.Tests
             Assert.IsNotNull(result.Data);
             Assert.AreEqual(1, result.Records);
             Assert.IsFalse(result is ConsoleErrorResultModel);
-          }
+        }
 
         [Test]
         public void Run_GetPageWithValidCommandForNonExistingTab_ShouldErrorResponse()
         {
             // Arrange            
-            _tab = null;            
+            _tab = null;
             _tabControllerMock.SetReturnsDefault(_tab);
             _securityServiceMock.SetReturnsDefault(true);
             _contentVerifierMock.SetReturnsDefault(false);
@@ -119,7 +118,7 @@ namespace Dnn.PersonaBar.Pages.Tests
 
             // Assert
             Assert.IsTrue(result.IsError);
-            Assert.IsTrue(result is ConsoleErrorResultModel);            
+            Assert.IsTrue(result is ConsoleErrorResultModel);
         }
     }
 }
