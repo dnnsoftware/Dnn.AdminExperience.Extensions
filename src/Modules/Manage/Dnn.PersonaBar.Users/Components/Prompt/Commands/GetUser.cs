@@ -29,7 +29,7 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
 
         private const int UserIdZero = 0;
 
-        public GetUser():this(new UserValidator())
+        public GetUser() : this(new UserValidator())
         {
         }
 
@@ -113,10 +113,11 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
                     }
                 }
 
-                ConsoleErrorResultModel errorResultModel;
                 UserInfo userInfo;
-                if ((errorResultModel = Utilities.ValidateUser(userId, PortalSettings, User, out userInfo)) != null) return errorResultModel;
-                errorResultModel = _userValidator.ValidateUser(userId, PortalSettings, User, out userInfo);
+                ConsoleErrorResultModel errorResultModel =
+                    _userValidator.ValidateUser(userId, PortalSettings, User, out userInfo);
+
+                if (errorResultModel != null) return errorResultModel;
 
                 lst.Add(new UserModel(userInfo));
             }

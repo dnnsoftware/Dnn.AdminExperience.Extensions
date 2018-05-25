@@ -11,14 +11,14 @@ namespace Dnn.PersonaBar.Users.Components
         {
         }
 
-        public UserInfo GetUser(int value, PortalSettings portalSettings, UserInfo currentUserInfo, out KeyValuePair<HttpStatusCode, string> response)
+        public UserInfo GetUser(int userId, PortalSettings portalSettings, UserInfo currentUserInfo, out KeyValuePair<HttpStatusCode, string> response)
         {
-            throw new System.NotImplementedException();
+            return UsersController.GetUser(userId, portalSettings, currentUserInfo, out response);
         }
 
-        public UserInfo GetUserById(int portalID, int value)
+        public UserInfo GetUserById(int portalId, int userId)
         {
-            throw new System.NotImplementedException();
+            return UserController.GetUserById(portalId, userId);
         }
     }
 }
