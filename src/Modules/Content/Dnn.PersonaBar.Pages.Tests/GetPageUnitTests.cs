@@ -40,7 +40,6 @@ namespace Dnn.PersonaBar.Pages.Tests
             _tabControllerMock.SetReturnsDefault(_tab);
             _securityServiceMock.SetReturnsDefault(true);
             _contentVerifierMock.SetReturnsDefault(true);
-
         }
 
         [Test]
