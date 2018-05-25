@@ -36,23 +36,18 @@ namespace Dnn.PersonaBar.Pages.Tests
             _tabControllerMock = new Mock<ITabController>();
             _securityServiceMock = new Mock<ISecurityService>();
             _contentVerifierMock = new Mock<IContentVerifier>();
-        }
 
-        private void SetupCommand()
-        {
-            _getCommand = new GetPage(_tabControllerMock.Object, _securityServiceMock.Object, _contentVerifierMock.Object);
+            _tabControllerMock.SetReturnsDefault(_tab);
+            _securityServiceMock.SetReturnsDefault(true);
+            _contentVerifierMock.SetReturnsDefault(true);
 
-            var args = new[] { "get-page", _tabId.ToString() };
-            _getCommand.Initialize(args, _portalSettings, null, _tabId);
         }
 
         [Test]
         public void Run_GetPageWithValidCommand_ShouldSuccessResponse()
         {
-            // Arrange
-            _securityServiceMock.SetReturnsDefault(true);
+            // Arrange         
             _tabControllerMock.Setup(t => t.GetTab(_tabId, _testPortalId)).Returns(_tab);
-            _contentVerifierMock.SetReturnsDefault(true);
 
             SetupCommand();
 
@@ -71,9 +66,8 @@ namespace Dnn.PersonaBar.Pages.Tests
         {
             // Arrange            
             _tab = null;
-            _tabControllerMock.SetReturnsDefault(_tab);
-            _securityServiceMock.SetReturnsDefault(true);
-            _contentVerifierMock.SetReturnsDefault(false);
+
+            _tabControllerMock.Setup(t => t.GetTab(_tabId, _testPortalId)).Returns(_tab);
 
             SetupCommand();
 
@@ -89,9 +83,7 @@ namespace Dnn.PersonaBar.Pages.Tests
         public void Run_GetPageWithValidCommandForRequestedPortalNotAllowed_ShouldErrorResponse()
         {
             // Arrange            
-            _tabControllerMock.SetReturnsDefault(_tab);
-            _securityServiceMock.SetReturnsDefault(true);
-            _contentVerifierMock.SetReturnsDefault(false);
+            _contentVerifierMock.Setup(c => c.IsContentExistsForRequestedPortal(_testPortalId, _portalSettings, false)).Returns(false);
 
             SetupCommand();
 
@@ -107,9 +99,7 @@ namespace Dnn.PersonaBar.Pages.Tests
         public void Run_GetPageWithValidCommandForPortalNotAllowed_ShouldErrorResponse()
         {
             // Arrange
-            _tabControllerMock.SetReturnsDefault(_tab);
-            _securityServiceMock.SetReturnsDefault(false);
-            _contentVerifierMock.SetReturnsDefault(false);
+            _securityServiceMock.Setup(s => s.CanManagePage(_tabId)).Returns(false);
 
             SetupCommand();
 
@@ -119,6 +109,14 @@ namespace Dnn.PersonaBar.Pages.Tests
             // Assert
             Assert.IsTrue(result.IsError);
             Assert.IsTrue(result is ConsoleErrorResultModel);
+        }
+
+        private void SetupCommand()
+        {
+            _getCommand = new GetPage(_tabControllerMock.Object, _securityServiceMock.Object, _contentVerifierMock.Object);
+
+            var args = new[] { "get-page", _tabId.ToString() };
+            _getCommand.Initialize(args, _portalSettings, null, _tabId);
         }
     }
 }
