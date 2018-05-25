@@ -5,72 +5,10 @@ namespace Dnn.PersonaBar.Users.Components.Helpers
 {
     public class SearchTextFilter
     {
-        
-        private static string getInStringSearchPattern(string searchText)
+
+        public static string CleanWildcards(string searchText)
         {
-            var pattern = new StringBuilder();
-            var regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled;
-            var inStringRegex = "^(\\*|%)?([\\w\\-_\\*\\%\\.\\@]+)(\\*|%)$";
-            var regex = new Regex(inStringRegex, regexOptions);
-            var matches = regex.Matches(searchText);
-
-            if (matches.Count > 0)
-            {
-                var matchText = matches[0].Groups[2].Value;
-                if (matchText != null && !string.IsNullOrEmpty(matchText))
-                {
-                    pattern.Append("%");
-                    pattern.Append(matchText.Replace("*", "").Replace("%", ""));
-                    pattern.Append("%");
-
-                }
-            }
-            return pattern.ToString();
-        }
-
-        private static string getPrefixSearchPattern(string searchText)
-        {
-            var regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled;
-            var pattern = new StringBuilder();
-            var prefixRegex = "^(\\*|%)?([\\w\\-_\\*\\%\\.\\@]+)";
-            var regex = new Regex(prefixRegex, regexOptions);
-            var matches = regex.Matches(searchText);
-
-            if (matches.Count > 0)
-            {
-                var matchText = matches[0].Groups[2].Value;
-                if (matchText != null && !string.IsNullOrEmpty(matchText))
-                {
-                    pattern.Append("%");
-                    pattern.Append(matchText.Replace("*", "").Replace("%", ""));
-                }
-            }
-            return pattern.ToString();
-        }
-
-        private static string getSuffixSearchPattern(string searchText)
-        {
-            var pattern = new StringBuilder();
-            var regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled;
-            var suffixRegex = "([\\w\\-_\\*\\%\\.\\@]+)(\\*|%)$";
-            var regex = new Regex(suffixRegex, regexOptions);
-            var matches = regex.Matches(searchText);
-
-            if (matches.Count > 0)
-            {
-                var matchText = matches[0].Groups[1].Value;
-                if (matchText != null && !string.IsNullOrEmpty(matchText))
-                {
-                    pattern.Append(matchText.Replace("*", "").Replace("%", ""));
-                    pattern.Append("%");
-                }
-            }
-            return pattern.ToString();
-        }
-
-        public static string Apply(string searchText)
-        {
-            if(string.IsNullOrEmpty(searchText))
+            if (string.IsNullOrEmpty(searchText))
             {
                 return null;
             }
@@ -93,19 +31,81 @@ namespace Dnn.PersonaBar.Users.Components.Helpers
 
                 if (IN_STRING == true)
                 {
-                    pattern = getInStringSearchPattern(searchText);
+                    pattern = GetInStringSearchPattern(searchText);
                 }
                 else if (PREFIX == true)
                 {
-                    pattern = getPrefixSearchPattern(searchText);
+                    pattern = GetPrefixSearchPattern(searchText);
                 }
                 else if (SUFFIX == true)
                 {
-                    pattern = getSuffixSearchPattern(searchText);
+                    pattern = GetSuffixSearchPattern(searchText);
                 }
             }
 
             return pattern;
+        }
+
+        private static string GetInStringSearchPattern(string searchText)
+        {
+            var pattern = new StringBuilder();
+            var regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+            var inStringRegex = "^(\\*|%)?([\\w\\-_\\*\\%\\.\\@]+)(\\*|%)$";
+            var regex = new Regex(inStringRegex, regexOptions);
+            var matches = regex.Matches(searchText);
+
+            if (matches.Count > 0)
+            {
+                var matchText = matches[0].Groups[2].Value;
+                if (matchText != null && !string.IsNullOrEmpty(matchText))
+                {
+                    pattern.Append("%");
+                    pattern.Append(matchText.Replace("*", "").Replace("%", ""));
+                    pattern.Append("%");
+
+                }
+            }
+            return pattern.ToString();
+        }
+
+        private static string GetPrefixSearchPattern(string searchText)
+        {
+            var regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+            var pattern = new StringBuilder();
+            var prefixRegex = "^(\\*|%)?([\\w\\-_\\*\\%\\.\\@]+)";
+            var regex = new Regex(prefixRegex, regexOptions);
+            var matches = regex.Matches(searchText);
+
+            if (matches.Count > 0)
+            {
+                var matchText = matches[0].Groups[2].Value;
+                if (matchText != null && !string.IsNullOrEmpty(matchText))
+                {
+                    pattern.Append("%");
+                    pattern.Append(matchText.Replace("*", "").Replace("%", ""));
+                }
+            }
+            return pattern.ToString();
+        }
+
+        private static string GetSuffixSearchPattern(string searchText)
+        {
+            var pattern = new StringBuilder();
+            var regexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+            var suffixRegex = "([\\w\\-_\\*\\%\\.\\@]+)(\\*|%)$";
+            var regex = new Regex(suffixRegex, regexOptions);
+            var matches = regex.Matches(searchText);
+
+            if (matches.Count > 0)
+            {
+                var matchText = matches[0].Groups[1].Value;
+                if (matchText != null && !string.IsNullOrEmpty(matchText))
+                {
+                    pattern.Append(matchText.Replace("*", "").Replace("%", ""));
+                    pattern.Append("%");
+                }
+            }
+            return pattern.ToString();
         }
     }
 }

@@ -494,7 +494,7 @@ namespace Dnn.PersonaBar.Users.Components
             bool? includeAuthorized, bool? includeDeleted, bool? includeSuperUsers, out int totalRecords)
         {
 
-            var parsedSearchText = string.IsNullOrEmpty(usersContract.SearchText) ? "" : SearchTextFilter.Apply(usersContract.SearchText.Trim());
+            var parsedSearchText = string.IsNullOrEmpty(usersContract.SearchText) ? "" : SearchTextFilter.CleanWildcards(usersContract.SearchText.Trim());
 
             List<UserBasicDto2> records = CBO.FillCollection<UserBasicDto2>(
                 CallGetUsersBySearchTerm(
@@ -510,7 +510,7 @@ namespace Dnn.PersonaBar.Users.Components
         protected virtual IDataReader CallGetUsersBySearchTerm(GetUsersContract usersContract,
             bool? includeAuthorized, bool? includeDeleted, bool? includeSuperUsers)
         {
-            var parsedSearchText = string.IsNullOrEmpty(usersContract.SearchText) ? "" : SearchTextFilter.Apply(usersContract.SearchText.Trim());
+            var parsedSearchText = string.IsNullOrEmpty(usersContract.SearchText) ? "" : SearchTextFilter.CleanWildcards(usersContract.SearchText.Trim());
 
             return DataProvider.Instance().ExecuteReader(
                     "Personabar_GetUsersBySearchTerm",
