@@ -11,8 +11,10 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
 {
     [ConsoleCommand("get-user", Constants.UsersCategory, "Prompt_GetUser_Description")]
     public class GetUser : ConsoleCommandBase
-    {
+    {        
         public override string LocalResourceFile => Constants.LocalResourcesFile;
+
+        private IUserValidator _userValidator;
 
         [FlagParameter("id", "Prompt_GetUser_FlagId", "Integer")]
         private const string FlagId = "id";
@@ -21,12 +23,20 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
         [FlagParameter("username", "Prompt_GetUser_FlagUsername", "String")]
         private const string FlagUsername = "username";
 
-
         private int? UserId { get; set; }
         private string Email { get; set; }
         private string Username { get; set; }
 
         private const int UserIdZero = 0;
+
+        public GetUser():this(new UserValidator())
+        {
+        }
+
+        public GetUser(IUserValidator userValidator)
+        {
+            this._userValidator = userValidator;
+        }
 
         public override void Init(string[] args, PortalSettings portalSettings, UserInfo userInfo, int activeTabId)
         {
@@ -106,6 +116,8 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
                 ConsoleErrorResultModel errorResultModel;
                 UserInfo userInfo;
                 if ((errorResultModel = Utilities.ValidateUser(userId, PortalSettings, User, out userInfo)) != null) return errorResultModel;
+                errorResultModel = _userValidator.ValidateUser(userId, PortalSettings, User, out userInfo);
+
                 lst.Add(new UserModel(userInfo));
             }
 
