@@ -14,7 +14,7 @@ namespace Dnn.PersonaBar.Users.Components
         private IUserControllerWrapper _userControllerWrapper;
         private IContentVerifier _contentVerifier;
 
-        public UserValidator():this(PortalController.Instance,new UserControllerWrapper(), new ContentVerifier())
+        public UserValidator() : this(PortalController.Instance, new UserControllerWrapper(), new ContentVerifier())
         {
         }
 
@@ -46,10 +46,10 @@ namespace Dnn.PersonaBar.Users.Components
                 }
 
                 if (userInfo != null &&
-                    !    _contentVerifier.IsContentExistsForRequestedPortal(
-                            userInfo.PortalID,
-                            portalSettings,
-                            true
+                    !_contentVerifier.IsContentExistsForRequestedPortal(
+                        userInfo.PortalID,
+                        portalSettings,
+                        true
                         )
                     )
                 {
