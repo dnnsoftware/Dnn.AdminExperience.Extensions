@@ -57,7 +57,7 @@ namespace Dnn.PersonaBar.Users.Components
                         portalSettings,
                         true
                         )
-                    )
+                   )
                 {
                     userInfo = null;
                 }

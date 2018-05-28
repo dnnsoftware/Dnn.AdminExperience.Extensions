@@ -15,6 +15,7 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
         public override string LocalResourceFile => Constants.LocalResourcesFile;
 
         private IUserValidator _userValidator;
+        private IUserControllerWrapper _userControllerWrapper;
 
         [FlagParameter("id", "Prompt_GetUser_FlagId", "Integer")]
         private const string FlagId = "id";
@@ -29,13 +30,14 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
 
         private const int UserIdZero = 0;
 
-        public GetUser() : this(new UserValidator())
+        public GetUser() : this(new UserValidator(), new UserControllerWrapper())
         {
         }
 
-        public GetUser(IUserValidator userValidator)
+        public GetUser(IUserValidator userValidator, IUserControllerWrapper userControllerWrapper)
         {
             this._userValidator = userValidator;
+            this._userControllerWrapper = userControllerWrapper;
         }
 
         public override void Init(string[] args, PortalSettings portalSettings, UserInfo userInfo, int activeTabId)
@@ -92,24 +94,26 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
                 {
                     // do username lookup
                     var searchTerm = Username.Replace("%", "").Replace("*", "%");
-                    userId = (UserController.GetUsersByUserName(PortalId, searchTerm, -1, int.MaxValue, ref recCount, true, false).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? UserIdZero;
-
+                    
+                    userId = _userControllerWrapper.GetUsersByUserName(PortalId, searchTerm, -1, int.MaxValue, ref recCount, true, false) ?? UserIdZero;
                     // search against superusers if no regular user found
                     if (userId == UserIdZero)
                     {
-                        userId = (UserController.GetUsersByUserName(-1, searchTerm, -1, int.MaxValue, ref recCount, true, true).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? UserIdZero;
+                        //userId = (UserController.GetUsersByUserName(-1, searchTerm, -1, int.MaxValue, ref recCount, true, true).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? UserIdZero;
+                        userId = _userControllerWrapper.GetUsersByUserName(-1, searchTerm, -1, int.MaxValue, ref recCount, true, true) ?? UserIdZero;
                     }
                 }
                 else if (!userId.HasValue && !string.IsNullOrEmpty(Email))
                 {
                     // must be email
                     var searchTerm = Email.Replace("%", "").Replace("*", "%");
-                    userId = (UserController.GetUsersByEmail(PortalId, searchTerm, -1, int.MaxValue, ref recCount, true, false).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? UserIdZero;
+                    
+                    userId = _userControllerWrapper.GetUsersByEmail(PortalId, searchTerm, -1, int.MaxValue, ref recCount, true, false) ?? UserIdZero;
 
                     // search against superusers if no regular user found
                     if (userId == UserIdZero)
                     {
-                        userId = (UserController.GetUsersByEmail(-1, searchTerm, -1, int.MaxValue, ref recCount, true, true).ToArray().FirstOrDefault() as UserInfo)?.UserID ?? UserIdZero;
+                        userId = _userControllerWrapper.GetUsersByEmail(-1, searchTerm, -1, int.MaxValue, ref recCount, true, true) ?? UserIdZero;
                     }
                 }
 
