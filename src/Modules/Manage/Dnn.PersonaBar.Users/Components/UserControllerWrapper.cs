@@ -7,10 +7,6 @@ namespace Dnn.PersonaBar.Users.Components
 {
     public class UserControllerWrapper : IUserControllerWrapper
     {
-        public UserControllerWrapper()
-        {
-        }
-
         public UserInfo GetUser(int userId, PortalSettings portalSettings, UserInfo currentUserInfo, out KeyValuePair<HttpStatusCode, string> response)
         {
             return UsersController.GetUser(userId, portalSettings, currentUserInfo, out response);

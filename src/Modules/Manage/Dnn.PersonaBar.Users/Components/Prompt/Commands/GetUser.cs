@@ -117,7 +117,10 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
                 ConsoleErrorResultModel errorResultModel =
                     _userValidator.ValidateUser(userId, PortalSettings, User, out userInfo);
 
-                if (errorResultModel != null) return errorResultModel;
+                if (errorResultModel != null)
+                {
+                    return errorResultModel;
+                }
 
                 lst.Add(new UserModel(userInfo));
             }

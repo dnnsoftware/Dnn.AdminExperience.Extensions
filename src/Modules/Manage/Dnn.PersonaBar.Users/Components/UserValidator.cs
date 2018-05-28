@@ -28,7 +28,10 @@ namespace Dnn.PersonaBar.Users.Components
         public ConsoleErrorResultModel ValidateUser(int? userId, PortalSettings portalSettings, UserInfo currentUserInfo, out UserInfo userInfo)
         {
             userInfo = null;
-            if (!userId.HasValue) return new ConsoleErrorResultModel(Localization.GetString("Prompt_NoUserId", Constants.LocalResourcesFile));
+            if (!userId.HasValue)
+            {
+                return new ConsoleErrorResultModel(Localization.GetString("Prompt_NoUserId", Constants.LocalResourcesFile));
+            }
 
             KeyValuePair<HttpStatusCode, string> response;
             userInfo = _userControllerWrapper.GetUser(userId.Value, portalSettings, currentUserInfo, out response);
@@ -42,7 +45,10 @@ namespace Dnn.PersonaBar.Users.Components
                     var portalInfo = portal as PortalInfo;
                     userInfo = _userControllerWrapper.GetUserById(portalInfo.PortalID, userId.Value);
 
-                    if (userInfo != null) break;
+                    if (userInfo != null)
+                    {
+                        break;
+                    }
                 }
 
                 if (userInfo != null &&
