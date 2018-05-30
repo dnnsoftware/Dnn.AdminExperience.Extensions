@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Dnn.PersonaBar.Users.Tests</RootNamespace>
     <AssemblyName>Dnn.PersonaBar.Users.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,6 +40,9 @@
     <Reference Include="DotNetNuke.Instrumentation">
       <HintPath>..\..\..\bin\DotNetNuke.Instrumentation.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetNuke.Web">
+      <HintPath>..\..\..\bin\DotNetNuke.Web.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\..\..\bin\Moq.dll</HintPath>
     </Reference>
@@ -57,6 +61,7 @@
   <ItemGroup>
     <Compile Include="GetUserUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchUsersBySearchTermTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dnn.PersonaBar.Users\Dnn.PersonaBar.Users.csproj">

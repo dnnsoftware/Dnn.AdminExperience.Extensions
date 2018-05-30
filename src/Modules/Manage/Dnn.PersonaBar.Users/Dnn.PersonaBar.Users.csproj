@@ -117,6 +117,7 @@
     <Compile Include="Components\Dto\UserRoleDto.cs" />
     <Compile Include="Components\IUserControllerWrapper.cs" />
     <Compile Include="Components\IUserValidator.cs" />
+    <Compile Include="Components\Helpers\SearchTextFilter.cs" />
     <Compile Include="Components\Prompt\Commands\AddRoles.cs" />
     <Compile Include="Components\Prompt\Commands\DeleteUser.cs" />
     <Compile Include="Components\Prompt\Commands\GetUser.cs" />
