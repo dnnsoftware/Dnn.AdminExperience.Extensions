@@ -59,20 +59,53 @@ namespace Dnn.PersonaBar.Pages.Components
         private readonly ITemplateController _templateController;
         private readonly IDefaultPortalThemeController _defaultPortalThemeController;
         private readonly ICloneModuleExecutionContext _cloneModuleExecutionContext;
+        private readonly IUrlRewriterUtilsWrapper _urlRewriterUtilsWrapper;
+        private readonly IFriendlyUrlWrapper _friendlyUrlWrapper;
+        private readonly IContentVerifier _contentVerifier;
 
         public const string PageTagsVocabulary = "PageTags";
-        private static readonly IList<string> TabSettingKeys = new List<string> { "CustomStylesheet" };
+        private static readonly IList<string> TabSettingKeys = new List<string> { "CustomStylesheet" };        
+
         private PortalSettings PortalSettings { get; set; }
 
         public PagesControllerImpl()
+            : this(
+                  TabController.Instance,
+                  ModuleController.Instance,
+                  PageUrlsController.Instance,
+                  TemplateController.Instance,
+                  DefaultPortalThemeController.Instance,
+                  CloneModuleExecutionContext.Instance,
+                  new UrlRewriterUtilsWrapper(),
+                  new FriendlyUrlWrapper(),
+                  new ContentVerifier()
+                  )
         {
-            _tabController = TabController.Instance;
-            _moduleController = ModuleController.Instance;
-            _pageUrlsController = PageUrlsController.Instance;
-            _templateController = TemplateController.Instance;
-            _defaultPortalThemeController = DefaultPortalThemeController.Instance;
-            _cloneModuleExecutionContext = CloneModuleExecutionContext.Instance;
         }
+
+        public PagesControllerImpl(
+            ITabController tabController,
+            IModuleController moduleController,
+            IPageUrlsController pageUrlsController,
+            ITemplateController templateController,
+            IDefaultPortalThemeController defaultPortalThemeController,
+            ICloneModuleExecutionContext cloneModuleExecutionContext,
+            IUrlRewriterUtilsWrapper urlRewriterUtilsWrapper,
+            IFriendlyUrlWrapper friendlyUrlWrapper,
+            IContentVerifier contentVerifier
+            )
+        {
+            _tabController = tabController;
+            _moduleController = moduleController;
+            _pageUrlsController = pageUrlsController;
+            _templateController = templateController;
+            _defaultPortalThemeController = defaultPortalThemeController;
+            _cloneModuleExecutionContext = cloneModuleExecutionContext;
+            _urlRewriterUtilsWrapper = urlRewriterUtilsWrapper;
+            _friendlyUrlWrapper = friendlyUrlWrapper;
+            _contentVerifier = contentVerifier;
+        }
+
 
         public bool IsValidTabPath(TabInfo tab, string newTabPath, string newTabName, out string errorMessage)
         {
@@ -222,7 +255,7 @@ namespace Dnn.PersonaBar.Pages.Components
                 }
                 else
                 {
-                    if (PortalHelper.IsContentExistsForRequestedPortal(tab.PortalID, currentPortal))
+                    if (_contentVerifier.IsContentExistsForRequestedPortal(tab.PortalID, currentPortal))
                     {
                         TabController.Instance.SoftDeleteTab(tab.TabID, currentPortal);
                     }
@@ -272,7 +305,7 @@ namespace Dnn.PersonaBar.Pages.Components
 
             string errorMessage;
             string field;
-            if (!ValidatePageSettingsData(pageSettings, tab, out field, out errorMessage))
+            if (!ValidatePageSettingsData(PortalSettings, pageSettings, tab, out field, out errorMessage))
             {
                 throw new PageValidationException(field, errorMessage);
             }
@@ -453,7 +486,7 @@ namespace Dnn.PersonaBar.Pages.Components
             return tabModules.Values.Where(m => !m.IsDeleted && !m.AllTabs);
         }
 
-        protected virtual bool ValidatePageSettingsData(PageSettings pageSettings, TabInfo tab, out string invalidField, out string errorMessage)
+        protected virtual bool ValidatePageSettingsData(PortalSettings portalSettings, PageSettings pageSettings, TabInfo tab, out string invalidField, out string errorMessage)
         {
             errorMessage = string.Empty;
             invalidField = string.Empty;
@@ -478,7 +511,6 @@ namespace Dnn.PersonaBar.Pages.Components
             }
 
             var parentId = pageSettings.ParentId ?? tab?.ParentId ?? Null.NullInteger;
-            var portalSettings = PortalSettings ?? PortalController.Instance.GetCurrentPortalSettings();
 
             if (pageSettings.PageType == "template")
             {
@@ -538,7 +570,7 @@ namespace Dnn.PersonaBar.Pages.Components
                     break;
             }
 
-            return ValidatePageUrlSettings(pageSettings, tab, ref invalidField, ref errorMessage);
+            return ValidatePageUrlSettings(portalSettings, pageSettings, tab, ref invalidField, ref errorMessage);
         }
 
         protected virtual int GetTemplateParentId(int portalId)
@@ -546,21 +578,20 @@ namespace Dnn.PersonaBar.Pages.Components
             return Null.NullInteger;
         }
 
-        private bool ValidatePageUrlSettings(PageSettings pageSettings, TabInfo tab, ref string invalidField, ref string errorMessage)
+        public bool ValidatePageUrlSettings(PortalSettings portalSettings, PageSettings pageSettings, TabInfo tab, ref string invalidField, ref string errorMessage)
         {
-            var portalSettings = PortalSettings ?? PortalController.Instance.GetCurrentPortalSettings();
-            var urlPath = !string.IsNullOrEmpty(pageSettings.Url) ? pageSettings.Url.TrimStart('/') : string.Empty;
+            var urlPath = pageSettings.Url;
 
             if (string.IsNullOrEmpty(urlPath))
             {
                 return true;
             }
-                        
+
             bool modified;
-            //Clean Url
-            var options = UrlRewriterUtils.ExtendOptionsForCustomURLs(UrlRewriterUtils.GetOptionsFromSettings(new FriendlyUrlSettings(portalSettings.PortalId)));
-            urlPath = GetLocalPath(urlPath);            
-            urlPath = FriendlyUrlController.CleanNameForUrl(urlPath, options, out modified);
+            //Clean Url            
+            var options = _urlRewriterUtilsWrapper.GetExtendOptionsForURLs(portalSettings.PortalId);
+            urlPath = GetLocalPath(urlPath);
+            urlPath = _friendlyUrlWrapper.CleanNameForUrl(urlPath, options, out modified);
             if (modified)
             {
                 errorMessage = Localization.GetString("UrlPathCleaned");
@@ -569,7 +600,7 @@ namespace Dnn.PersonaBar.Pages.Components
             }
 
             //Validate for uniqueness
-            FriendlyUrlController.ValidateUrl(urlPath, tab?.TabID ?? Null.NullInteger, portalSettings, out modified);
+            _friendlyUrlWrapper.ValidateUrl(urlPath, tab?.TabID ?? Null.NullInteger, portalSettings, out modified);
             if (modified)
             {
                 errorMessage = Localization.GetString("UrlPathNotUnique");
@@ -998,7 +1029,7 @@ namespace Dnn.PersonaBar.Pages.Components
         {
             var tab = GetPageDetails(pageId);            
 
-            if (!PortalHelper.IsContentExistsForRequestedPortal(tab.PortalID, requestPortalSettings))
+            if (!_contentVerifier.IsContentExistsForRequestedPortal(tab.PortalID, requestPortalSettings))
             {
                 throw new PageNotFoundException();
             }
@@ -1275,9 +1306,9 @@ namespace Dnn.PersonaBar.Pages.Components
 
         private string GetLocalPath(string url)
         {
-            if (url.Length > 1)
+            url = url.TrimEnd(new[] { '/' });
+            if (url.Length > 1 && url.IndexOf('/') > -1)
             {
-                url = url.TrimEnd(new[] { '/' });
                 url = url.Remove(0, url.LastIndexOf('/'));
             }
             return url;
