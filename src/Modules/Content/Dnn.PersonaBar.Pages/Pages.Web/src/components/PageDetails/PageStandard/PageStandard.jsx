@@ -114,6 +114,7 @@ class PageDetails extends Component {
                         <Label label={Localization.get("Tags")} style={{ paddingBottom: "10px" }} />
                         <Tags
                             tags={tags}
+                            autoSuggest={true}
                             onUpdateTags={this.onChangeTags.bind(this)} />
                     </GridCell>
                     <GridCell className="right-column input-cell">

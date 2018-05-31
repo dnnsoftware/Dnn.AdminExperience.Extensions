@@ -13,6 +13,7 @@ import template from "./templateReducer";
 import languages from "./languagesReducer";
 import pageList from "./pageListReducer";
 import searchList from "./searchListReducer";
+import tagsReducer from "./tagsReducer";
 
 const rootReducer = combineReducers({
     pageList,
@@ -28,7 +29,8 @@ const rootReducer = combineReducers({
     pageSeo,
     extensions,
     template,
-    languages
+    languages,
+    tagsReducer
 });
 
 export default rootReducer;

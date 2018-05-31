@@ -1621,6 +1621,10 @@ dnd-core@^2.6.0:
     lodash "^4.2.0"
     redux "^3.7.1"
 
+dnn-api@^0.0.14:
+  version "0.0.14"
+  resolved "https://www.myget.org/F/dnn-software-public/npm/dnn-api/-/dnn-api-0.0.14.tgz#65b5bd4678cf11f6b1a74faa47a9e89896597c50"
+
 dnn-draggable@0.0.1:
   version "0.0.1"
   resolved "https://www.myget.org/F/dnn-software-public/npm/dnn-draggable/-/dnn-draggable-0.0.1.tgz#1cb6a6206b1eb349eec95e932a6c2424df684667"

@@ -13,11 +13,16 @@ import PageTypeSelector from "../PageTypeSelector/PageTypeSelector";
 import PageLocalization from "../PageLocalization/PageLocalization";
 import securityService from "../../services/securityService";
 import permissionTypes from "../../services/permissionTypes";
+import tagsService from "../../services/tagsService";
 
 class PageSettings extends Component {
 
     componentWillMount() {
         this.setState({ selectedPageName: "" });
+        const prom = tagsService.getSuggestions("tag",10,10);
+        prom.then((data) => {
+            console.log(data);
+        });
     }
     hasPageErrors() {
         const { selectedPageErrors } = this.props;

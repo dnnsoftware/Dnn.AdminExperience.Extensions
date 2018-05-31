@@ -7,6 +7,7 @@ import templateActions from "./templateActions";
 import visiblePanelActions from "./visiblePanelActions";
 import visiblePageSettingsActions from "./visiblePageSettingsActions";
 import languagesActions from "./languagesActions";
+import tagsActions from "./tagsActions";
 
 export {
     pagination,
@@ -17,5 +18,6 @@ export {
     templateActions,
     visiblePanelActions,
     visiblePageSettingsActions,
-    languagesActions
+    languagesActions,
+    tagsActions
 };
