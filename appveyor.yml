@@ -18,8 +18,4 @@ before_package:
 
 test:
   assemblies:
-    except:
-    - src\bin\DNN.Integration.Test.Framework.dll
-    - src\bin\DotNetNuke.Tests.Data.dll
-    - src\bin\DotNetNuke.Tests.Utilities.dll
-    - DotNetNuke.Tests.*.dll
+    - *.Tests.dll
