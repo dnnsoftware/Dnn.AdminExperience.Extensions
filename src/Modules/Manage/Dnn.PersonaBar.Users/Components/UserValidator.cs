@@ -13,6 +13,7 @@ namespace Dnn.PersonaBar.Users.Components
         private IPortalController _portalController;
         private IUserControllerWrapper _userControllerWrapper;
         private IContentVerifier _contentVerifier;
+        private int _userPortalId;
 
         public UserValidator() : this(PortalController.Instance, new UserControllerWrapper(), new ContentVerifier())
         {
@@ -25,13 +26,21 @@ namespace Dnn.PersonaBar.Users.Components
             this._contentVerifier = contentVerifier;
         }
 
+        public int GetValidPortalId()
+        {
+            return _userPortalId;
+        }
+
         public ConsoleErrorResultModel ValidateUser(int? userId, PortalSettings portalSettings, UserInfo currentUserInfo, out UserInfo userInfo)
         {
             userInfo = null;
+
             if (!userId.HasValue)
             {
                 return new ConsoleErrorResultModel(Localization.GetString("Prompt_NoUserId", Constants.LocalResourcesFile));
             }
+
+            _userPortalId = portalSettings.PortalId;
 
             KeyValuePair<HttpStatusCode, string> response;
             userInfo = _userControllerWrapper.GetUser(userId.Value, portalSettings, currentUserInfo, out response);
@@ -47,6 +56,7 @@ namespace Dnn.PersonaBar.Users.Components
 
                     if (userInfo != null)
                     {
+                        _userPortalId = portalInfo.PortalID;
                         break;
                     }
                 }
