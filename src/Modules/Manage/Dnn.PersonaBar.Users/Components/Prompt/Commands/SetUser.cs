@@ -100,17 +100,15 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
                )
             {
                 return errorResultModel;
-            }
-                        
-            var validPortalId = _userValidator.GetValidPortalId();
-
+            }                        
+          
             // Update the User
             // process the password first. If invalid, we can abort other changes to the user
             if (!string.IsNullOrEmpty(Password))
             {
                 try
                 {                    
-                    _usersController.ChangePassword(validPortalId, userInfo.UserID, Password);
+                    _usersController.ChangePassword(userInfo.PortalID, userInfo.UserID, Password);
                     sbResults.Append(LocalizeString("ChangeSuccessful"));
                 }
                 catch (Exception ex)
@@ -121,7 +119,7 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
 
             if (Approved.HasValue && userInfo.Membership.Approved != Approved.Value)
             {
-                _usersController.UpdateAuthorizeStatus(userInfo, validPortalId, Approved.Value);
+                _usersController.UpdateAuthorizeStatus(userInfo, userInfo.PortalID, Approved.Value);
                 sbResults.Append(LocalizeString(Approved.Value ? "UserAuthorized" : "UserUnAuthorized"));
             }
 
@@ -152,7 +150,7 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
             {
                 try
                 {
-                    _usersController.UpdateUserBasicInfo(userBasicDto, validPortalId);
+                    _usersController.UpdateUserBasicInfo(userBasicDto, userInfo.PortalID);
                 }
                 catch (SqlException)
                 {
@@ -164,7 +162,7 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
                 }
             }
             // retrieve the updated user
-            var updatedUser = _userControllerWrapper.GetUserById(validPortalId, userInfo.UserID);
+            var updatedUser = _userControllerWrapper.GetUserById(userInfo.PortalID, userInfo.UserID);
 
             var lst = new List<UserModel> { new UserModel(updatedUser) };
 

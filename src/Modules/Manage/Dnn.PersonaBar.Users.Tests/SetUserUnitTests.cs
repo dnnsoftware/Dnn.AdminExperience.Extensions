@@ -68,10 +68,10 @@ namespace Dnn.PersonaBar.Users.Tests
             userInfo.LastName = "userLastName";
             userInfo.Email = "user@email.com";
             userInfo.IsDeleted = false;
+            userInfo.PortalID = _testPortalId;
 
             ConsoleErrorResultModel errorResponse = null;
             
-            _userValidatorMock.Setup(u => u.GetValidPortalId()).Returns(_testPortalId);
             _userValidatorMock
                 .Setup(u => u.ValidateUser(userId, _portalSettings, null, out userInfo))
                 .Returns(errorResponse);

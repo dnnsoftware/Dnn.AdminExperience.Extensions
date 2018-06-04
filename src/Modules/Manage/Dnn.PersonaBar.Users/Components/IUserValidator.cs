@@ -7,6 +7,5 @@ namespace Dnn.PersonaBar.Users.Components
     public interface IUserValidator
     {
         ConsoleErrorResultModel ValidateUser(int? userId, PortalSettings portalSettings, UserInfo user, out UserInfo userInfo);
-        int GetValidPortalId();
     }
 }
