@@ -120,7 +120,7 @@ namespace Dnn.PersonaBar.Pages.Components
             {
                 TabId = tab.TabID,
                 SeqNum = seqNum,
-                PortalAliasId = dto.SiteAliasKey,
+                PortalAliasId = GetValidPortalAliasId(portalSettings.PortalId, dto.SiteAliasKey),
                 PortalAliasUsage = portalAliasUsage,
                 QueryString = dto.QueryString.ValueOrEmpty(),
                 Url = dto.Path.ValueOrEmpty(),
@@ -190,7 +190,7 @@ namespace Dnn.PersonaBar.Pages.Components
                     {
                         TabId = tab.TabID,
                         SeqNum = dto.Id,
-                        PortalAliasId = dto.SiteAliasKey,
+                        PortalAliasId = GetValidPortalAliasId(portalSettings.PortalId, dto.SiteAliasKey),
                         PortalAliasUsage = (PortalAliasUsageType)dto.SiteAliasUsage,
                         QueryString = dto.QueryString.ValueOrEmpty(),
                         Url = dto.Path.ValueOrEmpty(),
@@ -472,6 +472,22 @@ namespace Dnn.PersonaBar.Pages.Components
 
             return string.Format("/{0}", urlPath);
         }
+
+        private int GetValidPortalAliasId(int portalId, int portalAliasId)
+        {
+            var portalAliases = PortalAliasController.Instance.GetPortalAliasesByPortalId(portalId).ToList();
+            if (portalAliases.All(a => a.PortalAliasID != portalAliasId))
+            {
+                var alias = portalAliases.OrderByDescending(a => a.IsPrimary).ThenBy(a => a.PortalAliasID).FirstOrDefault();
+                if (alias != null)
+                {
+                    portalAliasId = alias.PortalAliasID;
+                }
+            }
+
+            return portalAliasId;
+        }
+
         public class KeyValuePairComparer : IComparer<KeyValuePair<int, string>>
         {
             public int Compare(KeyValuePair<int, string> pair1, KeyValuePair<int, string> pair2)
