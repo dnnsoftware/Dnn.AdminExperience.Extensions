@@ -1,10 +1,10 @@
-﻿using Dnn.PersonaBar.Library.Prompt.Models;
+﻿using Moq;
+using NUnit.Framework;
+using DotNetNuke.Entities.Users;
+using DotNetNuke.Entities.Portals;
 using Dnn.PersonaBar.Users.Components;
 using Dnn.PersonaBar.Users.Components.Prompt.Commands;
-using DotNetNuke.Entities.Portals;
-using DotNetNuke.Entities.Users;
-using Moq;
-using NUnit.Framework;
+using Dnn.PersonaBar.Library.Prompt.Models;
 
 namespace Dnn.PersonaBar.Users.Tests
 {
