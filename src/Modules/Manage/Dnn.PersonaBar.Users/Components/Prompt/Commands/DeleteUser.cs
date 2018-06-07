@@ -51,12 +51,14 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
                 return errorResultModel;
             }
 
-            var userModels = new List<UserModel> { new UserModel(userInfo) };
+            var userModels = new List<UserModel> { new UserModel(userInfo) };            
 
             if (userInfo.IsDeleted)
             {
                 return new ConsoleErrorResultModel(LocalizeString("Prompt_UserAlreadyDeleted"));
             }
+
+            var validPortalId = userInfo.PortalID;
 
             if (!_userControllerWrapper.DeleteUserAndClearCache(ref userInfo, Notify, false))
             {
@@ -67,7 +69,7 @@ namespace Dnn.PersonaBar.Users.Components.Prompt.Commands
             }
 
             // attempt to retrieve the user from the dB 
-            userInfo = _userControllerWrapper.GetUserById(userInfo.PortalID, userInfo.UserID);
+            userInfo = _userControllerWrapper.GetUserById(validPortalId, userInfo.UserID);
             userModels = new List<UserModel> { new UserModel(userInfo) };
             return new ConsoleResultModel(LocalizeString("UserDeleted")) { Data = userModels, Records = userModels.Count };            
         }
