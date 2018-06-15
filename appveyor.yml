@@ -24,7 +24,7 @@ before_package:
 
 test:
   assemblies:
-    - '*.Tests.dll'
+    - '**\*.Tests.dll'
   
 artifacts:
   - path: 'nugets\*.nupkg'
