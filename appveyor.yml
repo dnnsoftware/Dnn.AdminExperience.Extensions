@@ -11,9 +11,9 @@ before_build:
   - set checkoutDirectory=${env.APPVEYOR_BUILD_FOLDER}
 
 build_script:
-  - msbuild src/Dnn.PersonaBar.Extensions.sln /t:Rebuild /v:m /nologo /m /p:Configuration=${env.Configuration}
-  - msbuild src/Build/BuildScripts/CreateSourcePackage.build /t:CreateSource /v:m /nologo /p:Configuration=${env.Configuration}
-  - msbuild src/Build/BuildScripts/CreateSourcePackage.build /t:CreateSymbols /v:m /nologo /p:Configuration=${env.Configuration}
+  - msbuild src/Dnn.PersonaBar.Extensions.sln /t:Rebuild /v:m /nologo /m /p:Configuration=Release
+  - msbuild src/Build/BuildScripts/CreateSourcePackage.build /t:CreateSource /v:m /nologo /p:Configuration=Release
+  - msbuild src/Build/BuildScripts/CreateSourcePackage.build /t:CreateSymbols /v:m /nologo /p:Configuration=Release
   
 after_build:
   - nuget pack src/Modules/Content/Dnn.PersonaBar.Pages/Dnn.PersonaBar.Pages.nuspec -OutputDirectory Nuget -BasePath src/Modules/Content/Dnn.PersonaBar.Pages -Version ${env.GitVersion_NuGetVersion} -Properties Configuration=Release
