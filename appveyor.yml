@@ -16,8 +16,8 @@ build_script:
   
 after_build:
   - nuget pack src/Modules/Content/Dnn.PersonaBar.Pages/Dnn.PersonaBar.Pages.nuspec -OutputDirectory Nuget -BasePath src/Modules/Content/Dnn.PersonaBar.Pages -Version %GitVersion_NuGetVersion% -Properties Configuration=Release
-  - nuget pack src/Modules/Content/Dnn.PersonaBar.Recyclebin/Dnn.PersonaBar.Recyclebin.nuspec -OutputDirectory Nuget -BasePath src/Modules/Content/Dnn.PersonaBar.Recyclebin -Version %env.GitVersion_NuGetVersion% -Properties Configuration=Release
-  - nuget pack src/Modules/Settings/Dnn.PersonaBar.Prompt/Dnn.PersonaBar.Prompt.nuspec -OutputDirectory Nuget -BasePath src/Modules/Settings/Dnn.PersonaBar.Prompt -Version %env.GitVersion_NuGetVersion% -Properties Configuration=Release
+  - nuget pack src/Modules/Content/Dnn.PersonaBar.Recyclebin/Dnn.PersonaBar.Recyclebin.nuspec -OutputDirectory Nuget -BasePath src/Modules/Content/Dnn.PersonaBar.Recyclebin -Version %GitVersion_NuGetVersion% -Properties Configuration=Release
+  - nuget pack src/Modules/Settings/Dnn.PersonaBar.Prompt/Dnn.PersonaBar.Prompt.nuspec -OutputDirectory Nuget -BasePath src/Modules/Settings/Dnn.PersonaBar.Prompt -Version %GitVersion_NuGetVersion% -Properties Configuration=Release
   
 before_package:		
   - ps: .\build\YarnInstall.ps1 .\src
@@ -27,5 +27,5 @@ test:
     - '**\*.Tests.dll'
   
 artifacts:
-  - path: 'nugets\*.nupkg'
+  - path: 'nuget\*.nupkg'
   - path: Website\Install\Module\*.zip
