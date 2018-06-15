@@ -9,7 +9,7 @@ before_build:
   - nuget restore src/Dnn.PersonaBar.Extensions.sln -Source https://api.nuget.org/v3/index.json -Source https://www.myget.org/F/dnn-software-public/api/v3/index.json
   - ps: gitversion /l console /output buildserver
 
-build:
+build_script:
   - msbuild src/Dnn.PersonaBar.Extensions.sln /t:Rebuild /v:m /nologo /m /p:Configuration=Release
   - msbuild src/Build/BuildScripts/CreateSourcePackage.build /t:CreateSource /v:m /nologo
   - msbuild src/Build/BuildScripts/CreateSourcePackage.build /t:CreateSymbols /v:m /nologo
