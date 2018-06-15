@@ -9,6 +9,9 @@ build:
   project: src\Dnn.PersonaBar.Extensions.sln
   parallel: true
   verbosity: minimal
+  
+before_package:		
+  ps: .\build\YarnInstall.ps1 .\src
 
 test:
   assemblies:
