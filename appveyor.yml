@@ -1,2 +1,30 @@
-cache:
- - "%LOCALAPPDATA%\\Yarn"
+install:
+  - choco install gitversion.portable -pre -y
+  
+configuration: Release
+
+platform: Any CPU
+
+before_build:
+  - npm config set registry "https://www.myget.org/F/dnn-software-public/npm/"
+  - nuget restore src/Dnn.PersonaBar.Extensions.sln -Source https://api.nuget.org/v3/index.json -Source https://www.myget.org/F/dnn-software-public/api/v3/index.json
+  - gitversion /l console /output buildserver /updateassemblyinfo src\SolutionInfo.cs
+
+build_script:
+  - ps: .\build\YarnInstall.ps1 .\src
+  - msbuild src/Dnn.PersonaBar.Extensions.sln /t:Rebuild /v:m /nologo /m /p:Configuration=Release
+  - msbuild src/Build/BuildScripts/CreateSourcePackage.build /t:CreateSource /nologo /p:checkoutDirectory="%APPVEYOR_BUILD_FOLDER%"
+  - msbuild src/Build/BuildScripts/CreateSourcePackage.build /t:CreateSymbols /nologo /p:checkoutDirectory="%APPVEYOR_BUILD_FOLDER%"
+  
+after_build:
+  - nuget pack src/Modules/Content/Dnn.PersonaBar.Pages/Dnn.PersonaBar.Pages.nuspec -OutputDirectory Nuget -BasePath src/Modules/Content/Dnn.PersonaBar.Pages -Version %GitVersion_NuGetVersion% -Properties Configuration=Release
+  - nuget pack src/Modules/Content/Dnn.PersonaBar.Recyclebin/Dnn.PersonaBar.Recyclebin.nuspec -OutputDirectory Nuget -BasePath src/Modules/Content/Dnn.PersonaBar.Recyclebin -Version %GitVersion_NuGetVersion% -Properties Configuration=Release
+  - nuget pack src/Modules/Settings/Dnn.PersonaBar.Prompt/Dnn.PersonaBar.Prompt.nuspec -OutputDirectory Nuget -BasePath src/Modules/Settings/Dnn.PersonaBar.Prompt -Version %GitVersion_NuGetVersion% -Properties Configuration=Release
+
+test:
+  assemblies:
+    - '**\*.Tests.dll'
+  
+artifacts:
+  - path: 'nuget\*.nupkg'
+  - path: Website\Install\Module\*.zip
