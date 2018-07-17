@@ -29,6 +29,7 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -982,8 +983,8 @@ namespace Dnn.PersonaBar.Extensions.Services
                         files.AddRange(GetFiles(Globals.HostMapPath + "Templates\\", ".module.template"));
                         break;
                     case FileType.Manifest:
-                        files.AddRange(GetFiles(folder, "*.dnn"));
-                        files.AddRange(GetFiles(folder, "*.dnn5"));
+                        var regex = new Regex(@"\.dnn(\d+)?$");
+                        files.AddRange(GetFiles(folder, "*.*").Where(f => regex.IsMatch(f)));
                         break;
                 }
 
