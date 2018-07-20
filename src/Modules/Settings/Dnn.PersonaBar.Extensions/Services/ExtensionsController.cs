@@ -65,6 +65,7 @@ namespace Dnn.PersonaBar.Extensions.Services
     public class ExtensionsController : PersonaBarApiController
     {
         private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(ExtensionsController));
+        private static readonly Regex ManifestExensionsRegex = new Regex(@"dnn\d*$");
         private readonly Components.ExtensionsController _controller = new Components.ExtensionsController();
         private static readonly string[] SpecialModuleFolders = new[] { "mvc" };
         private const string AuthFailureMessage = "Authorization has been denied for this request.";
@@ -983,8 +984,7 @@ namespace Dnn.PersonaBar.Extensions.Services
                         files.AddRange(GetFiles(Globals.HostMapPath + "Templates\\", ".module.template"));
                         break;
                     case FileType.Manifest:
-                        var regex = new Regex(@"\.dnn(\d+)?$");
-                        files.AddRange(GetFiles(folder, "*.*").Where(f => regex.IsMatch(f)));
+                        files.AddRange(GetFiles(folder, "*.dnn*").Where(file => ManifestExensionsRegex.IsMatch(file)));
                         break;
                 }
 
