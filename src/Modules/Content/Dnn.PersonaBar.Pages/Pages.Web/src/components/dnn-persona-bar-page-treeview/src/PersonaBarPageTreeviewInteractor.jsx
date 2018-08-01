@@ -28,14 +28,17 @@ class PersonaBarPageTreeviewInteractor extends Component {
             setMouseCoordDebounce: false,
             pageX: 0,
             pageY: 0,
-            isMouseInTree: false
+            isMouseInTree: false,
+            treeViewActivePage: {}
         };
         this.origin = window.origin;
         this.treeContentWidth = 200;
 
         this.countTreeDepthOpen = 0;
     }
-
+    componentDidMount() {
+        this.init();
+    }
     componentWillReceiveProps(newProps) {
         let setTreeViewExpanded = null;
         const {
@@ -88,6 +91,12 @@ class PersonaBarPageTreeviewInteractor extends Component {
         });
     }
 
+    init() {
+        this.setState({
+            treeViewActivePage: this.props.activePage
+        });
+    }
+
     getPageInfo(id) {
         return new Promise((resolve) => {
             const {
@@ -97,6 +106,9 @@ class PersonaBarPageTreeviewInteractor extends Component {
             
             getPage(id)
                 .then((data) => {
+                    this.setState({
+                        treeViewActivePage: data
+                    });                    
                     return setActivePage(data);
                 }).then(() => resolve());
         });
@@ -213,7 +225,7 @@ class PersonaBarPageTreeviewInteractor extends Component {
                     self.setState({
                         draggedItem: li,
                         pageList: list,
-                        activePage: item
+                        treeViewActivePage: item
                     }, () => updateStore(list));
                 }
             });
@@ -302,7 +314,7 @@ class PersonaBarPageTreeviewInteractor extends Component {
         this.removeClone();
 
         const left = () => {
-            let activePage = Object.assign({}, this.props.activePage);
+            let treeViewActivePage = Object.assign({}, this.state.treeViewActivePage);
             let pageList = null;
             let runUpdateStore = null;
             this.props._traverse((pageListItem, list, updateStore) => {
@@ -314,14 +326,14 @@ class PersonaBarPageTreeviewInteractor extends Component {
                 pageList
             }, () => runUpdateStore(pageList));
 
-            this.getPageInfo(activePage.id)
-                .then((data) => {
-                    let activePage = Object.assign({}, this.props.activePage);
-                    activePage.oldParentId = activePage.parentId;
-                    activePage.parentId = item.id;
-                    return this.props.saveDropState(activePage);
+            this.getPageInfo(treeViewActivePage.id)
+                .then(() => {
+                    let treeViewActivePage = Object.assign({}, this.state.treeViewActivePage);
+                    treeViewActivePage.oldParentId = treeViewActivePage.parentId;
+                    treeViewActivePage.parentId = item.id;
+                    return this.props.saveDropState(treeViewActivePage);
                 })
-                .then(this.getPageInfo.bind(this, activePage.id))
+                .then(this.getPageInfo.bind(this, treeViewActivePage.id))
                 .then(() => this.setState({
                     droppedItem: item
                 }));
@@ -333,18 +345,16 @@ class PersonaBarPageTreeviewInteractor extends Component {
 
 
     onMovePage({
-    e,
-        Action,
-        PageId,
-        ParentId,
-        RelatedPageId,
-        RelatedPageParentId
-}) {
+            e,
+            Action,
+            PageId,
+            ParentId,
+            RelatedPageId,
+            RelatedPageParentId
+        }) {
 
         e.preventDefault();
-        const {
-            onMovePage
-        } = this.props;
+        const { onMovePage } = this.props;
 
         onMovePage({
             Action,

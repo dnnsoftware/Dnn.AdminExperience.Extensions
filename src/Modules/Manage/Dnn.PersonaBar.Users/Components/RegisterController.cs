@@ -37,6 +37,7 @@ using DotNetNuke.Framework;
 using DotNetNuke.Security;
 using DotNetNuke.Security.Membership;
 using DotNetNuke.Security.Roles;
+using DotNetNuke.Services.Cache;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.Services.Mail;
 using DotNetNuke.Services.Social.Notifications;
@@ -91,15 +92,9 @@ namespace Dnn.PersonaBar.Users.Components
             {
                 throw new ArgumentException(Localization.GetExceptionMessage("InvalidUserName", "The username specified is invalid."));
             }
+            
+            var valid = UserController.Instance.IsValidUserName(username);
 
-            // Validate username against bad characters; it must not start or end with space, 
-            // must not contain control characters, and not contain special punctuations
-            // Printable ASCII: " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
-            char[] unallowedAscii = "!\"#$%&'()*+,/:;<=>?@[\\]^`{|}".ToCharArray();
-            var valid = username.Length >= 5 &&
-                        username == username.Trim() &&
-                        username.All(ch => ch >= ' ') &&
-                        username.IndexOfAny(unallowedAscii) < 0;
             if (!valid)
             {
                 throw new ArgumentException(Localization.GetExceptionMessage("InvalidUserName", "The username specified is invalid."));
@@ -249,7 +244,9 @@ namespace Dnn.PersonaBar.Users.Components
 
             //clear cache
             if (createStatus == UserCreateStatus.Success)
-                DataCache.ClearPortalCache(portalSettings.PortalId, true);
+            {
+                CachingProvider.Instance().Remove(string.Format(DataCache.PortalUserCountCacheKey, portalSettings.PortalId));
+            }
 
             if (createStatus != UserCreateStatus.Success)
             {
