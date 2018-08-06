@@ -63,6 +63,7 @@ namespace Dnn.PersonaBar.Servers.Services
                         enableSmtpSsl = HostController.Instance.GetBoolean("SMTPEnableSSL", false),
                         smtpUserName = HostController.Instance.GetString("SMTPUsername"),
                         smtpPassword = GetSmtpPassword(),
+                        smtpHostEmail = HostController.Instance.GetString("HostEmail"),
                         messageSchedulerBatchSize = Host.MessageSchedulerBatchSize
                     },
                     site = new 
@@ -73,7 +74,8 @@ namespace Dnn.PersonaBar.Servers.Services
                         smtpAuthentication = PortalController.GetPortalSetting("SMTPAuthentication", portalId, "0"),
                         enableSmtpSsl = PortalController.GetPortalSetting("SMTPEnableSSL", portalId, string.Empty) == "Y",
                         smtpUserName = PortalController.GetPortalSetting("SMTPUsername", portalId, string.Empty),
-                        smtpPassword = PortalController.GetEncryptedString("SMTPPassword", portalId, Config.GetDecryptionkey())
+                        smtpPassword = PortalController.GetEncryptedString("SMTPPassword", portalId, Config.GetDecryptionkey()),
+                        smtpHostEmail = HostController.Instance.GetString("HostEmail")
                     },
                     portalName = PortalSettings.Current.PortalName
                 };
@@ -104,6 +106,7 @@ namespace Dnn.PersonaBar.Servers.Services
                     HostController.Instance.Update("SMTPUsername", request.SmtpUsername, false);
                     HostController.Instance.UpdateEncryptedString("SMTPPassword", request.SmtpPassword,
                         Config.GetDecryptionkey());
+                    HostController.Instance.Update("HostEmail", request.SmtpHostEmail);
                     HostController.Instance.Update("SMTPEnableSSL", request.EnableSmtpSsl ? "Y" : "N", false);
                     HostController.Instance.Update("MessageSchedulerBatchSize",
                         request.MessageSchedulerBatchSize.ToString(), false);
@@ -117,6 +120,7 @@ namespace Dnn.PersonaBar.Servers.Services
                         request.SmtpAuthentication.ToString(), false);
                     PortalController.UpdatePortalSetting(portalId, "SMTPUsername", request.SmtpUsername, false);
                     PortalController.UpdateEncryptedString(portalId, "SMTPPassword", request.SmtpPassword, Config.GetDecryptionkey());
+                    HostController.Instance.Update("HostEmail", request.SmtpHostEmail);
                     PortalController.UpdatePortalSetting(portalId, "SMTPEnableSSL", request.EnableSmtpSsl ? "Y" : "N", false);
                 }
 
