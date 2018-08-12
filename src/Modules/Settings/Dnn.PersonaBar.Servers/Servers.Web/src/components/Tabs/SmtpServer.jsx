@@ -61,6 +61,7 @@ class SmtpServer extends Component {
             smtpAuthentication: smtpSettings.smtpAuthentication,
             smtpUsername: smtpSettings.smtpUserName,
             smtpPassword: smtpSettings.smtpPassword,
+            smtpHostEmail: smtpSettings.smtpHostEmail,
             enableSmtpSsl: smtpSettings.enableSmtpSsl,
             messageSchedulerBatchSize: props.smtpServerInfo.host.messageSchedulerBatchSize
         };
@@ -197,7 +198,7 @@ class SmtpServer extends Component {
                                     isGlobal={areGlobalSettings} />
                         </div>
                     }
-                    <div className="tooltipAdjustment">
+                    <div className="tooltipAdjustment border-bottom">
                         {smtpSettingsVisible && credentialVisible && 
                             <div>
                                 <EditBlock label={localization.get("plSMTPUsername")}
@@ -205,17 +206,17 @@ class SmtpServer extends Component {
                                     value={selectedSmtpSettings.smtpUserName} 
                                     isGlobal={areGlobalSettings}
                                     onChange={this.onChangeField.bind(this, "smtpUserName")} 
-                                    error={props.errors["smtpUserName"]} />                   
-                            
+                                error={props.errors["smtpUserName"]} />                                
                                 <EditBlock label={localization.get("plSMTPPassword")}
                                     tooltip={localization.get("plSMTPPassword.Help")}
                                     value={selectedSmtpSettings.smtpPassword} 
                                     isGlobal={areGlobalSettings} 
                                     type="password"
                                     onChange={this.onChangeField.bind(this, "smtpPassword")}
-                                    error={props.errors["smtpPassword"]}  />
+                                error={props.errors["smtpPassword"]}  />                                
+
                             </div>     
-                        }
+                        }                        
                         {smtpSettingsVisible &&
                         <SwitchBlock label={localization.get("plSMTPEnableSSL")}
                             onText={localization.get("SwitchOn")}
@@ -226,6 +227,14 @@ class SmtpServer extends Component {
                             isGlobal={areGlobalSettings} />
                         }              
                     </div>
+                    {smtpSettingsVisible && areGlobalSettings &&
+                        <EditBlock label={localization.get("plHostEmail")}  
+                            tooltip={localization.get("plHostEmail.Help")}
+                            value={selectedSmtpSettings.smtpHostEmail}
+                            isGlobal={true}
+                            onChange={this.onChangeField.bind(this, "smtpHostEmail")}
+                            error={props.errors["smtpHostEmail"]} />
+                    }
                 </div>
             </GridSystem>
             <div className="clear" />
