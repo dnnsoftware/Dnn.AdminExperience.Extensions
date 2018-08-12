@@ -206,15 +206,15 @@ class SmtpServer extends Component {
                                     value={selectedSmtpSettings.smtpUserName} 
                                     isGlobal={areGlobalSettings}
                                     onChange={this.onChangeField.bind(this, "smtpUserName")} 
-                                    error={props.errors["smtpUserName"]} />                   
+                                error={props.errors["smtpUserName"]} />                                
                                 <EditBlock label={localization.get("plSMTPPassword")}
                                     tooltip={localization.get("plSMTPPassword.Help")}
                                     value={selectedSmtpSettings.smtpPassword} 
                                     isGlobal={areGlobalSettings} 
                                     type="password"
                                     onChange={this.onChangeField.bind(this, "smtpPassword")}
-                                    error={props.errors["smtpPassword"]}  />
-                                
+                                error={props.errors["smtpPassword"]}  />                                
+
                             </div>     
                         }                        
                         {smtpSettingsVisible &&
@@ -227,12 +227,14 @@ class SmtpServer extends Component {
                             isGlobal={areGlobalSettings} />
                         }              
                     </div>
-                    <EditBlock label={localization.get("plHostEmail")} 
-                        tooltip={localization.get("plHostEmail.Help")}
-                        value={selectedSmtpSettings.smtpHostEmail}
-                        isGlobal={true}
-                        onChange={this.onChangeField.bind(this, "smtpHostEmail")}
-                        error={props.errors["smtpHostEmail"]} />
+                    {smtpSettingsVisible && areGlobalSettings &&
+                        <EditBlock label={localization.get("plHostEmail")}  
+                            tooltip={localization.get("plHostEmail.Help")}
+                            value={selectedSmtpSettings.smtpHostEmail}
+                            isGlobal={true}
+                            onChange={this.onChangeField.bind(this, "smtpHostEmail")}
+                            error={props.errors["smtpHostEmail"]} />
+                    }
                 </div>
             </GridSystem>
             <div className="clear" />
